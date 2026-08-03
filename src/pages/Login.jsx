@@ -127,10 +127,17 @@ export default function Login() {
           </div>
 
           {/* Demo hint */}
-          <div className="mt-4 text-center">
-            <p className="text-tp-muted text-xs">
-              Demo mode — any email & password will work
-            </p>
+          <div className="mt-4 space-y-1.5">
+            <div className="flex items-center gap-2 bg-tp-card border border-tp-border rounded-lg px-3 py-2 cursor-pointer hover:border-tp-border-bright transition-all"
+              onClick={() => { document.querySelector('input[type="email"]').value = 'arjun@test.com'; setEmail('arjun@test.com'); setPassword('demo') }}>
+              <span className="text-tp-soft text-xs flex-1">Member demo: <span className="text-tp-white font-mono">arjun@test.com</span></span>
+              <span className="text-tp-muted text-[10px]">click to fill</span>
+            </div>
+            <div className="flex items-center gap-2 bg-tp-card border border-tp-border rounded-lg px-3 py-2 cursor-pointer hover:border-tp-border-bright transition-all"
+              onClick={() => { setEmail('coach@twitchperformance.in'); setPassword('demo') }}>
+              <span className="text-tp-soft text-xs flex-1">Coach demo: <span className="text-tp-white font-mono">coach@twitchperformance.in</span></span>
+              <span className="text-tp-muted text-[10px]">click to fill</span>
+            </div>
           </div>
         </div>
       </div>

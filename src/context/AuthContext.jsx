@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { mockMember } from '../data/mockData'
+import { mockTrainer } from '../data/mockTrainerData'
 
 // ─────────────────────────────────────────────────────────────
 // AuthContext — dummy auth backed by localStorage.
@@ -34,7 +35,11 @@ export function AuthProvider({ children }) {
     // Simulate network latency
     await new Promise((r) => setTimeout(r, 900))
 
-    const sessionUser = { ...mockMember, email }
+    const isCoach     = email.toLowerCase().includes('coach') || email.toLowerCase().includes('trainer')
+    const sessionUser = isCoach
+      ? { ...mockTrainer, email, role: 'trainer' }
+      : { ...mockMember,  email, role: 'member'  }
+
     localStorage.setItem('tp_session', JSON.stringify(sessionUser))
     // Backend hook: localStorage.setItem('tp_token', data.token)
     setUser(sessionUser)
