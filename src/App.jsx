@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
@@ -53,17 +53,18 @@ function RequireTrainer() {
   return <Outlet />
 }
 
-export default function App() {
-  return (
-    <AuthProvider>
-      <HashRouter>
-        <Routes>
-          {/* Public */}
-          <Route path="/login"    element={<Login />} />
-          <Route path="/userflow" element={<UserFlow />} />
+// ── Inner router — intercepts /userflow before auth guards ───
+function AppRoutes() {
+  const { pathname } = useLocation()
+  if (pathname === '/userflow') return <UserFlow />
 
-          {/* Protected */}
-          <Route element={<RequireAuth />}>
+  return (
+    <Routes>
+      {/* Public */}
+      <Route path="/login" element={<Login />} />
+
+      {/* Protected */}
+      <Route element={<RequireAuth />}>
             {/* ── Member routes ── */}
             <Route element={<RequireMember />}>
               <Route element={<AppShell />}>
@@ -98,6 +99,14 @@ export default function App() {
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+  )
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <HashRouter>
+        <AppRoutes />
       </HashRouter>
     </AuthProvider>
   )
