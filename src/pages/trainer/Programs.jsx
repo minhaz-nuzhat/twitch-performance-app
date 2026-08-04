@@ -29,15 +29,28 @@ export default function Programs() {
       <div className="space-y-3">
         {library?.map(prog => {
           const assignedMembers = mockRoster.filter(m => prog.assignedTo?.includes(m.id))
+          const endDate = prog.startDate
+            ? (() => {
+                const d = new Date(prog.startDate)
+                d.setDate(d.getDate() + prog.totalWeeks * 7 - 1)
+                return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+              })()
+            : null
+          const fmtStart = prog.startDate
+            ? new Date(prog.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+            : null
           return (
             <div key={prog.id} className="card p-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <h3 className="text-tp-white font-semibold">{prog.name}</h3>
                   <p className="text-tp-muted text-xs mt-0.5">{prog.sport} · {prog.goal}</p>
-                  <div className="flex items-center gap-3 mt-2">
+                  <div className="flex items-center gap-3 mt-2 flex-wrap">
                     <span className="text-tp-soft text-xs">{prog.phases?.length ?? 0} phases</span>
                     <span className="text-tp-soft text-xs">{prog.totalWeeks} weeks</span>
+                    {fmtStart && endDate && (
+                      <span className="text-tp-muted text-xs font-mono">{fmtStart} – {endDate}</span>
+                    )}
                     {prog.createdAt && <span className="text-tp-muted text-xs">Created {prog.createdAt}</span>}
                   </div>
                 </div>

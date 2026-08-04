@@ -256,6 +256,7 @@ export default function ProgramBuilderPage() {
     sport: '',
     goal: '',
     description: '',
+    startDate: '',
     phases: [],
     assignedTo: params.get('member') ? [params.get('member')] : [],
   })
@@ -428,6 +429,16 @@ export default function ProgramBuilderPage() {
             <label className="label block mb-1.5">Primary Goal</label>
             <input className="input" placeholder="e.g. Power & Speed" value={program.goal} onChange={e => updateProgram('goal', e.target.value)} />
           </div>
+          <div>
+            <label className="label block mb-1.5">Program Start Date</label>
+            <input
+              type="date"
+              className="input"
+              value={program.startDate}
+              onChange={e => updateProgram('startDate', e.target.value)}
+            />
+            <p className="text-tp-muted text-[10px] mt-1">Used to show real calendar dates in the Timeline view</p>
+          </div>
           <div className="sm:col-span-2">
             <label className="label block mb-1.5">Assign to Member (optional)</label>
             <select className="input" value={program.assignedTo[0] ?? ''} onChange={e => updateProgram('assignedTo', e.target.value ? [e.target.value] : [])}>
@@ -441,6 +452,21 @@ export default function ProgramBuilderPage() {
           <div><span className="font-mono font-bold text-tp-white">{program.phases.length}</span> <span className="text-tp-muted text-xs">phases</span></div>
           <div><span className="font-mono font-bold text-tp-white">{totalSessions}</span> <span className="text-tp-muted text-xs">sessions</span></div>
           <div><span className="font-mono font-bold text-tp-white">{totalExercises}</span> <span className="text-tp-muted text-xs">exercises</span></div>
+          {program.startDate && (() => {
+            const end = new Date(program.startDate)
+            const maxWk = Math.max(1, ...program.phases.flatMap(ph => ph.sessions.map(s => s.week)))
+            end.setDate(end.getDate() + maxWk * 7 - 1)
+            return (
+              <div className="ml-auto text-right">
+                <p className="text-tp-muted text-xs">
+                  {new Date(program.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  {' – '}
+                  {end.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </p>
+                <p className="text-tp-muted text-[10px]">{maxWk}-week program</p>
+              </div>
+            )
+          })()}
         </div>
       </div>
 
@@ -469,6 +495,7 @@ export default function ProgramBuilderPage() {
           </div>
           <ProgramCalendar
             phases={program.phases}
+            startDate={program.startDate}
             onSelectSession={(phaseId, sessionId) => {
               setSelectedPhaseId(phaseId)
               setSelectedSessionId(sessionId)

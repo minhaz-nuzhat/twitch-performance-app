@@ -246,6 +246,7 @@ export const mockProgramLibrary = [
     sport: 'Cricket',
     goal: 'Power & Speed',
     totalWeeks: 12,
+    startDate: '2026-06-16',
     phases: [
       { id: 'ph_1', name: 'Phase 1 — Foundation',  weekCount: 4 },
       { id: 'ph_2', name: 'Phase 2 — Power',        weekCount: 4 },
@@ -260,6 +261,7 @@ export const mockProgramLibrary = [
     sport: 'Badminton',
     goal: 'Explosive Power & Agility',
     totalWeeks: 8,
+    startDate: '2026-06-15',
     phases: [
       { id: 'ph_1', name: 'Phase 1 — Conditioning', weekCount: 4 },
       { id: 'ph_2', name: 'Phase 2 — Speed',         weekCount: 4 },

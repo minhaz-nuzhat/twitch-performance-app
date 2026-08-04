@@ -1,9 +1,28 @@
 import { useMemo } from 'react'
-import { Play, Clock } from 'lucide-react'
+import { Clock } from 'lucide-react'
 import clsx from 'clsx'
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const DAY_SHORT = { Monday: 'Mon', Tuesday: 'Tue', Wednesday: 'Wed', Thursday: 'Thu', Friday: 'Fri', Saturday: 'Sat' }
+
+// ── Date helpers ─────────────────────────────────────────────
+function addDays(dateStr, days) {
+  if (!dateStr) return null
+  const d = new Date(dateStr)
+  d.setDate(d.getDate() + days)
+  return d
+}
+
+function fmtDate(date) {
+  if (!date) return ''
+  return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+}
+
+function fmtDateRange(startDate, endDate) {
+  if (!startDate) return ''
+  if (!endDate) return fmtDate(startDate)
+  return `${fmtDate(startDate)} – ${fmtDate(endDate)}`
+}
 
 // One color per phase index
 const PHASE_STYLES = [
@@ -18,9 +37,10 @@ const PHASE_STYLES = [
  * ProgramCalendar
  * Props:
  *   phases         : program.phases array
+ *   startDate      : string ISO date (e.g. '2026-08-04') — program start date
  *   onSelectSession: (phaseId, sessionId) => void  — jump to build view for that session
  */
-export default function ProgramCalendar({ phases = [], onSelectSession }) {
+export default function ProgramCalendar({ phases = [], startDate = '', onSelectSession }) {
   // Flatten all sessions with phase metadata
   const allSessions = useMemo(() =>
     phases.flatMap((phase, phaseIdx) =>
@@ -39,18 +59,17 @@ export default function ProgramCalendar({ phases = [], onSelectSession }) {
     return map
   }, [allSessions])
 
-  // Calculate phase week ranges for the legend / phase header rows
+  // Calculate phase week ranges + actual dates for the legend
   const phaseRanges = useMemo(() =>
     phases.map((phase, idx) => {
       const sessionWeeks = phase.sessions.map(s => s.week)
-      return {
-        ...phase,
-        phaseIdx: idx,
-        minWeek: sessionWeeks.length ? Math.min(...sessionWeeks) : null,
-        maxWeek: sessionWeeks.length ? Math.max(...sessionWeeks) : null,
-      }
+      const minWeek = sessionWeeks.length ? Math.min(...sessionWeeks) : null
+      const maxWeek = sessionWeeks.length ? Math.max(...sessionWeeks) : null
+      const phaseStart = minWeek != null ? addDays(startDate, (minWeek - 1) * 7) : null
+      const phaseEnd   = maxWeek != null ? addDays(startDate, maxWeek * 7 - 1)    : null
+      return { ...phase, phaseIdx: idx, minWeek, maxWeek, phaseStart, phaseEnd }
     }),
-    [phases],
+    [phases, startDate],
   )
 
   if (phases.length === 0) {
@@ -68,10 +87,19 @@ export default function ProgramCalendar({ phases = [], onSelectSession }) {
         {phaseRanges.map((phase, i) => {
           const style = PHASE_STYLES[i % PHASE_STYLES.length]
           return (
-            <div key={phase.id} className={clsx('flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs', style.bg, style.border)}>
-              <div className={clsx('w-2 h-2 rounded-full flex-shrink-0', style.dot)} />
-              <span className={clsx('font-medium', style.text)}>{phase.name}</span>
-              {phase.minWeek && <span className="text-tp-muted">Wk {phase.minWeek}–{phase.maxWeek}</span>}
+            <div key={phase.id} className={clsx('flex flex-col gap-0.5 px-3 py-1.5 rounded-lg border text-xs', style.bg, style.border)}>
+              <div className="flex items-center gap-2">
+                <div className={clsx('w-2 h-2 rounded-full flex-shrink-0', style.dot)} />
+                <span className={clsx('font-medium', style.text)}>{phase.name}</span>
+                <span className="text-tp-muted">
+                  {phase.minWeek ? `Wk ${phase.minWeek}–${phase.maxWeek}` : 'No sessions'}
+                </span>
+              </div>
+              {phase.phaseStart && (
+                <p className="text-tp-muted text-[10px] pl-4">
+                  {fmtDateRange(phase.phaseStart, phase.phaseEnd)}
+                </p>
+              )}
             </div>
           )
         })}
@@ -99,16 +127,26 @@ export default function ProgramCalendar({ phases = [], onSelectSession }) {
               return (
                 <div key={week} className="grid grid-cols-7 gap-1.5 items-stretch">
                   {/* Week label */}
-                  <div className="flex flex-col items-center justify-center bg-tp-card border border-tp-border rounded-lg px-1 py-2">
-                    <span className="text-tp-white text-xs font-mono font-bold">Wk{week}</span>
-                    {weekPhases.length > 0 && (
-                      <div className="flex gap-0.5 mt-1">
-                        {weekPhases.map(idx => (
-                          <div key={idx} className={clsx('w-1.5 h-1.5 rounded-full', PHASE_STYLES[idx % PHASE_STYLES.length].dot)} />
-                        ))}
+                  {(() => {
+                    const weekMonday = addDays(startDate, (week - 1) * 7)
+                    return (
+                      <div className="flex flex-col items-center justify-center bg-tp-card border border-tp-border rounded-lg px-1 py-2">
+                        <span className="text-tp-white text-xs font-mono font-bold">Wk{week}</span>
+                        {weekMonday && (
+                          <span className="text-tp-muted text-[9px] mt-0.5 font-mono">
+                            {fmtDate(weekMonday)}
+                          </span>
+                        )}
+                        {weekPhases.length > 0 && (
+                          <div className="flex gap-0.5 mt-1">
+                            {weekPhases.map(idx => (
+                              <div key={idx} className={clsx('w-1.5 h-1.5 rounded-full', PHASE_STYLES[idx % PHASE_STYLES.length].dot)} />
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
+                    )
+                  })()}
 
                   {/* Day cells */}
                   {DAYS.map(day => {
