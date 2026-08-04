@@ -143,36 +143,36 @@ export const mockAssessmentTemplate = {
 // ── Exercise Library ──────────────────────────────────────────
 export const mockExerciseLibrary = [
   // Lower Body
-  { id: 'el_01', name: 'Back Squat',              category: 'Lower Body',  type: 'Strength',   defaultSets: 4, defaultReps: '5',      defaultLoad: 'Heavy',  defaultRest: '3 min' },
-  { id: 'el_02', name: 'Romanian Deadlift',        category: 'Lower Body',  type: 'Strength',   defaultSets: 3, defaultReps: '8',      defaultLoad: 'Moderate', defaultRest: '2 min' },
-  { id: 'el_03', name: 'Bulgarian Split Squat',    category: 'Lower Body',  type: 'Strength',   defaultSets: 3, defaultReps: '10 each', defaultLoad: 'Moderate', defaultRest: '90 s' },
-  { id: 'el_04', name: 'Box Jump',                 category: 'Lower Body',  type: 'Explosive',  defaultSets: 4, defaultReps: '5',      defaultLoad: 'BW',     defaultRest: '2 min' },
-  { id: 'el_05', name: 'Nordic Curl',              category: 'Lower Body',  type: 'Strength',   defaultSets: 3, defaultReps: '6',      defaultLoad: 'BW',     defaultRest: '2 min' },
-  { id: 'el_06', name: 'Hex Bar Deadlift',         category: 'Lower Body',  type: 'Strength',   defaultSets: 4, defaultReps: '4',      defaultLoad: 'Heavy',  defaultRest: '3 min' },
-  { id: 'el_07', name: 'Prowler Push',             category: 'Lower Body',  type: 'Conditioning', defaultSets: 5, defaultReps: '20m',  defaultLoad: '60 kg',  defaultRest: '90 s' },
+  { id: 'el_01', name: 'Back Squat',              category: 'Lower Body',  type: 'Strength',     defaultSets: 4, defaultReps: '5',        defaultLoad: 'Heavy',        defaultRest: '3 min', videoUrl: 'https://www.youtube.com/watch?v=ultWZbUMPL8' },
+  { id: 'el_02', name: 'Romanian Deadlift',        category: 'Lower Body',  type: 'Strength',     defaultSets: 3, defaultReps: '8',        defaultLoad: 'Moderate',     defaultRest: '2 min', videoUrl: 'https://www.youtube.com/watch?v=JCXUYuzwNrM' },
+  { id: 'el_03', name: 'Bulgarian Split Squat',    category: 'Lower Body',  type: 'Strength',     defaultSets: 3, defaultReps: '10 each',  defaultLoad: 'Moderate',     defaultRest: '90 s',  videoUrl: 'https://www.youtube.com/watch?v=2C-uNgKwPLE' },
+  { id: 'el_04', name: 'Box Jump',                 category: 'Lower Body',  type: 'Explosive',    defaultSets: 4, defaultReps: '5',        defaultLoad: 'BW',           defaultRest: '2 min', videoUrl: 'https://www.youtube.com/watch?v=52r_Ul5k03g' },
+  { id: 'el_05', name: 'Nordic Curl',              category: 'Lower Body',  type: 'Strength',     defaultSets: 3, defaultReps: '6',        defaultLoad: 'BW',           defaultRest: '2 min', videoUrl: 'https://www.youtube.com/watch?v=1__g4QHPUss' },
+  { id: 'el_06', name: 'Hex Bar Deadlift',         category: 'Lower Body',  type: 'Strength',     defaultSets: 4, defaultReps: '4',        defaultLoad: 'Heavy',        defaultRest: '3 min', videoUrl: '' },
+  { id: 'el_07', name: 'Prowler Push',             category: 'Lower Body',  type: 'Conditioning', defaultSets: 5, defaultReps: '20m',      defaultLoad: '60 kg',        defaultRest: '90 s',  videoUrl: '' },
   // Upper Body
-  { id: 'el_08', name: 'Bench Press',              category: 'Upper Body',  type: 'Strength',   defaultSets: 4, defaultReps: '5',      defaultLoad: 'Heavy',  defaultRest: '3 min' },
-  { id: 'el_09', name: 'Pull-Up',                  category: 'Upper Body',  type: 'Strength',   defaultSets: 4, defaultReps: '8',      defaultLoad: 'BW',     defaultRest: '2 min' },
-  { id: 'el_10', name: 'Dumbbell Row',             category: 'Upper Body',  type: 'Strength',   defaultSets: 3, defaultReps: '10 each', defaultLoad: '30 kg', defaultRest: '90 s' },
-  { id: 'el_11', name: 'Overhead Press',           category: 'Upper Body',  type: 'Strength',   defaultSets: 3, defaultReps: '8',      defaultLoad: 'Moderate', defaultRest: '2 min' },
-  { id: 'el_12', name: 'Cable Row',                category: 'Upper Body',  type: 'Strength',   defaultSets: 3, defaultReps: '12',     defaultLoad: 'Moderate', defaultRest: '90 s' },
+  { id: 'el_08', name: 'Bench Press',              category: 'Upper Body',  type: 'Strength',     defaultSets: 4, defaultReps: '5',        defaultLoad: 'Heavy',        defaultRest: '3 min', videoUrl: 'https://www.youtube.com/watch?v=SCVCLChPQSY' },
+  { id: 'el_09', name: 'Pull-Up',                  category: 'Upper Body',  type: 'Strength',     defaultSets: 4, defaultReps: '8',        defaultLoad: 'BW',           defaultRest: '2 min', videoUrl: 'https://www.youtube.com/watch?v=eGo4IYlbE5g' },
+  { id: 'el_10', name: 'Dumbbell Row',             category: 'Upper Body',  type: 'Strength',     defaultSets: 3, defaultReps: '10 each',  defaultLoad: '30 kg',        defaultRest: '90 s',  videoUrl: '' },
+  { id: 'el_11', name: 'Overhead Press',           category: 'Upper Body',  type: 'Strength',     defaultSets: 3, defaultReps: '8',        defaultLoad: 'Moderate',     defaultRest: '2 min', videoUrl: 'https://www.youtube.com/watch?v=2yjwXTZQDDI' },
+  { id: 'el_12', name: 'Cable Row',                category: 'Upper Body',  type: 'Strength',     defaultSets: 3, defaultReps: '12',       defaultLoad: 'Moderate',     defaultRest: '90 s',  videoUrl: '' },
   // Full Body
-  { id: 'el_13', name: 'Power Clean',              category: 'Full Body',   type: 'Explosive',  defaultSets: 4, defaultReps: '4',      defaultLoad: 'Moderate', defaultRest: '3 min' },
-  { id: 'el_14', name: 'Hang Snatch',              category: 'Full Body',   type: 'Explosive',  defaultSets: 4, defaultReps: '3',      defaultLoad: 'Light',  defaultRest: '3 min' },
-  { id: 'el_15', name: 'Medicine Ball Slam',       category: 'Full Body',   type: 'Explosive',  defaultSets: 4, defaultReps: '8',      defaultLoad: '6 kg',   defaultRest: '90 s' },
-  { id: 'el_16', name: 'Burpee',                   category: 'Full Body',   type: 'Conditioning', defaultSets: 4, defaultReps: '10',   defaultLoad: 'BW',     defaultRest: '90 s' },
+  { id: 'el_13', name: 'Power Clean',              category: 'Full Body',   type: 'Explosive',    defaultSets: 4, defaultReps: '4',        defaultLoad: 'Moderate',     defaultRest: '3 min', videoUrl: 'https://www.youtube.com/watch?v=om8TPPrHv3U' },
+  { id: 'el_14', name: 'Hang Snatch',              category: 'Full Body',   type: 'Explosive',    defaultSets: 4, defaultReps: '3',        defaultLoad: 'Light',        defaultRest: '3 min', videoUrl: 'https://www.youtube.com/watch?v=9xQp2sldaEY' },
+  { id: 'el_15', name: 'Medicine Ball Slam',       category: 'Full Body',   type: 'Explosive',    defaultSets: 4, defaultReps: '8',        defaultLoad: '6 kg',         defaultRest: '90 s',  videoUrl: 'https://www.youtube.com/watch?v=9gHMDnSq1TY' },
+  { id: 'el_16', name: 'Burpee',                   category: 'Full Body',   type: 'Conditioning', defaultSets: 4, defaultReps: '10',       defaultLoad: 'BW',           defaultRest: '90 s',  videoUrl: '' },
   // Sprint / Speed
-  { id: 'el_17', name: '10m Acceleration Sprint',  category: 'Speed',       type: 'Explosive',  defaultSets: 6, defaultReps: '1',      defaultLoad: 'BW',     defaultRest: '2 min' },
-  { id: 'el_18', name: '30m Sprint',               category: 'Speed',       type: 'Explosive',  defaultSets: 4, defaultReps: '1',      defaultLoad: 'BW',     defaultRest: '3 min' },
-  { id: 'el_19', name: 'Sled Drag',                category: 'Speed',       type: 'Conditioning', defaultSets: 5, defaultReps: '20m',  defaultLoad: '40 kg',  defaultRest: '2 min' },
+  { id: 'el_17', name: '10m Acceleration Sprint',  category: 'Speed',       type: 'Explosive',    defaultSets: 6, defaultReps: '1',        defaultLoad: 'BW',           defaultRest: '2 min', videoUrl: '' },
+  { id: 'el_18', name: '30m Sprint',               category: 'Speed',       type: 'Explosive',    defaultSets: 4, defaultReps: '1',        defaultLoad: 'BW',           defaultRest: '3 min', videoUrl: '' },
+  { id: 'el_19', name: 'Sled Drag',                category: 'Speed',       type: 'Conditioning', defaultSets: 5, defaultReps: '20m',      defaultLoad: '40 kg',        defaultRest: '2 min', videoUrl: '' },
   // Mobility
-  { id: 'el_20', name: 'Hip 90/90 Stretch',        category: 'Mobility',    type: 'Mobility',   defaultSets: 2, defaultReps: '60s each', defaultLoad: 'BW',  defaultRest: '30 s' },
-  { id: 'el_21', name: 'Thoracic Rotation',        category: 'Mobility',    type: 'Mobility',   defaultSets: 2, defaultReps: '10 each',  defaultLoad: 'BW',  defaultRest: '30 s' },
-  { id: 'el_22', name: 'Ankle Dorsiflexion',       category: 'Mobility',    type: 'Mobility',   defaultSets: 2, defaultReps: '10 each',  defaultLoad: 'BW',  defaultRest: '30 s' },
+  { id: 'el_20', name: 'Hip 90/90 Stretch',        category: 'Mobility',    type: 'Mobility',     defaultSets: 2, defaultReps: '60s each', defaultLoad: 'BW',           defaultRest: '30 s',  videoUrl: 'https://www.youtube.com/watch?v=sdkPLCSzLMc' },
+  { id: 'el_21', name: 'Thoracic Rotation',        category: 'Mobility',    type: 'Mobility',     defaultSets: 2, defaultReps: '10 each',  defaultLoad: 'BW',           defaultRest: '30 s',  videoUrl: '' },
+  { id: 'el_22', name: 'Ankle Dorsiflexion',       category: 'Mobility',    type: 'Mobility',     defaultSets: 2, defaultReps: '10 each',  defaultLoad: 'BW',           defaultRest: '30 s',  videoUrl: '' },
   // Core
-  { id: 'el_23', name: 'Pallof Press',             category: 'Core',        type: 'Strength',   defaultSets: 3, defaultReps: '10 each',  defaultLoad: 'Light', defaultRest: '60 s' },
-  { id: 'el_24', name: 'Dead Bug',                 category: 'Core',        type: 'Mobility',   defaultSets: 3, defaultReps: '8 each',   defaultLoad: 'BW',  defaultRest: '60 s' },
-  { id: 'el_25', name: 'Farmer Carry',             category: 'Core',        type: 'Conditioning', defaultSets: 4, defaultReps: '30m',  defaultLoad: '30 kg each', defaultRest: '90 s' },
+  { id: 'el_23', name: 'Pallof Press',             category: 'Core',        type: 'Strength',     defaultSets: 3, defaultReps: '10 each',  defaultLoad: 'Light',        defaultRest: '60 s',  videoUrl: '' },
+  { id: 'el_24', name: 'Dead Bug',                 category: 'Core',        type: 'Mobility',     defaultSets: 3, defaultReps: '8 each',   defaultLoad: 'BW',           defaultRest: '60 s',  videoUrl: 'https://www.youtube.com/watch?v=4XLEnwUr1d8' },
+  { id: 'el_25', name: 'Farmer Carry',             category: 'Core',        type: 'Conditioning', defaultSets: 4, defaultReps: '30m',      defaultLoad: '30 kg each',   defaultRest: '90 s',  videoUrl: '' },
 ]
 
 // ── Trainer message threads ───────────────────────────────────

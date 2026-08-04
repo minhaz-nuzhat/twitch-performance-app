@@ -1,10 +1,12 @@
 import { useState, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useProgramLibrary, useExerciseLibrary } from '../../hooks/useTrainerApi'
-import { mockRoster, mockProgramLibrary } from '../../data/mockTrainerData'
+import { mockRoster } from '../../data/mockTrainerData'
+import ProgramCalendar from '../../components/trainer/ProgramCalendar'
 import {
-  Plus, Trash2, ChevronRight, ChevronDown, GripVertical,
-  CheckCircle2, X, Search, BookOpen,
+  Plus, Trash2, ChevronDown, GripVertical,
+  CheckCircle2, X, Search, BookOpen, Youtube,
+  Upload, ExternalLink, Calendar, Layers,
 } from 'lucide-react'
 import clsx from 'clsx'
 
@@ -12,11 +14,21 @@ import clsx from 'clsx'
 let _uid = 0
 const uid = () => `id_${++_uid}_${Date.now()}`
 
-const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const DAYS  = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const SPORTS = ['Cricket', 'Badminton', 'Football', 'Swimming', 'Athletics', 'Basketball', 'Tennis', 'Generic']
+
+// ── YouTube helpers ───────────────────────────────────────────
+function getYouTubeId(url = '') {
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/)
+  return m?.[1] ?? null
+}
+function isYouTubeUrl(url = '') { return !!getYouTubeId(url) }
 
 // ── Exercise row inside a session ────────────────────────────
 function ExerciseRow({ ex, onUpdate, onRemove }) {
+  const ytId        = getYouTubeId(ex.videoUrl ?? '')
+  const thumbUrl    = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : null
+
   return (
     <div className="flex items-start gap-2 p-3 rounded-xl bg-tp-black border border-tp-border group">
       <GripVertical size={14} className="text-tp-border mt-2 flex-shrink-0 cursor-grab" />
@@ -51,6 +63,41 @@ function ExerciseRow({ ex, onUpdate, onRemove }) {
           value={ex.notes}
           onChange={e => onUpdate('notes', e.target.value)}
         />
+
+        {/* ── Video URL field ── */}
+        <div className="flex items-center gap-2 pt-1">
+          <Youtube size={12} className={clsx('flex-shrink-0', ex.videoUrl ? 'text-tp-red' : 'text-tp-border')} />
+          <input
+            className="flex-1 bg-transparent text-tp-muted text-xs placeholder-tp-border focus:outline-none focus:text-tp-soft transition-colors"
+            placeholder="YouTube URL or video link…"
+            value={ex.videoUrl ?? ''}
+            onChange={e => onUpdate('videoUrl', e.target.value)}
+          />
+          {/* File upload placeholder */}
+          <label
+            className="flex items-center gap-1 text-[10px] text-tp-muted border border-tp-border rounded px-1.5 py-0.5 cursor-pointer hover:border-tp-border-bright transition-all"
+            title="Video file upload requires backend storage"
+          >
+            <Upload size={10} />
+            <span>Upload</span>
+            <input type="file" accept="video/*,image/*" className="hidden" onChange={() => {}} disabled />
+          </label>
+        </div>
+
+        {/* YouTube thumbnail preview */}
+        {thumbUrl && (
+          <a href={ex.videoUrl} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-2 mt-1 p-1.5 rounded-lg bg-tp-raised border border-tp-border hover:border-tp-red/40 transition-all group/yt"
+          >
+            <img src={thumbUrl} alt="Video preview" className="w-16 h-10 object-cover rounded" />
+            <div className="flex-1 min-w-0">
+              <p className="text-tp-white text-xs font-medium truncate">{ex.name || 'Watch video'}</p>
+              <p className="text-tp-muted text-[10px] flex items-center gap-1 group-hover/yt:text-tp-red transition-colors">
+                <ExternalLink size={9} /> Open on YouTube
+              </p>
+            </div>
+          </a>
+        )}
       </div>
       <button onClick={onRemove} className="text-tp-border hover:text-tp-danger transition-colors flex-shrink-0 mt-1 p-1 rounded">
         <Trash2 size={13} />
@@ -101,11 +148,18 @@ function ExerciseLibraryModal({ exercises, onAdd, onClose }) {
               className="w-full text-left card px-3 py-2.5 hover:border-tp-red/30 hover:bg-tp-red/3 transition-all group"
             >
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-tp-white text-sm font-medium group-hover:text-tp-red transition-colors">{ex.name}</p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-tp-white text-sm font-medium group-hover:text-tp-red transition-colors">{ex.name}</p>
+                    {ex.videoUrl && (
+                      <span className="flex items-center gap-0.5 bg-tp-red/10 border border-tp-red/20 text-tp-red text-[9px] px-1.5 py-0.5 rounded font-bold uppercase">
+                        <Youtube size={8} /> Video
+                      </span>
+                    )}
+                  </div>
                   <p className="text-tp-muted text-xs">{ex.category} · {ex.type} · {ex.defaultSets}×{ex.defaultReps} · {ex.defaultLoad}</p>
                 </div>
-                <Plus size={14} className="text-tp-muted group-hover:text-tp-red transition-colors flex-shrink-0" />
+                <Plus size={14} className="text-tp-muted group-hover:text-tp-red transition-colors flex-shrink-0 ml-2" />
               </div>
             </button>
           ))}
@@ -211,6 +265,7 @@ export default function ProgramBuilderPage() {
   const [showLibrary,       setShowLibrary]        = useState(false)
   const [saved,             setSaved]             = useState(false)
   const [expandedPhases,    setExpandedPhases]    = useState({})
+  const [viewMode,          setViewMode]          = useState('build') // 'build' | 'calendar'
 
   // ── Program helpers ───────────────────────────────────────
   const updateProgram = (field, val) => setProgram(p => ({ ...p, [field]: val }))
@@ -389,8 +444,43 @@ export default function ProgramBuilderPage() {
         </div>
       </div>
 
+      {/* ── View mode toggle ── */}
+      <div className="flex gap-1 bg-tp-surface p-1 rounded-xl border border-tp-border">
+        <button onClick={() => setViewMode('build')}
+          className={clsx('flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all',
+            viewMode === 'build' ? 'bg-tp-red text-white' : 'text-tp-muted hover:text-tp-white')}
+        >
+          <Layers size={14} /> Build
+        </button>
+        <button onClick={() => setViewMode('calendar')}
+          className={clsx('flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all',
+            viewMode === 'calendar' ? 'bg-tp-red text-white' : 'text-tp-muted hover:text-tp-white')}
+        >
+          <Calendar size={14} /> Timeline
+        </button>
+      </div>
+
+      {/* ── Calendar / Timeline view ── */}
+      {viewMode === 'calendar' && (
+        <div className="card p-5 animate-fade-in">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-tp-white font-semibold">Program Timeline</h3>
+            <span className="text-tp-muted text-xs">Click any session block to jump to its editor</span>
+          </div>
+          <ProgramCalendar
+            phases={program.phases}
+            onSelectSession={(phaseId, sessionId) => {
+              setSelectedPhaseId(phaseId)
+              setSelectedSessionId(sessionId)
+              setExpandedPhases(e => ({ ...e, [phaseId]: true }))
+              setViewMode('build')
+            }}
+          />
+        </div>
+      )}
+
       {/* ── Builder: two-column on desktop ── */}
-      <div className="grid lg:grid-cols-5 gap-4">
+      {viewMode === 'build' && <div className="grid lg:grid-cols-5 gap-4">
         {/* Left: Phase / Session tree */}
         <div className="lg:col-span-2 space-y-3">
           <div className="flex items-center justify-between">
@@ -483,14 +573,14 @@ export default function ProgramBuilderPage() {
           ) : (
             <div className="card border-dashed h-64 flex items-center justify-center">
               <div className="text-center">
-                <ChevronRight size={24} className="text-tp-border mx-auto mb-2" />
-                <p className="text-tp-muted text-sm">Select a session from the left to edit it</p>
-                <p className="text-tp-muted text-xs mt-1">or add a phase to get started</p>
+                <Calendar size={24} className="text-tp-border mx-auto mb-2" />
+                <p className="text-tp-muted text-sm">Select a session to edit</p>
+                <p className="text-tp-muted text-xs mt-1">or switch to Timeline to see the full schedule</p>
               </div>
             </div>
           )}
         </div>
-      </div>
+      </div>}
 
       {/* ── Save bar ── */}
       <div className="flex gap-3 pb-4 sticky bottom-0 bg-tp-black py-3">
