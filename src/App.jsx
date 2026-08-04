@@ -25,6 +25,7 @@ import ProgramBuilderPage   from './pages/trainer/ProgramBuilderPage'
 import NutritionBuilderPage from './pages/trainer/NutritionBuilderPage'
 import TrainerMessages      from './pages/trainer/TrainerMessages'
 import TrainerAnalytics     from './pages/trainer/TrainerAnalytics'
+import UserFlow             from './pages/UserFlow'
 
 // ── Auth guards ───────────────────────────────────────────────
 function RequireAuth() {
@@ -58,7 +59,8 @@ export default function App() {
       <HashRouter>
         <Routes>
           {/* Public */}
-          <Route path="/login" element={<Login />} />
+          <Route path="/login"    element={<Login />} />
+          <Route path="/userflow" element={<UserFlow />} />
 
           {/* Protected */}
           <Route element={<RequireAuth />}>
