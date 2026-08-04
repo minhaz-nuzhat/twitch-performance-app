@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Users, ClipboardList, Dumbbell, MessageCircle, BarChart2, LogOut, Zap } from 'lucide-react'
+import { LayoutDashboard, Users, ClipboardList, Dumbbell, MessageCircle, BarChart2, LogOut, Zap, GitBranch } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useRoster } from '../../hooks/useTrainerApi'
 import clsx from 'clsx'
@@ -11,6 +11,7 @@ const NAV = [
   { to: '/trainer/programs',     label: 'Programs',     icon: Dumbbell        },
   { to: '/trainer/messages',     label: 'Messages',     icon: MessageCircle   },
   { to: '/trainer/analytics',    label: 'Analytics',    icon: BarChart2       },
+  { to: '/userflow',             label: 'User Journey', icon: GitBranch, external: true },
 ]
 
 export default function TrainerSidebar() {
@@ -33,28 +34,40 @@ export default function TrainerSidebar() {
 
       {/* Nav */}
       <nav className="flex-1 px-3 space-y-1">
-        {NAV.map(({ to, label, icon: Icon, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            className={({ isActive }) => clsx(
-              'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
-              isActive
-                ? 'bg-tp-red/10 text-tp-red border border-tp-red/20'
-                : 'text-tp-soft hover:text-tp-white hover:bg-tp-raised',
-            )}
-          >
-            {({ isActive }) => (
-              <>
-                <Icon size={18} className={isActive ? 'text-tp-red' : ''} />
-                <span className="flex-1">{label}</span>
-                {label === 'Roster' && alerts > 0 && (
-                  <span className="bg-tp-danger text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{alerts}</span>
-                )}
-              </>
-            )}
-          </NavLink>
+        {NAV.map(({ to, label, icon: Icon, end, external }) => (
+          external ? (
+            <a
+              key={to}
+              href={`#${to}`}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-tp-soft hover:text-tp-white hover:bg-tp-raised"
+            >
+              <Icon size={18} />
+              <span className="flex-1">{label}</span>
+              <span className="text-tp-muted text-[9px] border border-tp-border px-1.5 py-0.5 rounded uppercase tracking-wider">Preview</span>
+            </a>
+          ) : (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              className={({ isActive }) => clsx(
+                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
+                isActive
+                  ? 'bg-tp-red/10 text-tp-red border border-tp-red/20'
+                  : 'text-tp-soft hover:text-tp-white hover:bg-tp-raised',
+              )}
+            >
+              {({ isActive }) => (
+                <>
+                  <Icon size={18} className={isActive ? 'text-tp-red' : ''} />
+                  <span className="flex-1">{label}</span>
+                  {label === 'Roster' && alerts > 0 && (
+                    <span className="bg-tp-danger text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{alerts}</span>
+                  )}
+                </>
+              )}
+            </NavLink>
+          )
         ))}
       </nav>
 
