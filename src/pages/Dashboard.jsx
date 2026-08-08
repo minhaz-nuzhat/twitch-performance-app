@@ -3,11 +3,16 @@ import { useAuth } from '../context/AuthContext'
 import { usePerformance, useTraining } from '../hooks/useApi'
 import { mockLeaderboard } from '../data/mockData'
 import ScoreRing from '../components/ui/ScoreRing'
-import { ChevronRight, Trophy, AlertTriangle, Clock, Dumbbell, TrendingUp, X } from 'lucide-react'
+import TierBadge from '../components/ui/TierBadge'
+import DimensionCard from '../components/ui/DimensionCard'
+import RadarChartWidget from '../components/ui/RadarChartWidget'
+import InsightCard from '../components/ui/InsightCard'
+import { ChevronRight, ChevronDown, Trophy, AlertTriangle, Clock, Dumbbell, TrendingUp, X, Brain, Activity, Zap } from 'lucide-react'
 import clsx from 'clsx'
 import { useState } from 'react'
 import {
   LineChart, Line, ResponsiveContainer, Tooltip as ReTooltip,
+  AreaChart, Area, XAxis, YAxis, CartesianGrid,
 } from 'recharts'
 
 // ── Leaderboard Modal ────────────────────────────────────────
@@ -139,7 +144,7 @@ function StrengthIndexCard({ perf }) {
     <div className="card p-4">
       <div className="flex items-center justify-between mb-3">
         <p className="label">Strength Index</p>
-        <Link to="/performance" className="text-tp-muted text-xs hover:text-tp-red transition-colors">View testing</Link>
+        <Link to="/assessment" className="text-tp-muted text-xs hover:text-tp-red transition-colors">View testing</Link>
       </div>
       <p className="font-mono font-bold text-4xl text-tp-white mb-1">{s.score}</p>
       <p className="text-tp-soft text-xs leading-relaxed mb-2">{s.description}</p>
@@ -268,6 +273,155 @@ function TodaysAssignmentCard({ training }) {
 
 // ── Main page ─────────────────────────────────────────────────
 
+const HistoryTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null
+  return (
+    <div className="bg-tp-elevated border border-tp-border rounded-lg px-3 py-2 text-xs shadow-xl">
+      <p className="text-tp-soft mb-0.5">{label}</p>
+      <p className="text-tp-white font-mono font-bold">{payload[0].value} pts</p>
+    </div>
+  )
+}
+
+function ScienceAccordion({ perf }) {
+  const [open, setOpen] = useState(false)
+  const dims = Object.values(perf.dimensions)
+
+  const fatigueConfig = {
+    low:      { label: 'Low',      color: 'text-tp-green',  bg: 'bg-tp-green/10',  border: 'border-tp-green/20'  },
+    moderate: { label: 'Moderate', color: 'text-tp-amber',  bg: 'bg-tp-amber/10',  border: 'border-tp-amber/20'  },
+    high:     { label: 'High',     color: 'text-tp-danger', bg: 'bg-tp-danger/10', border: 'border-tp-danger/20' },
+    critical: { label: 'Critical', color: 'text-tp-danger', bg: 'bg-tp-danger/10', border: 'border-tp-danger/20' },
+  }[perf.derived.fatigueScore] ?? {}
+
+  return (
+    <div className="card overflow-hidden">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center justify-between px-5 py-4 hover:bg-tp-raised/50 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <Brain size={15} className="text-tp-red" />
+          <span className="text-tp-white font-semibold text-sm">Science, Data &amp; Insights</span>
+        </div>
+        <ChevronDown
+          size={16}
+          className={clsx('text-tp-muted transition-transform duration-300', open && 'rotate-180')}
+        />
+      </button>
+
+      {open && (
+        <div className="px-5 pb-6 space-y-6 border-t border-tp-border pt-5 animate-fade-in">
+
+          {/* Score + Radar */}
+          <div className="card p-5 border-red-glow">
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+              <div className="flex flex-col items-center gap-3 flex-shrink-0">
+                <ScoreRing score={perf.composite} tier={perf.tier} size={140} stroke={12} />
+                <TierBadge tier={perf.tier} showRange />
+                <p className="text-tp-muted text-[10px] text-center">
+                  Updated {new Date(perf.lastUpdated).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </p>
+              </div>
+              <div className="flex-1 w-full">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-tp-white font-semibold text-sm">Performance Radar</h3>
+                  <span className="text-tp-muted text-xs">vs. previous assessment</span>
+                </div>
+                <RadarChartWidget data={perf.radarData} />
+              </div>
+            </div>
+          </div>
+
+          {/* Contextual Metrics */}
+          <div>
+            <h3 className="text-tp-white font-semibold mb-3 flex items-center gap-2 text-sm">
+              <Brain size={14} className="text-tp-red" />
+              Contextual Metrics
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="card p-4">
+                <span className="label block mb-1">Athletic Age</span>
+                <div className="flex items-baseline gap-1">
+                  <span className="font-mono font-bold text-3xl text-tp-white">{perf.derived.athleticAge}</span>
+                  <span className="text-tp-soft text-xs">yrs</span>
+                </div>
+                <p className="text-tp-muted text-[10px] mt-1.5 leading-relaxed">
+                  Performance profile matches a {perf.derived.athleticAge}-yr-old athlete's benchmark population.
+                </p>
+              </div>
+              <div className={clsx('card p-4 border', fatigueConfig.border)}>
+                <span className="label block mb-1">Fatigue Score</span>
+                <span className={clsx('font-bold text-xl', fatigueConfig.color)}>{fatigueConfig.label}</span>
+                <p className="text-tp-muted text-[10px] mt-1">
+                  ACWR: <span className="text-tp-white font-mono">{perf.derived.fatigueRatio}</span>
+                </p>
+                <p className="text-tp-muted text-[10px] leading-relaxed mt-1">
+                  {perf.derived.fatigueRatio < 1.3 ? 'Training load is within safe range.' : 'Load is elevated — prioritise recovery.'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* AI Insight */}
+          <div>
+            <h3 className="text-tp-white font-semibold mb-3 flex items-center gap-2 text-sm">
+              <Zap size={14} className="text-tp-red" />
+              AI Insight
+            </h3>
+            <InsightCard insight={perf.insightCard} />
+          </div>
+
+          {/* All Dimensions */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-tp-white font-semibold flex items-center gap-2 text-sm">
+                <Activity size={14} className="text-tp-red" />
+                All Dimensions
+              </h3>
+              <span className="text-tp-muted text-xs">Tap any card for detail</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {dims.map((dim, i) => (
+                <DimensionCard key={dim.label} dimension={dim} delay={i * 40} />
+              ))}
+            </div>
+          </div>
+
+          {/* Score History */}
+          <div>
+            <h3 className="text-tp-white font-semibold mb-3 text-sm">Score History</h3>
+            <div className="card p-4">
+              <div className="h-44">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={perf.history} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+                    <defs>
+                      <linearGradient id="sciGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%"  stopColor="#e63946" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#e63946" stopOpacity={0}   />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid stroke="#1e1e1e" vertical={false} />
+                    <XAxis dataKey="label" tick={{ fill: '#555555', fontSize: 10 }} axisLine={false} tickLine={false} />
+                    <YAxis domain={[45, 75]} tick={{ fill: '#555555', fontSize: 10 }} axisLine={false} tickLine={false} />
+                    <ReTooltip content={<HistoryTooltip />} />
+                    <Area type="monotone" dataKey="composite" stroke="#e63946" strokeWidth={2.5}
+                      fill="url(#sciGrad)"
+                      dot={{ r: 3, fill: '#e63946', strokeWidth: 0 }}
+                      activeDot={{ r: 5, fill: '#e63946', stroke: '#ff4757', strokeWidth: 2 }}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function Dashboard() {
   const { user }           = useAuth()
   const { data: perf }     = usePerformance()
@@ -312,6 +466,9 @@ export default function Dashboard() {
         <SessionAdherenceCard perf={perf} />
         <TodaysAssignmentCard training={training} />
       </div>
+
+      {/* Science, Data & Insights Accordion */}
+      <ScienceAccordion perf={perf} />
 
       {/* Leaderboard Modal */}
       <LeaderboardModal isOpen={showLeaderboard} onClose={() => setShowLeaderboard(false)} />
