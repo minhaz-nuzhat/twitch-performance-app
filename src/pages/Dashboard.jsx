@@ -46,8 +46,8 @@ function ReadinessHero({ perf }) {
   const ptsAway = nextTierTarget - composite
 
   return (
-    <div className={clsx('card p-5 border', TIER_BORDER[tier])}
-      style={{ boxShadow: tier === 'gold' ? '0 0 28px rgba(255,215,0,0.08)' : tier === 'elite' ? '0 0 28px rgba(179,71,234,0.10)' : undefined }}>
+    <div className={clsx('card p-5 border-2', TIER_BORDER[tier])}
+      style={{ boxShadow: tier === 'gold' ? '0 0 40px rgba(255,215,0,0.20), inset 0 0 40px rgba(255,215,0,0.04)' : tier === 'elite' ? '0 0 40px rgba(179,71,234,0.20)' : tier === 'silver' ? '0 0 20px rgba(192,192,192,0.12)' : undefined }}>
       <div className="flex flex-col sm:flex-row items-start gap-5">
         {/* Score ring */}
         <div className="flex-shrink-0">
