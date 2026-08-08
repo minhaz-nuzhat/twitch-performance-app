@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useClientProfile } from '../hooks/useApi'
-import { X, CheckCircle2, ChevronRight } from 'lucide-react'
+import { CheckCircle2, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 
 // ── Section definitions (8 sections, 43 questions total) ─────
@@ -136,72 +136,61 @@ function CompletionRing({ pct }) {
   )
 }
 
-// ── Section card ──────────────────────────────────────────────
-function SectionCard({ section, form, onClick }) {
+// ── Expandable section card (replaces modal) ─────────────────
+function SectionCard({ section, form, isOpen, onToggle, onUpdate }) {
   const status = sectionStatus(section, form)
   const done   = answered(form, section.questions.map(q => q.key))
   const total  = section.questions.length
   const pct    = Math.round((done / total) * 100)
 
-  const borderClass = status === 'complete' ? 'border-tp-green/30' : status === 'partial' ? 'border-tp-amber/30' : 'border-tp-border'
-  const barClass    = status === 'complete' ? 'bg-tp-green'         : status === 'partial' ? 'bg-tp-amber'         : 'bg-tp-raised'
-  const countClass  = status === 'complete' ? 'bg-tp-green/15 text-tp-green border-tp-green/25' : status === 'partial' ? 'bg-tp-amber/15 text-tp-amber border-tp-amber/25' : 'bg-tp-raised text-tp-muted border-tp-border'
+  const borderClass = isOpen
+    ? 'border-tp-red/40'
+    : status === 'complete' ? 'border-tp-green/30'
+    : status === 'partial'  ? 'border-tp-amber/30'
+    : 'border-tp-border'
+
+  const barClass   = status === 'complete' ? 'bg-tp-green' : status === 'partial' ? 'bg-tp-amber' : 'bg-tp-raised'
+  const countClass = status === 'complete'
+    ? 'bg-tp-green/15 text-tp-green border-tp-green/25'
+    : status === 'partial'
+    ? 'bg-tp-amber/15 text-tp-amber border-tp-amber/25'
+    : 'bg-tp-raised text-tp-muted border-tp-border'
 
   return (
-    <button
-      onClick={onClick}
-      className={clsx('card p-4 text-left hover:border-tp-border-bright transition-all group flex flex-col gap-3', borderClass)}
-    >
-      <div className="flex items-start justify-between">
-        <span className="text-2xl leading-none">{section.icon}</span>
-        <span className={clsx('text-[10px] font-bold px-1.5 py-0.5 rounded-full border', countClass)}>
+    <div className={clsx('card overflow-hidden transition-all duration-200', borderClass)}>
+      {/* ── Clickable header ── */}
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center gap-3 p-4 text-left hover:bg-tp-raised/50 transition-colors"
+      >
+        <span className="text-xl leading-none flex-shrink-0">{section.icon}</span>
+        <div className="flex-1 min-w-0">
+          <p className="text-tp-white text-sm font-semibold">{section.label}</p>
+          <p className="text-tp-muted text-[10px] mt-0.5">
+            {status === 'complete' ? '✓ Complete' : status === 'partial' ? `${done}/${total} answered` : 'Not started'}
+          </p>
+        </div>
+        <span className={clsx('text-[10px] font-bold px-1.5 py-0.5 rounded-full border flex-shrink-0', countClass)}>
           {done}/{total}
         </span>
-      </div>
-      <div>
-        <p className="text-tp-white text-sm font-semibold leading-tight">{section.label}</p>
-        <p className="text-tp-muted text-[10px] mt-0.5">
-          {status === 'complete' ? '✓ Complete' : status === 'partial' ? `${total - done} left` : 'Not started'}
-        </p>
-      </div>
-      {/* Mini progress bar */}
-      <div className="h-1 rounded-full bg-tp-raised overflow-hidden">
-        <div className={clsx('h-full rounded-full transition-all duration-500', barClass)} style={{ width: `${pct}%` }} />
-      </div>
-    </button>
-  )
-}
+        <ChevronDown
+          size={15}
+          className={clsx('text-tp-muted flex-shrink-0 transition-transform duration-200', isOpen && 'rotate-180')}
+        />
+      </button>
 
-// ── Section modal (slide-up) ──────────────────────────────────
-function SectionModal({ section, form, onUpdate, onClose }) {
-  const bottomRef = useRef(null)
-
-  const done  = answered(form, section.questions.map(q => q.key))
-  const total = section.questions.length
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-0 sm:p-4"
-      onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="w-full sm:max-w-lg bg-tp-card border border-tp-border sm:rounded-2xl rounded-t-2xl max-h-[92vh] sm:max-h-[85vh] flex flex-col shadow-2xl animate-fade-up">
-
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-tp-border flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <span className="text-xl">{section.icon}</span>
-            <div>
-              <h3 className="text-tp-white font-bold text-sm">{section.label}</h3>
-              <p className="text-tp-muted text-[10px]">{done}/{total} answered</p>
-            </div>
-          </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg bg-tp-raised flex items-center justify-center text-tp-muted hover:text-tp-white transition-colors">
-            <X size={15} />
-          </button>
+      {/* Mini progress bar — only when collapsed */}
+      {!isOpen && (
+        <div className="h-0.5 bg-tp-raised overflow-hidden">
+          <div className={clsx('h-full transition-all duration-500', barClass)} style={{ width: `${pct}%` }} />
         </div>
+      )}
 
-        {/* Questions */}
-        <div className="flex-1 overflow-y-auto px-5 py-2">
-          {section.questions.map(({ key, label, long, type }, i) => (
-            <div key={key} className="py-3.5 border-b border-tp-border last:border-0">
+      {/* ── Expandable questions ── */}
+      {isOpen && (
+        <div className="border-t border-tp-border animate-fade-in">
+          {section.questions.map(({ key, label, long, type }) => (
+            <div key={key} className="px-4 py-3.5 border-b border-tp-border last:border-0">
               <p className="text-tp-muted text-[11px] mb-1.5">{label}</p>
               {long ? (
                 <textarea
@@ -222,20 +211,8 @@ function SectionModal({ section, form, onUpdate, onClose }) {
               )}
             </div>
           ))}
-          <div ref={bottomRef} />
         </div>
-
-        {/* Footer */}
-        <div className="px-5 py-4 border-t border-tp-border flex-shrink-0">
-          <button
-            onClick={onClose}
-            className="w-full bg-tp-red text-white font-semibold py-3 rounded-xl hover:bg-tp-red-bright active:bg-tp-red-dim transition-all flex items-center justify-center gap-2"
-          >
-            <CheckCircle2 size={16} />
-            Done with {section.label}
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   )
 }
@@ -244,7 +221,7 @@ function SectionModal({ section, form, onUpdate, onClose }) {
 export default function ClientProfiling() {
   const { data: saved, loading } = useClientProfile()
   const [form, setForm]          = useState(null)
-  const [activeSection, setActive] = useState(null)
+  const [openId, setOpenId]      = useState(null)
   const [savedOk, setSavedOk]    = useState(false)
 
   useEffect(() => {
@@ -266,7 +243,6 @@ export default function ClientProfiling() {
 
   const totalDone = SECTIONS.reduce((a, s) => a + answered(form, s.questions.map(q => q.key)), 0)
   const pct       = Math.round((totalDone / TOTAL_Q) * 100)
-  const activeS   = SECTIONS.find(s => s.id === activeSection)
 
   return (
     <div className="space-y-5 animate-fade-in">
@@ -335,17 +311,23 @@ export default function ClientProfiling() {
         </div>
       </div>
 
-      {/* ── Section grid ── */}
+      {/* ── Section grid — open card spans full width ── */}
       <div>
-        <p className="label px-1 mb-3">Profiling Questions — tap a section to open</p>
+        <p className="label px-1 mb-3">Profiling Questions — tap a section to expand</p>
         <div className="grid grid-cols-2 gap-3">
           {SECTIONS.map(section => (
-            <SectionCard
+            <div
               key={section.id}
-              section={section}
-              form={form}
-              onClick={() => setActive(section.id)}
-            />
+              className={clsx('transition-all', openId === section.id ? 'col-span-2' : 'col-span-1')}
+            >
+              <SectionCard
+                section={section}
+                form={form}
+                isOpen={openId === section.id}
+                onToggle={() => setOpenId(openId === section.id ? null : section.id)}
+                onUpdate={setQ}
+              />
+            </div>
           ))}
         </div>
       </div>
@@ -362,16 +344,6 @@ export default function ClientProfiling() {
           {savedOk ? <><CheckCircle2 size={16} /> Saved</> : 'Save Profile'}
         </button>
       </div>
-
-      {/* ── Section modal ── */}
-      {activeS && (
-        <SectionModal
-          section={activeS}
-          form={form}
-          onUpdate={setQ}
-          onClose={() => setActive(null)}
-        />
-      )}
     </div>
   )
 }
