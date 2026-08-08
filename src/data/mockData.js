@@ -144,36 +144,46 @@ export const mockTrainingProgram = {
   sessionsPerWeek: 3,
   assignedBy: 'Coach Ravi',
 
+  // Workout templates available for assignment
+  workoutTemplates: [
+    { id: 'wkt_1', name: 'Upper Body Strength', duration: 60 },
+    { id: 'wkt_2', name: 'Lower Body Power',    duration: 65 },
+    { id: 'wkt_3', name: 'Full Body Speed',     duration: 55 },
+    { id: 'wkt_4', name: 'Mobility & Recovery', duration: 45 },
+  ],
+
   todaySession: {
     id: 'sess_042',
     name: 'Lower Body Power',
-    date: '2026-08-01',
+    phase: 'Phase 2 — Power',
+    week: 6,
+    date: '2026-08-08',
     estimatedDuration: 65,
     completed: false,
     warmup: '10 min activation — hip circles, leg swings, jump rope',
     cooldown: '10 min — static stretch, hip flexor focus',
     exercises: [
-      { id: 'ex_1', order: 1, name: 'Back Squat',        sets: 4, reps: '5',       load: '100 kg', rest: '3 min', notes: 'Focus on bar speed out of the hole', completed: false },
-      { id: 'ex_2', order: 2, name: 'Romanian Deadlift', sets: 3, reps: '8',       load: '80 kg',  rest: '2 min', notes: '',                                  completed: false },
-      { id: 'ex_3', order: 3, name: 'Box Jump',          sets: 4, reps: '5',       load: 'BW',     rest: '2 min', notes: 'Max height each rep — full reset',   completed: false },
-      { id: 'ex_4', order: 4, name: 'Bulgarian Split Squat', sets: 3, reps: '10 each', load: '40 kg', rest: '90 s', notes: '',                               completed: false },
-      { id: 'ex_5', order: 5, name: 'Nordic Curl',       sets: 3, reps: '6',       load: 'BW',     rest: '2 min', notes: 'Eccentric focus — control descent',  completed: false },
+      { id: 'ex_1', order: 1, name: 'Back Squat',             sets: 4, reps: '5',          load: '100 kg', rest: '3 min',   notes: 'Focus on bar speed out of the hole',       completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
+      { id: 'ex_2', order: 2, name: 'Romanian Deadlift',      sets: 3, reps: '8',          load: '80 kg',  rest: '2 min',   notes: '',                                         completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
+      { id: 'ex_3', order: 3, name: 'Box Jump',               sets: 4, reps: '5',          load: 'BW',     rest: '90 sec',  notes: 'Max height each rep — full reset',        completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
+      { id: 'ex_4', order: 4, name: 'Bulgarian Split Squat',  sets: 3, reps: '10 each',    load: '40 kg',  rest: '90 s',   notes: 'Control eccentric phase',                  completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
+      { id: 'ex_5', order: 5, name: 'Nordic Curl',            sets: 3, reps: '6',          load: 'BW',     rest: '2 min',   notes: 'Eccentric focus — control descent',       completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
     ],
   },
 
   weekView: [
-    { day: 'Mon', name: 'Upper Body Strength', status: 'completed', date: '2026-07-28', duration: 60 },
-    { day: 'Wed', name: 'Lower Body Power',    status: 'today',     date: '2026-08-01', duration: 65 },
-    { day: 'Fri', name: 'Full Body Speed',     status: 'upcoming',  date: '2026-08-03', duration: 55 },
+    { day: 'Mon', name: 'Upper Body Strength', status: 'completed', date: '2026-08-04', duration: 60 },
+    { day: 'Wed', name: 'Lower Body Power',    status: 'today',     date: '2026-08-08', duration: 65 },
+    { day: 'Fri', name: 'Full Body Speed',     status: 'upcoming',  date: '2026-08-10', duration: 55 },
   ],
 
   recentSessions: [
-    { date: '2026-07-28', name: 'Upper Body Strength', completed: true,  rpe: 7,    notes: '' },
-    { date: '2026-07-25', name: 'Full Body Speed',      completed: true,  rpe: 8,    notes: 'Felt strong' },
-    { date: '2026-07-23', name: 'Lower Body Power',     completed: true,  rpe: 7,    notes: '' },
-    { date: '2026-07-21', name: 'Upper Body Strength',  completed: false, rpe: null, notes: 'Missed — travel' },
-    { date: '2026-07-18', name: 'Full Body Speed',      completed: true,  rpe: 6,    notes: '' },
-    { date: '2026-07-16', name: 'Lower Body Power',     completed: true,  rpe: 8,    notes: 'New squat PB' },
+    { date: '2026-08-04', name: 'Upper Body Strength', completed: true,  rpe: 7,    notes: '' },
+    { date: '2026-08-01', name: 'Full Body Speed',     completed: true,  rpe: 8,    notes: 'Felt strong' },
+    { date: '2026-07-30', name: 'Lower Body Power',    completed: true,  rpe: 7,    notes: '' },
+    { date: '2026-07-27', name: 'Upper Body Strength', completed: false, rpe: null, notes: 'Missed — travel' },
+    { date: '2026-07-23', name: 'Full Body Speed',     completed: true,  rpe: 6,    notes: '' },
+    { date: '2026-07-20', name: 'Lower Body Power',    completed: true,  rpe: 8,    notes: 'New squat PB' },
   ],
 }
 
