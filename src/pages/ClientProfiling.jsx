@@ -253,6 +253,15 @@ export default function ClientProfiling() {
         <span className="font-mono font-bold text-lg flex-shrink-0" style={{
           color: pct === 100 ? '#22c55e' : pct >= 50 ? '#f59e0b' : '#e63946'
         }}>{pct}%</span>
+        <button
+          onClick={handleSaveAll}
+          className={clsx(
+            'flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all',
+            savedOk ? 'bg-tp-green/15 text-tp-green border border-tp-green/30' : 'bg-tp-red/10 text-tp-red border border-tp-red/25 hover:bg-tp-red/20',
+          )}
+        >
+          {savedOk ? '✓ Saved' : 'Save'}
+        </button>
       </div>
 
       {/* ── Bio card ── */}
@@ -324,20 +333,6 @@ export default function ClientProfiling() {
           ))}
         </div>
       </div>
-
-      {/* ── Save all ── */}
-      <div className="sticky bottom-4 px-1 pb-2">
-        <button
-          onClick={handleSaveAll}
-          className={clsx(
-            'w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-sm transition-all',
-            savedOk ? 'bg-tp-green text-white' : 'bg-tp-red text-white hover:bg-tp-red-bright',
-          )}
-        >
-          {savedOk ? <><CheckCircle2 size={16} /> Saved</> : 'Save Profile'}
-        </button>
-      </div>
     </div>
   )
 }
-
