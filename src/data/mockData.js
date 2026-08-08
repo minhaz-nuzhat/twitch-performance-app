@@ -69,18 +69,65 @@ export const mockPerformanceScore = {
     { date: '2026-01-15', composite: 51, label: 'Jan' },
     { date: '2026-02-20', composite: 53, label: 'Feb' },
     { date: '2026-03-18', composite: 56, label: 'Mar' },
-    { date: '2026-04-22', composite: 57, label: 'Apr' },
-    { date: '2026-05-14', composite: 58, label: 'May' },
-    { date: '2026-06-03', composite: 60, label: 'Jun' },
-    { date: '2026-07-28', composite: 62, label: 'Jul' },
+    { date: '2026-04-22', composite: 58, label: 'Apr' },
+    { date: '2026-05-14', composite: 60, label: 'May' },
+    { date: '2026-06-03', composite: 62, label: 'Jun' },
+    { date: '2026-07-28', composite: 65, label: 'Jul' },
+  ],
+
+  // 7-day daily trend for hero card sparkline
+  last7Days: [
+    { day: 'Mon', v: 60 }, { day: 'Tue', v: 61 }, { day: 'Wed', v: 62 },
+    { day: 'Thu', v: 62 }, { day: 'Fri', v: 63 }, { day: 'Sat', v: 64 },
+    { day: 'Sun', v: 65 },
   ],
 
   insightCard: {
     type: 'improvement',
     title: 'Explosive Score up 6 points',
     body: 'CMJ height improved from 46 cm to 52 cm — a strong result from the plyometric block. Cardiovascular score dipped slightly; this is expected during high-intensity phases and will recover in the taper week.',
-    priority: 'Biggest gain available: Cardiovascular Fitness. A 7-point improvement would push you to Gold tier.',
+    priority: 'Biggest gain available: Cardiovascular Fitness. A 7-point improvement would push you to Elite tier.',
     generatedAt: '2026-07-28',
+  },
+
+  // ── New dashboard card data ──────────────────────────────
+  readinessRecommendation: {
+    label: 'Train with Control',
+    color: 'amber',
+    description: 'Readiness is acceptable. Keep intensity but control total volume.',
+    ptsToNextTier: 20,
+  },
+
+  strengthIndex: {
+    score: 68,
+    description: 'Based on latest force, power, and speed markers.',
+    change: +7,
+  },
+
+  leaderboard: {
+    rank: 2,
+    total: 5,
+  },
+
+  priorityFocus: {
+    dimension: 'Mobility',
+    score: 55,
+    urgency: 'Red',
+    description: 'Top priority. Make this the first focus in your week and protect quality over volume.',
+    coachSource: '27 Jul',
+  },
+
+  recoveryRisk: {
+    label: 'Moderate',
+    acwr: 1.18,
+    description: 'Readiness is acceptable. Keep intensity but control total volume.',
+    advisory: 'Keep recovery work, sleep, and session quality aligned with this readiness status.',
+  },
+
+  adherenceWindows: {
+    last14d: { pct: 100, sessions: '1/1' },
+    last30d: { pct: 83,  sessions: '5/6' },
+    targetText: 'Target: sustain 85%+ adherence with quality execution.',
   },
 }
 

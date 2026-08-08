@@ -1,76 +1,247 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { usePerformance, useTraining, useNutrition, useNotifications } from '../hooks/useApi'
+import { usePerformance, useTraining } from '../hooks/useApi'
 import ScoreRing from '../components/ui/ScoreRing'
-import TierBadge from '../components/ui/TierBadge'
-import InsightCard from '../components/ui/InsightCard'
-import { ChevronRight, Flame, Clock, CheckCircle2, ArrowUp, ArrowDown } from 'lucide-react'
+import { ChevronRight, Trophy, AlertTriangle, Clock, Dumbbell, TrendingUp } from 'lucide-react'
 import clsx from 'clsx'
 import {
   LineChart, Line, ResponsiveContainer, Tooltip as ReTooltip,
 } from 'recharts'
 
+// ── Helpers ───────────────────────────────────────────────────
+
 function greeting(name) {
   const h = new Date().getHours()
-  const salutation = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
-  return `${salutation}, ${name?.split(' ')[0]}`
+  const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
+  return `${g}, ${name?.split(' ')[0]}`
 }
 
-function StatPill({ label, value, sub, color = 'text-tp-white' }) {
-  return (
-    <div className="card px-4 py-3 flex flex-col gap-0.5">
-      <span className="label">{label}</span>
-      <span className={clsx('font-mono font-bold text-xl leading-none', color)}>{value}</span>
-      {sub && <span className="text-tp-muted text-[10px]">{sub}</span>}
-    </div>
-  )
+const TIER_BORDER = {
+  bronze: 'border-tp-bronze/40',
+  silver: 'border-tp-silver/30',
+  gold:   'border-tp-gold/40',
+  elite:  'border-tp-elite/40',
 }
 
-const SparkTooltip = ({ active, payload }) => {
+const TIER_TEXT = {
+  bronze: 'text-tp-bronze',
+  silver: 'text-tp-silver',
+  gold:   'text-tp-gold',
+  elite:  'text-tp-elite',
+}
+
+const SparkTip = ({ active, payload }) => {
   if (!active || !payload?.length) return null
   return (
     <div className="bg-tp-elevated border border-tp-border rounded px-2 py-1 text-xs text-tp-white">
-      {payload[0].payload.label}: <span className="font-mono font-bold">{payload[0].value}</span>
+      {payload[0].payload.day}: <span className="font-mono font-bold">{payload[0].value}</span>
     </div>
   )
 }
 
-export default function Dashboard() {
-  const { user }            = useAuth()
-  const { data: perf }      = usePerformance()
-  const { data: training }  = useTraining()
-  const { data: nutrition } = useNutrition()
-  const { data: notifs }    = useNotifications()
+// ── Sub-cards ─────────────────────────────────────────────────
 
-  const unread = notifs?.filter((n) => !n.read) ?? []
+function ReadinessHero({ perf }) {
+  const { readinessRecommendation: rec, tier, composite, trendValue, last7Days, nextTierName, nextTierTarget } = perf
+  const ptsAway = nextTierTarget - composite
+
+  return (
+    <div className={clsx('card p-5 border', TIER_BORDER[tier])}
+      style={{ boxShadow: tier === 'gold' ? '0 0 28px rgba(255,215,0,0.08)' : tier === 'elite' ? '0 0 28px rgba(179,71,234,0.10)' : undefined }}>
+      <div className="flex flex-col sm:flex-row items-start gap-5">
+        {/* Score ring */}
+        <div className="flex-shrink-0">
+          <ScoreRing score={composite} tier={tier} size={130} stroke={12} />
+        </div>
+
+        {/* Centre info */}
+        <div className="flex-1 min-w-0">
+          <p className="label mb-2">Readiness Score</p>
+          <p className={clsx('font-mono font-bold text-4xl mb-2', TIER_TEXT[tier])}>{composite}</p>
+          <div className="flex items-center gap-3 mb-2 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 bg-tp-amber/15 border border-tp-amber/40 text-tp-amber text-xs font-semibold px-3 py-1 rounded-full">
+              ↑ {rec.label}
+            </span>
+            <span className="text-tp-green text-xs font-medium flex items-center gap-1">
+              <TrendingUp size={12} />
+              +{trendValue} vs last assessment
+            </span>
+          </div>
+          <p className="text-tp-soft text-xs leading-relaxed mb-1">{rec.description}</p>
+          <p className="text-tp-muted text-xs">{ptsAway} points to {nextTierName} tier.</p>
+        </div>
+
+        {/* 7-day sparkline */}
+        {last7Days && (
+          <div className="flex-shrink-0 w-full sm:w-44">
+            <p className="label mb-2">7-Day Score Trend</p>
+            <div className="h-16">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={last7Days}>
+                  <ReTooltip content={<SparkTip />} />
+                  <Line type="monotone" dataKey="v" stroke="#e63946" strokeWidth={2}
+                    dot={false} activeDot={{ r: 3, fill: '#e63946' }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function StrengthIndexCard({ perf }) {
+  const { strengthIndex: s } = perf
+  return (
+    <div className="card p-4">
+      <div className="flex items-center justify-between mb-3">
+        <p className="label">Strength Index</p>
+        <Link to="/performance" className="text-tp-muted text-xs hover:text-tp-red transition-colors">View testing</Link>
+      </div>
+      <p className="font-mono font-bold text-4xl text-tp-white mb-1">{s.score}</p>
+      <p className="text-tp-soft text-xs leading-relaxed mb-2">{s.description}</p>
+      <p className={clsx('text-xs font-medium flex items-center gap-1', s.change >= 0 ? 'text-tp-green' : 'text-tp-danger')}>
+        {s.change >= 0 ? '+' : ''}{s.change} vs last assessment
+      </p>
+    </div>
+  )
+}
+
+function LeaderboardCard({ perf }) {
+  const { leaderboard: lb } = perf
+  return (
+    <Link to="/progress" className="card p-4 flex flex-col hover:border-tp-border-bright transition-all group">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <Trophy size={14} className="text-tp-gold" />
+          <p className="label">Leaderboard</p>
+        </div>
+        <ChevronRight size={14} className="text-tp-muted group-hover:text-tp-red transition-colors" />
+      </div>
+      <p className="font-mono font-bold text-4xl text-tp-white mb-1">#{lb.rank}</p>
+      <p className="text-tp-soft text-xs">Out of {lb.total} members</p>
+    </Link>
+  )
+}
+
+function PriorityFocusCard({ perf }) {
+  const { priorityFocus: pf } = perf
+  return (
+    <div className="card p-4">
+      <div className="flex items-center justify-between mb-3">
+        <p className="label">Priority Focus</p>
+        <span className="bg-tp-danger/15 text-tp-danger border border-tp-danger/30 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
+          {pf.urgency}
+        </span>
+      </div>
+      <p className="text-tp-white font-bold text-lg mb-1">{pf.dimension}</p>
+      <p className="text-tp-soft text-xs leading-relaxed mb-3">{pf.description}</p>
+      <p className="text-tp-muted text-[10px]">Coach source: {pf.coachSource}</p>
+    </div>
+  )
+}
+
+function RecoveryRiskCard({ perf }) {
+  const { recoveryRisk: rr } = perf
+  const riskConfig = {
+    Low:      { color: 'text-tp-green',  bg: 'bg-tp-green/15',  border: 'border-tp-green/30'  },
+    Moderate: { color: 'text-tp-amber',  bg: 'bg-tp-amber/15',  border: 'border-tp-amber/30'  },
+    High:     { color: 'text-tp-danger', bg: 'bg-tp-danger/15', border: 'border-tp-danger/30' },
+  }[rr.label] ?? {}
+
+  return (
+    <div className="card p-4">
+      <div className="flex items-center justify-between mb-3">
+        <p className="label">Recovery Risk</p>
+        <span className={clsx('text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border', riskConfig.color, riskConfig.bg, riskConfig.border)}>
+          {rr.label}
+        </span>
+      </div>
+      <p className="font-mono font-bold text-xl text-tp-white mb-1">ACWR {rr.acwr}</p>
+      <p className="text-tp-soft text-xs leading-relaxed mb-3">{rr.description}</p>
+      <div className="flex items-start gap-1.5 bg-tp-raised rounded-lg px-2 py-1.5">
+        <AlertTriangle size={11} className="text-tp-amber flex-shrink-0 mt-0.5" />
+        <p className="text-tp-soft text-[11px] leading-relaxed">{rr.advisory}</p>
+      </div>
+    </div>
+  )
+}
+
+function SessionAdherenceCard({ perf }) {
+  const { adherenceWindows: aw } = perf
+  return (
+    <div className="card p-4">
+      <div className="flex items-center justify-between mb-3">
+        <p className="label">Session Adherence</p>
+        <span className="text-tp-muted text-xs">14d / 30d</span>
+      </div>
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        {[
+          { label: 'Last 14 days', data: aw.last14d },
+          { label: 'Last 30 days', data: aw.last30d },
+        ].map(({ label, data }) => (
+          <div key={label} className="bg-tp-raised border border-tp-border rounded-xl p-3">
+            <p className="text-tp-muted text-[10px] mb-1">{label}</p>
+            <p className={clsx('font-mono font-bold text-2xl', data.pct >= 85 ? 'text-tp-green' : data.pct >= 70 ? 'text-tp-amber' : 'text-tp-danger')}>
+              {data.pct}%
+            </p>
+            <p className="text-tp-muted text-[10px] mt-0.5">{data.sessions} sessions</p>
+          </div>
+        ))}
+      </div>
+      <p className="text-tp-muted text-[11px] leading-relaxed">{aw.targetText}</p>
+    </div>
+  )
+}
+
+function TodaysAssignmentCard({ training }) {
+  if (!training) return null
+  const { todaySession: s, phase, week } = training
+  const completedCount = s.exercises.filter(e => e.completed).length
+  const pct            = Math.round((completedCount / s.exercises.length) * 100)
+
+  return (
+    <Link to="/training" className="card p-4 flex flex-col hover:border-tp-border-bright transition-all group">
+      <div className="flex items-center justify-between mb-3">
+        <p className="label">Today's Assignment</p>
+        <ChevronRight size={14} className="text-tp-muted group-hover:text-tp-red transition-colors" />
+      </div>
+      <p className="text-tp-white font-bold text-lg mb-0.5">{s.name}</p>
+      <p className="text-tp-soft text-xs mb-3">{phase} · Week {week}</p>
+      <div className="flex items-center gap-4 mb-3">
+        <span className="flex items-center gap-1 text-tp-muted text-xs"><Clock size={12} /> {s.estimatedDuration} min</span>
+        <span className="flex items-center gap-1 text-tp-muted text-xs"><Dumbbell size={12} /> {s.exercises.length} exercises</span>
+      </div>
+      <div className="mt-auto">
+        <p className="text-tp-muted text-[10px] mb-1">{pct}% completed</p>
+        <div className="h-1.5 rounded-full bg-tp-raised overflow-hidden">
+          <div className={clsx('h-full rounded-full transition-all', pct === 100 ? 'bg-tp-green' : 'bg-tp-red')}
+            style={{ width: `${pct || 0}%` }} />
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+// ── Main page ─────────────────────────────────────────────────
+
+export default function Dashboard() {
+  const { user }           = useAuth()
+  const { data: perf }     = usePerformance()
+  const { data: training } = useTraining()
 
   if (!perf) {
     return (
       <div className="space-y-4">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="skeleton h-24 rounded-xl" />
-        ))}
+        {[...Array(4)].map((_, i) => <div key={i} className="skeleton h-28 rounded-xl" />)}
       </div>
     )
   }
 
-  const fatigueColor = {
-    low:      'text-tp-green',
-    moderate: 'text-tp-amber',
-    high:     'text-tp-danger',
-    critical: 'text-tp-danger',
-  }[perf.derived.fatigueScore] ?? 'text-tp-soft'
-
-  const trendUp = perf.trend === 'up'
-
-  // Nutrition summary
-  const calPercent = nutrition
-    ? Math.round((nutrition.todayLog.calories / nutrition.targets.calories) * 100)
-    : 0
-
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* ── Greeting ── */}
+    <div className="space-y-4 animate-fade-in">
+      {/* Greeting */}
       <div>
         <h2 className="text-tp-white text-xl font-semibold">{greeting(user?.name)}</h2>
         <p className="text-tp-soft text-sm mt-0.5">
@@ -78,195 +249,25 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* ── Hero: Score + Stats ── */}
-      <div className="card p-6 border-red-glow">
-        <div className="flex flex-col sm:flex-row items-center gap-6">
-          {/* Score ring */}
-          <Link to="/performance" className="flex flex-col items-center gap-3 group">
-            <ScoreRing score={perf.composite} tier={perf.tier} size={160} />
-            <TierBadge tier={perf.tier} />
-            <span className="text-tp-muted text-xs group-hover:text-tp-red transition-colors flex items-center gap-1">
-              View breakdown <ChevronRight size={12} />
-            </span>
-          </Link>
+      {/* Hero */}
+      <ReadinessHero perf={perf} />
 
-          {/* Right stats */}
-          <div className="flex-1 w-full space-y-4">
-            {/* Trend */}
-            <div className="flex items-center gap-2">
-              {trendUp
-                ? <ArrowUp size={16} className="text-tp-green" />
-                : <ArrowDown size={16} className="text-tp-danger" />}
-              <span className={clsx('text-sm font-medium', trendUp ? 'text-tp-green' : 'text-tp-danger')}>
-                {trendUp ? '+' : ''}{perf.trendValue} pts since last assessment
-              </span>
-            </div>
-
-            {/* Progress to next tier */}
-            <div>
-              <div className="flex justify-between items-center mb-1.5">
-                <span className="label">To {perf.nextTierName}</span>
-                <span className="text-tp-muted text-xs">{perf.nextTierTarget - perf.composite} pts away</span>
-              </div>
-              <div className="h-2 rounded-full bg-tp-raised overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-tp-red transition-all duration-700"
-                  style={{ width: `${(perf.composite / perf.nextTierTarget) * 100}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Score sparkline */}
-            <div className="h-16">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={perf.history}>
-                  <ReTooltip content={<SparkTooltip />} />
-                  <Line
-                    type="monotone"
-                    dataKey="composite"
-                    stroke="#e63946"
-                    strokeWidth={2}
-                    dot={false}
-                    activeDot={{ r: 4, fill: '#e63946' }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
+      {/* Strength Index + Leaderboard */}
+      <div className="grid grid-cols-2 gap-4">
+        <StrengthIndexCard perf={perf} />
+        <LeaderboardCard perf={perf} />
       </div>
 
-      {/* ── Stat Pills ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatPill
-          label="Athletic Age"
-          value={perf.derived.athleticAge}
-          sub={`Bio age: ${user?.age ?? '—'}`}
-          color="text-tp-white"
-        />
-        <StatPill
-          label="Fatigue"
-          value={perf.derived.fatigueScore.charAt(0).toUpperCase() + perf.derived.fatigueScore.slice(1)}
-          sub={`ACWR ${perf.derived.fatigueRatio}`}
-          color={fatigueColor}
-        />
-        <StatPill
-          label="Streak"
-          value={`${perf.derived.streak}🔥`}
-          sub="consecutive sessions"
-          color="text-tp-amber"
-        />
-        <StatPill
-          label="Last Assessment"
-          value={new Date(perf.lastUpdated).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-          sub={`${perf.composite} pts scored`}
-          color="text-tp-soft"
-        />
+      {/* Priority Focus + Recovery Risk */}
+      <div className="grid grid-cols-2 gap-4">
+        <PriorityFocusCard perf={perf} />
+        <RecoveryRiskCard perf={perf} />
       </div>
 
-      {/* ── AI Insight ── */}
-      <InsightCard insight={perf.insightCard} />
-
-      {/* ── Cards row: Today's Session + Nutrition + Top Goal ── */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Today's Session */}
-        {training && (
-          <Link to="/training" className="card p-4 hover:border-tp-border-bright transition-all group">
-            <div className="flex items-center justify-between mb-3">
-              <span className="label">Today's Session</span>
-              <ChevronRight size={14} className="text-tp-muted group-hover:text-tp-red transition-colors" />
-            </div>
-            <p className="text-tp-white font-semibold text-sm">{training.todaySession.name}</p>
-            <p className="text-tp-soft text-xs mt-0.5">{training.phase} · Week {training.week}</p>
-            <div className="flex items-center gap-3 mt-3">
-              <span className="flex items-center gap-1 text-tp-muted text-xs">
-                <Clock size={11} />
-                {training.todaySession.estimatedDuration} min
-              </span>
-              <span className="flex items-center gap-1 text-tp-muted text-xs">
-                <CheckCircle2 size={11} />
-                {training.todaySession.exercises.length} exercises
-              </span>
-            </div>
-            {/* Exercise progress mini */}
-            <div className="mt-3 space-y-1">
-              {training.todaySession.exercises.slice(0, 3).map((ex) => (
-                <div key={ex.id} className="flex items-center gap-2">
-                  <div className={clsx('w-1.5 h-1.5 rounded-full flex-shrink-0',
-                    ex.completed ? 'bg-tp-green' : 'bg-tp-border')} />
-                  <span className="text-tp-soft text-xs truncate">{ex.name}</span>
-                </div>
-              ))}
-              {training.todaySession.exercises.length > 3 && (
-                <p className="text-tp-muted text-xs pl-3.5">
-                  +{training.todaySession.exercises.length - 3} more
-                </p>
-              )}
-            </div>
-          </Link>
-        )}
-
-        {/* Nutrition Snapshot */}
-        {nutrition && (
-          <Link to="/nutrition" className="card p-4 hover:border-tp-border-bright transition-all group">
-            <div className="flex items-center justify-between mb-3">
-              <span className="label">Nutrition Today</span>
-              <ChevronRight size={14} className="text-tp-muted group-hover:text-tp-red transition-colors" />
-            </div>
-            <div className="flex items-end gap-2 mb-2">
-              <span className="font-mono font-bold text-2xl text-tp-white">{nutrition.todayLog.calories}</span>
-              <span className="text-tp-muted text-xs mb-1">/ {nutrition.targets.calories} kcal</span>
-            </div>
-            <div className="h-1.5 rounded-full bg-tp-raised overflow-hidden mb-3">
-              <div
-                className={clsx('h-full rounded-full transition-all', calPercent > 100 ? 'bg-tp-danger' : 'bg-tp-red')}
-                style={{ width: `${Math.min(calPercent, 100)}%` }}
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { label: 'Protein', val: nutrition.todayLog.protein, target: nutrition.targets.protein, color: '#e63946' },
-                { label: 'Carbs',   val: nutrition.todayLog.carbs,   target: nutrition.targets.carbs,   color: '#f59e0b' },
-                { label: 'Fat',     val: nutrition.todayLog.fat,     target: nutrition.targets.fat,     color: '#22c55e' },
-              ].map(({ label, val, target, color }) => (
-                <div key={label} className="text-center">
-                  <p className="font-mono text-xs font-bold text-tp-white">{val}g</p>
-                  <p className="text-tp-muted text-[10px]">{label}</p>
-                  <div className="h-0.5 rounded-full bg-tp-raised mt-1 overflow-hidden">
-                    <div className="h-full rounded-full" style={{ width: `${Math.min((val/target)*100, 100)}%`, background: color }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Link>
-        )}
-
-        {/* Notifications / Recent alerts */}
-        <Link to="/profile" className="card p-4 hover:border-tp-border-bright transition-all group">
-          <div className="flex items-center justify-between mb-3">
-            <span className="label">Alerts</span>
-            {unread.length > 0 && (
-              <span className="bg-tp-red text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                {unread.length}
-              </span>
-            )}
-          </div>
-          <div className="space-y-2">
-            {(unread.length ? unread : notifs ?? []).slice(0, 3).map((n) => (
-              <div key={n.id} className="flex items-start gap-2">
-                <div className={clsx('w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0',
-                  !n.read ? 'bg-tp-red' : 'bg-tp-border')} />
-                <div>
-                  <p className="text-tp-white text-xs font-medium leading-tight">{n.title}</p>
-                  <p className="text-tp-muted text-[10px]">{n.time}</p>
-                </div>
-              </div>
-            ))}
-            {!notifs?.length && (
-              <p className="text-tp-muted text-xs">All caught up</p>
-            )}
-          </div>
-        </Link>
+      {/* Session Adherence + Today's Assignment */}
+      <div className="grid grid-cols-2 gap-4">
+        <SessionAdherenceCard perf={perf} />
+        <TodaysAssignmentCard training={training} />
       </div>
     </div>
   )
