@@ -5,29 +5,24 @@ import { useState, useCallback, useEffect } from 'react'
  * Handles: completion toggle, set/rep/weight logging per exercise
  */
 export function useExerciseLogs(initialExercises = []) {
-  const [exercises, setExercises] = useState(
-    initialExercises.map((ex) => ({
-      ...ex,
-      completed: false,
-      setsLogged: null,
-      repsLogged: null,
-      weightLogged: null,
-    })),
-  )
+  const [exercises, setExercises] = useState([])
 
-  // Update exercises when initialExercises changes (e.g., when training data loads)
+  // Transform exercises with defaults
+  const transformExercises = (exs) => {
+    if (!exs || !Array.isArray(exs)) return []
+    return exs.map((ex) => ({
+      ...ex,
+      completed: ex.completed ?? false,
+      setsLogged: ex.setsLogged ?? null,
+      repsLogged: ex.repsLogged ?? null,
+      weightLogged: ex.weightLogged ?? null,
+    }))
+  }
+
+  // Update state whenever initialExercises changes
   useEffect(() => {
-    if (initialExercises && initialExercises.length > 0) {
-      setExercises(
-        initialExercises.map((ex) => ({
-          ...ex,
-          completed: false,
-          setsLogged: null,
-          repsLogged: null,
-          weightLogged: null,
-        })),
-      )
-    }
+    const transformed = transformExercises(initialExercises)
+    setExercises(transformed)
   }, [initialExercises])
 
   const toggleExercise = useCallback((id) => {
