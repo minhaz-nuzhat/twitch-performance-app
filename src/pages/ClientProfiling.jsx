@@ -106,9 +106,7 @@ function sectionStatus(section, form) {
 }
 
 // ── Completion ring ───────────────────────────────────────────
-function CompletionRing({ pct }) {
-  const size  = 140
-  const stroke = 12
+function CompletionRing({ pct, size = 140, stroke = 12 }) {
   const r      = (size - stroke) / 2
   const circ   = 2 * Math.PI * r
   const offset = circ * (1 - pct / 100)
@@ -116,22 +114,16 @@ function CompletionRing({ pct }) {
   const glow   = pct === 100 ? 'rgba(34,197,94,0.25)' : pct >= 50 ? 'rgba(245,158,11,0.25)' : 'rgba(230,57,70,0.25)'
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div style={{ filter: `drop-shadow(0 0 16px ${glow})` }}>
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-          <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#1e1e1e" strokeWidth={stroke} />
-          <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={stroke}
-            strokeLinecap="round"
-            strokeDasharray={`${circ} ${circ}`} strokeDashoffset={offset}
-            transform={`rotate(-90 ${size/2} ${size/2})`}
-            style={{ transition: 'stroke-dashoffset 0.6s ease' }}
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ position: 'absolute', top: 0, left: 0, width: size, height: size }}>
-          <span className="font-mono font-bold text-2xl text-tp-white">{pct}%</span>
-          <span className="text-tp-muted text-[10px] uppercase tracking-wider">complete</span>
-        </div>
-      </div>
+    <div style={{ filter: `drop-shadow(0 0 8px ${glow})`, width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#1e1e1e" strokeWidth={stroke} />
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={`${circ} ${circ}`} strokeDashoffset={offset}
+          transform={`rotate(-90 ${size/2} ${size/2})`}
+          style={{ transition: 'stroke-dashoffset 0.6s ease' }}
+        />
+      </svg>
     </div>
   )
 }
@@ -248,18 +240,19 @@ export default function ClientProfiling() {
     <div className="space-y-5 animate-fade-in">
 
       {/* ── Overall completion ring ── */}
-      <div className="card p-6 flex flex-col items-center gap-3">
-        <div className="relative" style={{ width: 140, height: 140 }}>
-          <CompletionRing pct={pct} />
+      <div className="card px-4 py-3 flex items-center gap-4">
+        <div className="relative flex-shrink-0" style={{ width: 52, height: 52 }}>
+          <CompletionRing pct={pct} size={52} stroke={5} />
         </div>
-        <div className="text-center">
-          <p className="text-tp-white font-bold text-sm">{totalDone} of {TOTAL_Q} questions answered</p>
+        <div className="flex-1 min-w-0">
+          <p className="text-tp-white font-semibold text-sm">{totalDone} of {TOTAL_Q} questions answered</p>
           <p className="text-tp-muted text-xs mt-0.5">
-            {pct === 100
-              ? '✓ Profile complete — shared with your coach'
-              : 'Tap any section below to fill it in'}
+            {pct === 100 ? '✓ Profile complete — shared with your coach' : 'Tap any section below to fill it in'}
           </p>
         </div>
+        <span className="font-mono font-bold text-lg flex-shrink-0" style={{
+          color: pct === 100 ? '#22c55e' : pct >= 50 ? '#f59e0b' : '#e63946'
+        }}>{pct}%</span>
       </div>
 
       {/* ── Bio card ── */}
