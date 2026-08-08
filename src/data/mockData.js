@@ -502,3 +502,15 @@ export const mockAssessmentReport = {
     goal:        'keep improving while managing fatigue and form quality.',
   },
 }
+
+export const mockLeaderboard = {
+  description: 'Compare your strength index trend with other members in similar programs.',
+  yourRank: 2,
+  members: [
+    { rank: 1, name: 'Priya Mehta',   program: 'Elite Speed Cycle',        score: 79, trend: '+2' },
+    { rank: 2, name: 'Arjun Sharma',  program: 'Power & Strength Block',   score: 72, trend: '+1', isCurrentUser: true },
+    { rank: 3, name: 'Rahul Singh',   program: 'Force Build Phase',        score: 69, trend: '+3' },
+    { rank: 4, name: 'Nisha Patel',   program: 'Speed & Recovery',         score: 66, trend: '-1' },
+    { rank: 5, name: 'Vikram Shah',   program: 'Explosive Kickstart',      score: 63, trend: '+0' },
+  ],
+}

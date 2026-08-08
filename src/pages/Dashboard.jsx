@@ -1,14 +1,56 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { usePerformance, useTraining } from '../hooks/useApi'
+import { mockLeaderboard } from '../data/mockData'
 import ScoreRing from '../components/ui/ScoreRing'
-import { ChevronRight, Trophy, AlertTriangle, Clock, Dumbbell, TrendingUp } from 'lucide-react'
+import { ChevronRight, Trophy, AlertTriangle, Clock, Dumbbell, TrendingUp, X } from 'lucide-react'
 import clsx from 'clsx'
+import { useState } from 'react'
 import {
   LineChart, Line, ResponsiveContainer, Tooltip as ReTooltip,
 } from 'recharts'
 
-// ── Helpers ───────────────────────────────────────────────────
+// ── Leaderboard Modal ────────────────────────────────────────
+function LeaderboardModal({ isOpen, onClose }) {
+  if (!isOpen) return null
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="w-full max-w-lg bg-tp-card border border-tp-border rounded-2xl shadow-2xl animate-fade-up max-h-[85vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-tp-border flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <Trophy size={16} className="text-tp-gold" />
+            <h2 className="text-tp-white font-bold text-base">Member Leaderboard</h2>
+          </div>
+          <button onClick={onClose} className="w-8 h-8 rounded-lg bg-tp-raised flex items-center justify-center text-tp-muted hover:text-tp-white transition-colors">
+            <X size={14} />
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
+          <p className="text-tp-muted text-xs leading-relaxed">{mockLeaderboard.description}</p>
+          <p className="text-tp-soft text-sm font-medium">Your current rank: <span className="text-tp-red font-bold">#{mockLeaderboard.yourRank}</span></p>
+          <div className="space-y-2 mt-4">
+            {mockLeaderboard.members.map(member => (
+              <div key={member.rank} className={clsx('flex items-center justify-between p-4 rounded-xl transition-all', member.isCurrentUser ? 'bg-tp-red/10 border border-tp-red/30' : 'bg-tp-raised border border-tp-border')}>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className={clsx('text-sm font-bold', member.rank === 1 ? 'text-tp-gold' : 'text-tp-amber')}>#{member.rank}</span>
+                    <p className={clsx('font-semibold text-sm', member.isCurrentUser ? 'text-tp-red' : 'text-tp-white')}>{member.name}</p>
+                  </div>
+                  <p className="text-tp-muted text-xs">{member.program}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-mono font-bold text-tp-white text-sm">{member.score}</p>
+                  <p className={clsx('text-xs font-medium', member.trend.startsWith('+') ? 'text-tp-green' : member.trend === '+0' ? 'text-tp-muted' : 'text-tp-danger')}>{member.trend}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function greeting(name) {
   const h = new Date().getHours()
@@ -108,10 +150,10 @@ function StrengthIndexCard({ perf }) {
   )
 }
 
-function LeaderboardCard({ perf }) {
+function LeaderboardCard({ perf, onOpen }) {
   const { leaderboard: lb } = perf
   return (
-    <Link to="/progress" className="card p-4 flex flex-col hover:border-tp-border-bright transition-all group">
+    <button onClick={onOpen} className="card p-4 flex flex-col hover:border-tp-border-bright transition-all group">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Trophy size={14} className="text-tp-gold" />
@@ -121,7 +163,7 @@ function LeaderboardCard({ perf }) {
       </div>
       <p className="font-mono font-bold text-4xl text-tp-white mb-1">#{lb.rank}</p>
       <p className="text-tp-soft text-xs">Out of {lb.total} members</p>
-    </Link>
+    </button>
   )
 }
 
@@ -230,6 +272,7 @@ export default function Dashboard() {
   const { user }           = useAuth()
   const { data: perf }     = usePerformance()
   const { data: training } = useTraining()
+  const [showLeaderboard, setShowLeaderboard] = useState(false)
 
   if (!perf) {
     return (
@@ -255,7 +298,7 @@ export default function Dashboard() {
       {/* Strength Index + Leaderboard */}
       <div className="grid grid-cols-2 gap-4">
         <StrengthIndexCard perf={perf} />
-        <LeaderboardCard perf={perf} />
+        <LeaderboardCard perf={perf} onOpen={() => setShowLeaderboard(true)} />
       </div>
 
       {/* Priority Focus + Recovery Risk */}
@@ -269,6 +312,9 @@ export default function Dashboard() {
         <SessionAdherenceCard perf={perf} />
         <TodaysAssignmentCard training={training} />
       </div>
+
+      {/* Leaderboard Modal */}
+      <LeaderboardModal isOpen={showLeaderboard} onClose={() => setShowLeaderboard(false)} />
     </div>
   )
 }
