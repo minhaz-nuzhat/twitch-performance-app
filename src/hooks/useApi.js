@@ -9,6 +9,7 @@ import {
   mockMessages,
   mockNotifications,
   mockSubscription,
+  mockClientProfile,
 } from '../data/mockData'
 
 // ─────────────────────────────────────────────────────────────
@@ -110,4 +111,9 @@ export function useNotifications() {
 // ── Subscription ──────────────────────────────────────────────
 export function useSubscription() {
   return useMockFetch(() => mockSubscription)
+}
+
+// ── Client Profile ────────────────────────────────────────────
+export function useClientProfile() {
+  return useMockFetch(() => mockClientProfile)
 }
