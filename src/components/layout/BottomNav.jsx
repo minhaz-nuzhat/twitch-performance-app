@@ -1,14 +1,14 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Dumbbell, Utensils, TrendingUp, MessageCircle, ClipboardList } from 'lucide-react'
+import { LayoutDashboard, Dumbbell, Utensils, TrendingUp, MessageCircle, Activity } from 'lucide-react'
 import clsx from 'clsx'
 
 const TABS = [
-  { to: '/',           label: 'Home',     icon: LayoutDashboard, end: true },
-  { to: '/training',   label: 'Training', icon: Dumbbell                   },
-  { to: '/nutrition',  label: 'Eat',      icon: Utensils                   },
-  { to: '/progress',   label: 'Progress', icon: TrendingUp                 },
-  { to: '/messages',   label: 'Messages', icon: MessageCircle              },
-  { to: '/profiling',  label: 'My Profile', icon: ClipboardList             },
+  { to: '/',           label: 'Home',       icon: LayoutDashboard, end: true },
+  { to: '/training',   label: 'Training',   icon: Dumbbell                   },
+  { to: '/nutrition',  label: 'Eat',        icon: Utensils                   },
+  { to: '/assessment', label: 'Assessment', icon: Activity                   },
+  { to: '/progress',   label: 'Progress',   icon: TrendingUp                 },
+  { to: '/messages',   label: 'Messages',   icon: MessageCircle              },
 ]
 
 export default function BottomNav() {

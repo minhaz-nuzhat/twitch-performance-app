@@ -16,6 +16,7 @@ import Profile       from './pages/Profile'
 import Payment       from './pages/Payment'
 import Settings      from './pages/Settings'
 import ClientProfiling from './pages/ClientProfiling'
+import Assessment     from './pages/Assessment'
 
 import TrainerDashboard     from './pages/trainer/TrainerDashboard'
 import Roster               from './pages/trainer/Roster'
@@ -77,6 +78,7 @@ function AppRoutes() {
                 <Route path="/messages"    element={<Messages    />} />
                 <Route path="/profile"     element={<Profile     />} />
                 <Route path="/profiling"   element={<ClientProfiling />} />
+                <Route path="/assessment"  element={<Assessment     />} />
                 <Route path="/payment"     element={<Payment     />} />
                 <Route path="/settings"    element={<Settings    />} />
               </Route>

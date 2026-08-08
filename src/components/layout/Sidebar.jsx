@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Dumbbell, Utensils, TrendingUp,
-  MessageCircle, User, LogOut, Zap, ClipboardList,
+  MessageCircle, User, LogOut, Zap, ClipboardList, Activity,
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { usePerformance } from '../../hooks/useApi'
@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { to: '/training',    label: 'Training',     icon: Dumbbell        },
   { to: '/nutrition',   label: 'Nutrition',    icon: Utensils        },
   { to: '/progress',    label: 'Progress',     icon: TrendingUp      },
+  { to: '/assessment',  label: 'Assessment',   icon: Activity        },
   { to: '/messages',    label: 'Messages',     icon: MessageCircle   },
   { to: '/profiling',   label: 'My Profile',   icon: ClipboardList   },
   { to: '/profile',     label: 'Account',      icon: User            },

@@ -408,3 +408,97 @@ export const mockClientProfile = {
   q42: '',
   q43: '',
 }
+
+export const mockAssessmentReport = {
+  score: 60,
+  tier: 'bronze',
+  latestTestDate: '2026-07-28',
+  pointsToNext: 20,
+  nextTierLabel: 'Gold',
+
+  // ── Summary tab ───────────────────────────────────────────
+  evidenceNote: 'This summary explains what your test results are telling us in simple terms. Right now, your strongest area is strength output & symmetry and your biggest risk area is engine capacity (vo2). This tab explains the signal only. Your exact training steps are in Action Plan.',
+
+  trafficLight: {
+    red: [
+      { name: 'Engine Capacity (VO2)', score: 49, interpretation: 'This shows your fitness engine and how well you recover between hard efforts.', monitor: '5-min MAS and VO2 marker' },
+      { name: 'Explosiveness',          score: 52, interpretation: 'This shows how quickly you can produce force when you jump or drive off the ground.', monitor: 'CMJ and drop jump RSI trend' },
+    ],
+    orange: [
+      { name: 'Acceleration & Speed Reserve', score: 64, interpretation: 'Good acceleration helps in first-step speed, quick transitions, and reacting faster in play.', monitor: '10m split and pro-agility quality' },
+    ],
+    green: [
+      { name: 'Strength Output & Symmetry', score: 76, interpretation: 'Stable output to protect across the block.', monitor: 'ND percentage consistency.' },
+    ],
+  },
+
+  // ── Testing Markers tab ───────────────────────────────────
+  powerProfiling: {
+    checklist: ['SL Stand', 'CMJ', 'Drop Jump', 'Broad Jump', 'Med ball throws & slams'],
+    values: [
+      { label: 'SL Stand',               value: '36.8 s'  },
+      { label: 'CMJ',                     value: '42.6 cm' },
+      { label: 'Drop Jump (RSI)',         value: '2.10'    },
+      { label: 'Broad Jump',             value: '2.41 m'  },
+      { label: 'Med ball throws & slams', value: '6.80 m'  },
+    ],
+  },
+
+  forceProfiling: {
+    rows: [
+      { no: 1,  assessment: 'Isometric Knee Extension',   rPeak: '58.4', rAvg: '54.9', lPeak: '56.8', lAvg: '53.7', nd: '3.1%' },
+      { no: 2,  assessment: 'Isometric Knee Curl',         rPeak: '41.6', rAvg: '39.3', lPeak: '40.2', lAvg: '38.4', nd: '2.8%' },
+      { no: 3,  assessment: 'Isometric Hip Flexion',       rPeak: '33.2', rAvg: '31.7', lPeak: '32.5', lAvg: '30.9', nd: '2.1%' },
+      { no: 4,  assessment: 'Isometric Hip Extension',     rPeak: '49.0', rAvg: '46.4', lPeak: '47.6', lAvg: '45.0', nd: '3.0%' },
+      { no: 5,  assessment: 'Isometric Hip Abduction',     rPeak: '34.8', rAvg: '32.6', lPeak: '33.9', lAvg: '31.8', nd: '2.7%' },
+      { no: 6,  assessment: 'Isometric Hip Adduction',     rPeak: '36.1', rAvg: '34.2', lPeak: '35.2', lAvg: '33.1', nd: '2.6%' },
+      { no: 7,  assessment: 'Shoulder External Rotation',  rPeak: '17.8', rAvg: '16.4', lPeak: '17.1', lAvg: '15.9', nd: '4.1%' },
+      { no: 8,  assessment: 'Shoulder Internal Rotation',  rPeak: '20.3', rAvg: '18.9', lPeak: '19.8', lAvg: '18.2', nd: '2.5%' },
+      { no: 9,  assessment: 'Isometric Trunk Rotation',    rPeak: '27.5', rAvg: '25.8', lPeak: '26.9', lAvg: '25.1', nd: '2.2%' },
+      { no: 10, assessment: 'Active Straight Hand',         rPeak: 'PASS', rAvg: '--',   lPeak: '--',   lAvg: '--',   nd: '--'   },
+      { no: 11, assessment: 'Isometric Row (Bilateral)',   rPeak: '63.7', rAvg: '60.2', lPeak: '61.9', lAvg: '58.8', nd: '2.9%' },
+      { no: 12, assessment: 'Isometric Row (Unilateral)',  rPeak: '35.9', rAvg: '33.4', lPeak: '34.6', lAvg: '32.2', nd: '3.7%' },
+      { no: 13, assessment: 'Hand Grip Strength',          rPeak: '46.1', rAvg: '44.5', lPeak: '43.8', lAvg: '42.3', nd: '5.0%' },
+      { no: 14, assessment: 'Elbow Plank',                 rPeak: '01:48',rAvg: '--',   lPeak: '--',   lAvg: '--',   nd: '--'   },
+    ],
+    vo2max: '47.8',
+  },
+
+  speedProfiling: [
+    { label: 'Pro agility time',            value: '5.21 s'    },
+    { label: '10 meter sprint time',        value: '1.84 s'    },
+    { label: '20 meter sprint time',        value: '3.19 s'    },
+    { label: '40 meter sprint time',        value: '5.84 s'    },
+    { label: 'Maximal aerobic speed (5 mins)', value: '16.9 km/h' },
+    { label: 'Anaerobic Speed',             value: '22.4 km/h' },
+  ],
+
+  // ── Action Plan tab ───────────────────────────────────────
+  focusBlocks: [
+    {
+      id: 'fb1', label: 'FOCUS BLOCK 1',
+      title: 'Engine Capacity (VO2)',
+      thisWeek:     '1 interval fitness session + 1 easy recovery cardio session',
+      nextFewWeeks: 'Progress fitness work while keeping speed-day quality high.',
+      howWeKnow:    'Better recovery between hard efforts.',
+      whenAdjust:   'Coach reduces intensity when fatigue runs high.',
+      whyMatters:   'Building aerobic fitness improves repeat effort and recovery across training weeks.',
+    },
+    {
+      id: 'fb2', label: 'FOCUS BLOCK 2',
+      title: 'Explosiveness',
+      thisWeek:     '2 sessions · 3 to 5 sets · explosive reps only',
+      nextFewWeeks: 'Add one set only if jump quality stays consistent.',
+      howWeKnow:    'Jump height and spring stay steady or improve.',
+      whenAdjust:   'Coach reduces volume if jump quality clearly drops.',
+      whyMatters:   'Explosive work improves most when reps are sharp and you are not over-fatigued.',
+    },
+  ],
+
+  reviewCadence: {
+    trainerName: 'Coach Ravi',
+    description: 'Coach Ravi owns plan updates. Your role is simple: follow the plan and log session quality.',
+    reviewDate:  '24 Aug 2026',
+    goal:        'keep improving while managing fatigue and form quality.',
+  },
+}
