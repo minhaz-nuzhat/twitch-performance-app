@@ -5,15 +5,16 @@ import { useNotifications, usePerformance } from '../../hooks/useApi'
 import clsx from 'clsx'
 
 const ROUTE_LABELS = {
-  '/':           'Dashboard',
-  '/training':   'Training',
-  '/nutrition':  'Nutrition',
-  '/progress':   'Progress',
-  '/performance':'Performance',
-  '/messages':   'Messages',
-  '/profile':    'Profile',
-  '/settings':   'Settings',
-  '/payment':    'Subscription',
+  '/':            'Dashboard',
+  '/training':    'Training',
+  '/nutrition':   'Nutrition',
+  '/progress':    'Progress',
+  '/performance': 'Performance',
+  '/messages':    'Messages',
+  '/profiling':   'My Profile',
+  '/profile':     'Account',
+  '/settings':    'Settings',
+  '/payment':     'Subscription',
 }
 
 export default function TopBar() {

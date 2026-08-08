@@ -1,19 +1,20 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Dumbbell, Utensils, TrendingUp,
-  MessageCircle, User, LogOut, Zap,
+  MessageCircle, User, LogOut, Zap, ClipboardList,
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { usePerformance } from '../../hooks/useApi'
 import clsx from 'clsx'
 
 const NAV_ITEMS = [
-  { to: '/',           label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/training',   label: 'Training',  icon: Dumbbell        },
-  { to: '/nutrition',  label: 'Nutrition', icon: Utensils        },
-  { to: '/progress',   label: 'Progress',  icon: TrendingUp      },
-  { to: '/messages',   label: 'Messages',  icon: MessageCircle   },
-  { to: '/profile',    label: 'Profile',   icon: User            },
+  { to: '/',            label: 'Dashboard',    icon: LayoutDashboard },
+  { to: '/training',    label: 'Training',     icon: Dumbbell        },
+  { to: '/nutrition',   label: 'Nutrition',    icon: Utensils        },
+  { to: '/progress',    label: 'Progress',     icon: TrendingUp      },
+  { to: '/messages',    label: 'Messages',     icon: MessageCircle   },
+  { to: '/profiling',   label: 'My Profile',   icon: ClipboardList   },
+  { to: '/profile',     label: 'Account',      icon: User            },
 ]
 
 export default function Sidebar() {
