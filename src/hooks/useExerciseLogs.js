@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 
 /**
  * Manages exercise completion and logging data
@@ -14,6 +14,21 @@ export function useExerciseLogs(initialExercises = []) {
       weightLogged: null,
     })),
   )
+
+  // Update exercises when initialExercises changes (e.g., when training data loads)
+  useEffect(() => {
+    if (initialExercises && initialExercises.length > 0) {
+      setExercises(
+        initialExercises.map((ex) => ({
+          ...ex,
+          completed: false,
+          setsLogged: null,
+          repsLogged: null,
+          weightLogged: null,
+        })),
+      )
+    }
+  }, [initialExercises])
 
   const toggleExercise = useCallback((id) => {
     setExercises((prev) =>
