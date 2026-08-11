@@ -420,98 +420,267 @@ export const mockClientProfile = {
 }
 
 export const mockAssessmentReport = {
-  score: 60,
-  tier: 'bronze',
-  latestTestDate: '2026-07-28',
-  pointsToNext: 20,
-  nextTierLabel: 'Gold',
-
-  // ── Summary tab ───────────────────────────────────────────
-  evidenceNote: 'This summary explains what your test results are telling us in simple terms. Right now, your strongest area is strength output & symmetry and your biggest risk area is engine capacity (vo2). This tab explains the signal only. Your exact training steps are in Action Plan.',
-
-  trafficLight: {
-    red: [
-      { name: 'Engine Capacity (VO2)', score: 49, interpretation: 'This shows your fitness engine and how well you recover between hard efforts.', monitor: '5-min MAS and VO2 marker' },
-      { name: 'Explosiveness',          score: 52, interpretation: 'This shows how quickly you can produce force when you jump or drive off the ground.', monitor: 'CMJ and drop jump RSI trend' },
-    ],
-    orange: [
-      { name: 'Acceleration & Speed Reserve', score: 64, interpretation: 'Good acceleration helps in first-step speed, quick transitions, and reacting faster in play.', monitor: '10m split and pro-agility quality' },
-    ],
-    green: [
-      { name: 'Strength Output & Symmetry', score: 76, interpretation: 'Stable output to protect across the block.', monitor: 'ND percentage consistency.' },
-    ],
+  member: {
+    name: 'Lavanya C',
+    id: 'ATH0017',
+    sport: 'Cricket',
+    position: 'Right Hand Bat / Right Arm Medium Pace',
+    testNo: 1,
+    assessmentDate: '27–28 March 2026',
+    bodyWeight: 60,
+    coach: 'Snehit Rai',
   },
 
-  // ── Testing Markers tab ───────────────────────────────────
-  powerProfiling: {
-    checklist: ['SL Stand', 'CMJ', 'Drop Jump', 'Broad Jump', 'Med ball throws & slams'],
-    values: [
-      { label: 'SL Stand',               value: '36.8 s'  },
-      { label: 'CMJ',                     value: '42.6 cm' },
-      { label: 'Drop Jump (RSI)',         value: '2.10'    },
-      { label: 'Broad Jump',             value: '2.41 m'  },
-      { label: 'Med ball throws & slams', value: '6.80 m'  },
-    ],
-  },
-
-  forceProfiling: {
-    rows: [
-      { no: 1,  assessment: 'Isometric Knee Extension',   rPeak: '58.4', rAvg: '54.9', lPeak: '56.8', lAvg: '53.7', nd: '3.1%' },
-      { no: 2,  assessment: 'Isometric Knee Curl',         rPeak: '41.6', rAvg: '39.3', lPeak: '40.2', lAvg: '38.4', nd: '2.8%' },
-      { no: 3,  assessment: 'Isometric Hip Flexion',       rPeak: '33.2', rAvg: '31.7', lPeak: '32.5', lAvg: '30.9', nd: '2.1%' },
-      { no: 4,  assessment: 'Isometric Hip Extension',     rPeak: '49.0', rAvg: '46.4', lPeak: '47.6', lAvg: '45.0', nd: '3.0%' },
-      { no: 5,  assessment: 'Isometric Hip Abduction',     rPeak: '34.8', rAvg: '32.6', lPeak: '33.9', lAvg: '31.8', nd: '2.7%' },
-      { no: 6,  assessment: 'Isometric Hip Adduction',     rPeak: '36.1', rAvg: '34.2', lPeak: '35.2', lAvg: '33.1', nd: '2.6%' },
-      { no: 7,  assessment: 'Shoulder External Rotation',  rPeak: '17.8', rAvg: '16.4', lPeak: '17.1', lAvg: '15.9', nd: '4.1%' },
-      { no: 8,  assessment: 'Shoulder Internal Rotation',  rPeak: '20.3', rAvg: '18.9', lPeak: '19.8', lAvg: '18.2', nd: '2.5%' },
-      { no: 9,  assessment: 'Isometric Trunk Rotation',    rPeak: '27.5', rAvg: '25.8', lPeak: '26.9', lAvg: '25.1', nd: '2.2%' },
-      { no: 10, assessment: 'Active Straight Hand',         rPeak: 'PASS', rAvg: '--',   lPeak: '--',   lAvg: '--',   nd: '--'   },
-      { no: 11, assessment: 'Isometric Row (Bilateral)',   rPeak: '63.7', rAvg: '60.2', lPeak: '61.9', lAvg: '58.8', nd: '2.9%' },
-      { no: 12, assessment: 'Isometric Row (Unilateral)',  rPeak: '35.9', rAvg: '33.4', lPeak: '34.6', lAvg: '32.2', nd: '3.7%' },
-      { no: 13, assessment: 'Hand Grip Strength',          rPeak: '46.1', rAvg: '44.5', lPeak: '43.8', lAvg: '42.3', nd: '5.0%' },
-      { no: 14, assessment: 'Elbow Plank',                 rPeak: '01:48',rAvg: '--',   lPeak: '--',   lAvg: '--',   nd: '--'   },
-    ],
-    vo2max: '47.8',
-  },
-
-  speedProfiling: [
-    { label: 'Pro agility time',            value: '5.21 s'    },
-    { label: '10 meter sprint time',        value: '1.84 s'    },
-    { label: '20 meter sprint time',        value: '3.19 s'    },
-    { label: '40 meter sprint time',        value: '5.84 s'    },
-    { label: 'Maximal aerobic speed (5 mins)', value: '16.9 km/h' },
-    { label: 'Anaerobic Speed',             value: '22.4 km/h' },
+  kpis: [
+    { label: 'IMTP Peak Force',     value: '1516',  unit: 'N',          target: '1998 N',     status: 'below',  statusLabel: 'Below Target'     },
+    { label: 'CMJ Jump Height',     value: '11.02', unit: 'in',         target: '16 in',      status: 'below',  statusLabel: 'Below Target'     },
+    { label: 'VO2 Max',             value: '31.84', unit: 'ml/kg/min',  target: '>28',        status: 'pass',   statusLabel: 'Meets Standard'   },
+    { label: 'Grip Strength R',     value: '38',    unit: 'kg',         target: '>30.5 kg',   status: 'pass',   statusLabel: 'Meets Standard'   },
+    { label: 'IMTP Asymmetry',      value: '14.9%', unit: '',           target: '<10%',       status: 'fail',   statusLabel: 'High Asymmetry'   },
+    { label: 'React. Strength Idx', value: '0.68',  unit: '',           target: '1.5–2.5',    status: 'fail',   statusLabel: 'Well Below'       },
+    { label: 'Dyn. Strength Index', value: '1.15',  unit: '',           target: '0.6–0.8',    status: 'warn',   statusLabel: 'Strength Deficit' },
+    { label: 'Drop Jump mRSI',      value: '1.19',  unit: '',           target: '0.35–0.50',  status: 'above',  statusLabel: 'Above Range'      },
   ],
 
-  // ── Action Plan tab ───────────────────────────────────────
-  focusBlocks: [
-    {
-      id: 'fb1', label: 'FOCUS BLOCK 1',
-      title: 'Engine Capacity (VO2)',
-      thisWeek:     '1 interval fitness session + 1 easy recovery cardio session',
-      nextFewWeeks: 'Progress fitness work while keeping speed-day quality high.',
-      howWeKnow:    'Better recovery between hard efforts.',
-      whenAdjust:   'Coach reduces intensity when fatigue runs high.',
-      whyMatters:   'Building aerobic fitness improves repeat effort and recovery across training weeks.',
+  sections: {
+    bess: {
+      chart: {
+        title: 'BESS — Sway Lengths vs. Normative (Lower = Better)',
+        data: [
+          { name: 'L ML Sway',  value: 88,  norm: 90  },
+          { name: 'R ML Sway',  value: 111, norm: 90  },
+          { name: 'L AP Sway',  value: 89,  norm: 90  },
+          { name: 'R AP Sway',  value: 113, norm: 90  },
+          { name: 'L Total',    value: 152, norm: 150 },
+          { name: 'R Total',    value: 191, norm: 150 },
+        ],
+        refLines: [
+          { value: 90,  label: '90 cm norm',  color: '#06b6d4' },
+          { value: 150, label: '150 cm norm', color: '#f59e0b' },
+        ],
+      },
+      alert: { level: 'critical', text: 'RIGHT LEG POSTURAL CONTROL DEFICIT — Right leg sway exceeds norms in all directions. Priority: single-leg balance & proprioception training.' },
+      table: [
+        { factor: 'Left Leg Medial-Lateral Sway',    result: '88',  norm: '<90',  status: 'pass',       statusLabel: 'Pass'         },
+        { factor: 'Right Leg Medial-Lateral Sway',   result: '111', norm: '<90',  status: 'fail',       statusLabel: 'Fail'         },
+        { factor: 'Left Leg Anterior-Posterior Sway',result: '89',  norm: '<90',  status: 'borderline', statusLabel: '~ Borderline' },
+        { factor: 'Right Leg Anterior-Posterior Sway',result: '113',norm: '<90',  status: 'fail',       statusLabel: 'Fail'         },
+        { factor: 'Left Leg Total Sway',             result: '152', norm: '<150', status: 'borderline', statusLabel: '~ Borderline' },
+        { factor: 'Right Leg Total Sway',            result: '191', norm: '<150', status: 'fail',       statusLabel: 'Fail'         },
+      ],
     },
-    {
-      id: 'fb2', label: 'FOCUS BLOCK 2',
-      title: 'Explosiveness',
-      thisWeek:     '2 sessions · 3 to 5 sets · explosive reps only',
-      nextFewWeeks: 'Add one set only if jump quality stays consistent.',
-      howWeKnow:    'Jump height and spring stay steady or improve.',
-      whenAdjust:   'Coach reduces volume if jump quality clearly drops.',
-      whyMatters:   'Explosive work improves most when reps are sharp and you are not over-fatigued.',
+
+    imtp: {
+      chart: {
+        title: 'Rate of Force Development Across Time Windows',
+        data: [
+          { time: '0–100 ms', rfd: 2230 },
+          { time: '0–150 ms', rfd: 2100 },
+          { time: '0–200 ms', rfd: 1805 },
+          { time: '0–250 ms', rfd: 1552 },
+        ],
+      },
+      donut: { value: 14.9 },
+      summary: [
+        { label: 'IMTP Peak Force',       value: '1516 N', color: 'red'  },
+        { label: 'Target (BW × 33.3)',    value: '1998 N', color: ''     },
+        { label: '% of Target',           value: '75.9%',  color: ''     },
+        { label: 'L Asymmetry',           value: '871 N',  color: 'cyan' },
+        { label: 'R Asymmetry',           value: '645 N',  color: 'cyan' },
+      ],
+      table: [
+        { factor: 'Peak Force (N)',              result: '1516', norm: '1998 N (BW × 33.3)', status: 'below',    statusLabel: 'Below Target' },
+        { factor: 'L–R Peak Force Asymmetry (%)',result: '14.91',norm: '<10%',               status: 'fail',     statusLabel: 'Fail'         },
+        { factor: 'Left Peak Force (N)',          result: '871',  norm: 'Baseline',           status: 'baseline', statusLabel: 'Baseline'     },
+        { factor: 'Right Peak Force (N)',         result: '645',  norm: 'Baseline',           status: 'baseline', statusLabel: 'Baseline'     },
+        { factor: 'RFD 0–100 ms (N/s)',          result: '2230', norm: 'Baseline',           status: 'baseline', statusLabel: 'Baseline'     },
+        { factor: 'RFD 0–150 ms (N/s)',          result: '2100', norm: 'Baseline',           status: 'baseline', statusLabel: 'Baseline'     },
+        { factor: 'RFD 0–200 ms (N/s)',          result: '1805', norm: 'Baseline',           status: 'baseline', statusLabel: 'Baseline'     },
+        { factor: 'RFD 0–250 ms (N/s)',          result: '1552', norm: 'Baseline',           status: 'baseline', statusLabel: 'Baseline'     },
+      ],
     },
+
+    lowerBody: {
+      kneeData: [
+        { name: 'Knee Extension', left: 40.1, right: 35.3 },
+        { name: 'Knee Curl',      left: 14.2, right: 12.3 },
+      ],
+      hqData: [
+        { name: 'L H:Q Ratio', actual: 35.4, target: 75 },
+        { name: 'R H:Q Ratio', actual: 34.8, target: 75 },
+      ],
+      alert: { level: 'critical', text: 'CRITICAL — H:Q ratio is ~35% (target ≥75%). Significant hamstring strain injury risk. Immediate hamstring-focused loading required.' },
+      hipData: [
+        { name: 'Hip Ext',  left: 13.2, right: 10.6 },
+        { name: 'Hip Flex', left: 12.1, right: 11.3 },
+        { name: 'Hip Abd',  left: 12.8, right: 12.1 },
+        { name: 'Hip Add',  left: 9.5,  right: 9.2  },
+      ],
+      asymmetryData: [
+        { name: 'Knee Ext 11.9%',  value: 11.9 },
+        { name: 'Knee Curl 13.7%', value: 13.7 },
+        { name: 'Hip Ext 19.8%',   value: 19.8 },
+        { name: 'Hip Flex 6.7%',   value: 6.7  },
+        { name: 'Hip Abd 3.4%',    value: 3.4  },
+        { name: 'Hip Add 2.6%',    value: 2.6  },
+      ],
+      table: [
+        { factor: 'Knee Extension — Left',         result: '40.1',  norm: 'Baseline',  status: 'baseline', statusLabel: 'Baseline'         },
+        { factor: 'Knee Extension — Right',        result: '35.3',  norm: 'Baseline',  status: 'baseline', statusLabel: 'Baseline'         },
+        { factor: 'Knee Extension Asymmetry',      result: '11.9%', norm: '<10%',      status: 'fail',     statusLabel: 'Fail'             },
+        { factor: 'Knee Curl — Left (H:Q 35.4%)', result: '14.2',  norm: '≥75% Ext',  status: 'fail',     statusLabel: 'Critical Deficit' },
+        { factor: 'Knee Curl — Right (H:Q 34.8%)',result: '12.3',  norm: '≥75% Ext',  status: 'fail',     statusLabel: 'Critical Deficit' },
+        { factor: 'Knee Curl Asymmetry',           result: '13.7%', norm: '<10%',      status: 'fail',     statusLabel: 'Fail'             },
+        { factor: 'Hip Extension — Left',          result: '13.2',  norm: 'Baseline',  status: 'baseline', statusLabel: 'Baseline'         },
+        { factor: 'Hip Extension — Right',         result: '10.6',  norm: 'Baseline',  status: 'baseline', statusLabel: 'Baseline'         },
+        { factor: 'Hip Extension Asymmetry',       result: '19.8%', norm: '<10%',      status: 'fail',     statusLabel: 'Fail'             },
+        { factor: 'Hip Flexion Asymmetry',         result: '6.7%',  norm: '<10%',      status: 'pass',     statusLabel: 'Pass'             },
+        { factor: 'Hip Abduction Asymmetry',       result: '3.4%',  norm: '<10%',      status: 'pass',     statusLabel: 'Pass'             },
+        { factor: 'Hip Adduction Asymmetry',       result: '2.6%',  norm: '<10%',      status: 'pass',     statusLabel: 'Pass'             },
+      ],
+    },
+
+    upperBody: {
+      shoulderData: [
+        { name: 'Int. Rotation', right: 15.3, left: 14.8 },
+        { name: 'Ext. Rotation', right: 10.4, left: 11.7 },
+      ],
+      asymmetryData: [
+        { name: 'Shoulder IR 3.3%',   value: 3.3  },
+        { name: 'Shoulder ER 11.2%',  value: 11.2 },
+        { name: 'Act Str Leg 20.3%',  value: 20.3 },
+        { name: 'Trunk Rot 19.5%',    value: 19.5 },
+      ],
+      trunkData: [
+        { name: 'Trunk Rotation', right: 13.8, left: 11.1 },
+        { name: 'Act. Str. Leg',  right: 6.4,  left: 7.8  },
+      ],
+      gripData: [
+        { name: 'Right Grip', value: 38   },
+        { name: 'Left Grip',  value: 40.9 },
+        { name: 'Threshold',  value: 30.5 },
+      ],
+      table: [
+        { factor: 'Shoulder Int. Rotation — Right',  result: '15.3 kg', norm: 'Baseline', status: 'baseline', statusLabel: 'Baseline' },
+        { factor: 'Shoulder Int. Rotation — Left',   result: '14.8 kg', norm: 'Baseline', status: 'baseline', statusLabel: 'Baseline' },
+        { factor: 'Shoulder Int. Rotation Asymmetry',result: '3.3%',    norm: '<10%',     status: 'pass',     statusLabel: 'Pass'     },
+        { factor: 'Shoulder Ext. Rotation — Right',  result: '10.4 kg', norm: 'Baseline', status: 'baseline', statusLabel: 'Baseline' },
+        { factor: 'Shoulder Ext. Rotation — Left',   result: '11.7 kg', norm: 'Baseline', status: 'baseline', statusLabel: 'Baseline' },
+        { factor: 'Shoulder Ext. Rotation Asymmetry',result: '11.2%',   norm: '<10%',     status: 'fail',     statusLabel: 'Fail'     },
+        { factor: 'Active Straight Leg Asymmetry',   result: '20.3%',   norm: '<10%',     status: 'fail',     statusLabel: 'Fail'     },
+        { factor: 'Trunk Rotation — Right',          result: '13.8 kg', norm: 'Baseline', status: 'baseline', statusLabel: 'Baseline' },
+        { factor: 'Trunk Rotation — Left',           result: '11.1 kg', norm: 'Baseline', status: 'baseline', statusLabel: 'Baseline' },
+        { factor: 'Trunk Rotation Asymmetry',        result: '19.5%',   norm: '<10%',     status: 'fail',     statusLabel: 'Fail'     },
+        { factor: 'Hand Grip — Right',               result: '38 kg',   norm: '>30.5 kg', status: 'pass',     statusLabel: 'Pass'     },
+        { factor: 'Hand Grip — Left',                result: '40.9 kg', norm: '>30.5 kg', status: 'pass',     statusLabel: 'Pass'     },
+      ],
+    },
+
+    jump: {
+      cmjPhases: [
+        { name: 'Peak Braking',    value: 1120 },
+        { name: 'Peak Propulsive', value: 1650 },
+        { name: 'Peak Landing',    value: 2600 },
+      ],
+      cmjLR: [
+        { name: 'Braking',    left: 750, right: 620  },
+        { name: 'Propulsive', left: 780, right: 640  },
+        { name: 'Landing',    left: 635, right: 2019 },
+      ],
+      alert: { level: 'critical', text: 'CMJ LANDING ASYMMETRY 52.15% — Left 635 N vs Right 2019 N. This is a critical ACL-risk marker. Landing mechanics correction urgently required.' },
+      cmjTable: [
+        { factor: 'Jump Height (inches)',    result: '11.02', norm: '16 in',   status: 'below',      statusLabel: '68.9% of Target' },
+        { factor: 'Flight Time (s)',         result: '0.46',  norm: 'Baseline',status: 'baseline',   statusLabel: 'Baseline'        },
+        { factor: 'Take-off Velocity (m/s)', result: '2.33',  norm: 'Baseline',status: 'baseline',   statusLabel: 'Baseline'        },
+        { factor: 'Braking Asymmetry (%)',   result: '10.0',  norm: 'Baseline',status: 'borderline', statusLabel: '~ Borderline'    },
+        { factor: 'Propulsive Asymmetry (%)',result: '–0.4',  norm: 'Baseline',status: 'pass',       statusLabel: 'Good'            },
+        { factor: 'Landing Asymmetry (%)',   result: '52.15', norm: '—',       status: 'fail',       statusLabel: 'Critical Risk'   },
+      ],
+      dropJumpTable: [
+        { factor: 'RSI',             result: '0.68',    norm: '1.5–2.5',    status: 'fail',       statusLabel: 'Well Below'   },
+        { factor: 'Modified RSI',    result: '1.19',    norm: '0.35–0.50',  status: 'above',      statusLabel: '~ Above Range'},
+        { factor: 'Contact Time (s)',result: '0.40',    norm: 'Lower better',status: 'baseline',  statusLabel: 'Baseline'     },
+        { factor: 'Stiffness',       result: 'Negative',norm: 'Positive',   status: 'fail',       statusLabel: 'Fail'         },
+      ],
+      dropJumpChart: [
+        { name: 'RSI Actual',    value: 0.68 },
+        { name: 'RSI Min Target',value: 1.50 },
+        { name: 'RSI Max Target',value: 2.50 },
+      ],
+    },
+
+    medBall: {
+      throwData: [
+        { name: 'Rot.Throw Avg',  left: 4.1, right: 4.5 },
+        { name: 'Rot.Throw Peak', left: 4.6, right: 5.0 },
+        { name: 'Chest Pass Avg', left: 3.9, right: 4.0 },
+        { name: 'Chest Pass Peak',left: 4.0, right: 4.2 },
+      ],
+      slamData: [
+        { name: 'Avg Peak', value: 6.60 },
+        { name: 'Peak',     value: 7.09 },
+      ],
+    },
+
+    aerobic: {
+      vo2: 31.84,
+      dsiData: [
+        { name: 'DSI',          value: 1.15 },
+        { name: 'Vel Def Max',  value: 0.60 },
+        { name: 'Neutral',      value: 0.80 },
+        { name: 'Str Def Min',  value: 0.80 },
+      ],
+      alert: { level: 'pass', text: 'VO2 MAX & GRIP STRENGTH — Both meet normative standards. Continue current aerobic conditioning. DSI of 1.15 indicates strength deficit; prioritise max strength development before speed-strength work.' },
+      table: [
+        { factor: 'VO2 Max — Cooper Test (ml/kg/min)',result: '31.84',norm: '>28',      status: 'pass', statusLabel: 'Pass'             },
+        { factor: 'Right Hand Grip (kg)',              result: '38',   norm: '>30.5 kg', status: 'pass', statusLabel: 'Pass'             },
+        { factor: 'Left Hand Grip (kg)',               result: '40.9', norm: '>30.5 kg', status: 'pass', statusLabel: 'Pass'             },
+        { factor: 'Dynamic Strength Index (DSI)',      result: '1.15', norm: '0.6–0.8',  status: 'warn', statusLabel: 'Strength Deficit' },
+      ],
+    },
+  },
+
+  fullResultsSummary: [
+    { assessment: 'Modified BESS',  factor: 'Left ML Sway (cm)',        result: '88',    norm: '<90',       status: 'pass',       statusLabel: 'Pass'             },
+    { assessment: 'Modified BESS',  factor: 'Right ML Sway (cm)',       result: '111',   norm: '<90',       status: 'fail',       statusLabel: 'Fail'             },
+    { assessment: 'Modified BESS',  factor: 'Left AP Sway (cm)',        result: '89',    norm: '<90',       status: 'borderline', statusLabel: '~ Borderline'     },
+    { assessment: 'Modified BESS',  factor: 'Right AP Sway (cm)',       result: '113',   norm: '<90',       status: 'fail',       statusLabel: 'Fail'             },
+    { assessment: 'Modified BESS',  factor: 'Left Total Sway (cm)',     result: '152',   norm: '<150',      status: 'borderline', statusLabel: '~ Borderline'     },
+    { assessment: 'Modified BESS',  factor: 'Right Total Sway (cm)',    result: '191',   norm: '<150',      status: 'fail',       statusLabel: 'Fail'             },
+    { assessment: 'IMTP',           factor: 'Peak Force (N)',           result: '1516',  norm: '1998 N',    status: 'below',      statusLabel: 'Below Target'     },
+    { assessment: 'IMTP',           factor: 'L–R Asymmetry (%)',        result: '14.91', norm: '<10%',      status: 'fail',       statusLabel: 'Fail'             },
+    { assessment: 'Knee Extension', factor: 'Asymmetry (%)',            result: '11.9',  norm: '<10%',      status: 'fail',       statusLabel: 'Fail'             },
+    { assessment: 'Knee Curl',      factor: 'Right H:Q Ratio',          result: '34.8%', norm: '≥75%',      status: 'fail',       statusLabel: 'Critical'         },
+    { assessment: 'Knee Curl',      factor: 'Left H:Q Ratio',           result: '35.4%', norm: '≥75%',      status: 'fail',       statusLabel: 'Critical'         },
+    { assessment: 'Knee Curl',      factor: 'Asymmetry (%)',            result: '13.7',  norm: '<10%',      status: 'fail',       statusLabel: 'Fail'             },
+    { assessment: 'Hip Extension',  factor: 'Asymmetry (%)',            result: '19.8',  norm: '<10%',      status: 'fail',       statusLabel: 'Fail'             },
+    { assessment: 'Hip Flexion',    factor: 'Asymmetry (%)',            result: '6.7',   norm: '<10%',      status: 'pass',       statusLabel: 'Pass'             },
+    { assessment: 'Hip Abduction',  factor: 'Asymmetry (%)',            result: '3.4',   norm: '<10%',      status: 'pass',       statusLabel: 'Pass'             },
+    { assessment: 'Hip Adduction',  factor: 'Asymmetry (%)',            result: '2.6',   norm: '<10%',      status: 'pass',       statusLabel: 'Pass'             },
+    { assessment: 'Shoulder IR',    factor: 'Asymmetry (%)',            result: '3.3',   norm: '<10%',      status: 'pass',       statusLabel: 'Pass'             },
+    { assessment: 'Shoulder ER',    factor: 'Asymmetry (%)',            result: '11.2',  norm: '<10%',      status: 'fail',       statusLabel: 'Fail'             },
+    { assessment: 'Active Str. Leg',factor: 'Asymmetry (%)',            result: '20.3',  norm: '<10%',      status: 'fail',       statusLabel: 'Fail'             },
+    { assessment: 'Trunk Rotation', factor: 'Asymmetry (%)',            result: '19.5',  norm: '<10%',      status: 'fail',       statusLabel: 'Fail'             },
+    { assessment: 'CMJ',            factor: 'Jump Height (in)',         result: '11.02', norm: '16 in',     status: 'below',      statusLabel: 'Below Target'     },
+    { assessment: 'CMJ',            factor: 'Landing Asymmetry (%)',    result: '52.15', norm: '—',         status: 'fail',       statusLabel: 'Critical Risk'    },
+    { assessment: 'Drop Jump',      factor: 'RSI',                      result: '0.68',  norm: '1.5–2.5',   status: 'fail',       statusLabel: 'Well Below'       },
+    { assessment: 'Drop Jump',      factor: 'Modified RSI',             result: '1.19',  norm: '0.35–0.50', status: 'above',      statusLabel: '~ Above Range'    },
+    { assessment: 'Hand Grip',      factor: 'Right (kg)',               result: '38',    norm: '>30.5 kg',  status: 'pass',       statusLabel: 'Pass'             },
+    { assessment: 'Hand Grip',      factor: 'Left (kg)',                result: '40.9',  norm: '>30.5 kg',  status: 'pass',       statusLabel: 'Pass'             },
+    { assessment: 'Cooper Test',    factor: 'VO2 Max (ml/kg/min)',      result: '31.84', norm: '>28',       status: 'pass',       statusLabel: 'Pass'             },
+    { assessment: 'Dyn. Str. Index',factor: 'DSI',                      result: '1.15',  norm: '0.6–0.8',   status: 'warn',       statusLabel: 'Strength Deficit' },
   ],
 
-  reviewCadence: {
-    trainerName: 'Coach Ravi',
-    description: 'Coach Ravi owns plan updates. Your role is simple: follow the plan and log session quality.',
-    reviewDate:  '24 Aug 2026',
-    goal:        'keep improving while managing fatigue and form quality.',
-  },
+  priorities: [
+    { id: 1, priority: 'Priority 1', level: 'critical', title: 'Hamstring Strengthening — Critical',         description: 'H:Q ratio ~35% (target ≥75%). Urgent hamstring-focused loading required. High hamstring strain injury risk.' },
+    { id: 2, priority: 'Priority 2', level: 'critical', title: 'Right Leg Balance & Postural Control',       description: 'Right leg sway exceeds norms in all BESS directions. Single-leg stability, proprioception and balance training required immediately.' },
+    { id: 3, priority: 'Priority 3', level: 'critical', title: 'Landing Mechanics — CMJ Asymmetry 52%',      description: 'Severe landing asymmetry is a major ACL-risk marker. Bilateral landing technique correction and single-leg absorbing drills urgently needed.' },
+    { id: 4, priority: 'Priority 4', level: 'warn',     title: 'Overall Force Production (IMTP & DSI)',      description: 'IMTP at 75.9% of target; DSI of 1.15 indicates strength deficit. Focus on max strength development before speed-strength emphasis.' },
+    { id: 5, priority: 'Priority 5', level: 'warn',     title: 'Trunk & Hip Extension Symmetry',             description: 'Trunk rotation (19.5%) and hip extension (19.8%) asymmetries above threshold. Core rotational symmetry work recommended for bowling performance.' },
+    { id: 'm', priority: 'Maintain', level: 'pass',     title: 'Aerobic Fitness & Grip Strength',            description: 'VO2 max (31.84) and grip strength both meet normative standards. Continue current conditioning without major changes.' },
+  ],
 }
+
 
 export const mockLeaderboard = {
   description: 'Compare your strength index trend with other members in similar programs.',

@@ -1,291 +1,626 @@
 import { useState } from 'react'
-import { Trophy, Users, Zap, CheckCircle2 } from 'lucide-react'
 import clsx from 'clsx'
+import { ChevronDown } from 'lucide-react'
 import { mockAssessmentReport as data } from '../data/mockData'
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, ReferenceLine, LineChart, Line,
+  PieChart, Pie, Cell,
+} from 'recharts'
 
-// ── Tab config ────────────────────────────────────────────────
-const TABS = [
-  { id: 'summary', label: 'Summary'         },
-  { id: 'testing', label: 'Testing Markers' },
-  { id: 'action',  label: 'Action Plan'     },
-]
+// ── Shared style constants ────────────────────────────────────
+const AXIS  = { fill: '#555', fontSize: 10 }
+const GRID  = '#1e1e1e'
+const LEFT  = '#3b82f6'
+const RIGHT = '#06b6d4'
 
-const TIER_BADGE = {
-  bronze: 'bg-tp-bronze/15 text-tp-bronze border-tp-bronze/30',
-  silver: 'bg-tp-silver/15 text-tp-silver border-tp-silver/30',
-  gold:   'bg-tp-gold/15   text-tp-gold   border-tp-gold/30',
-  elite:  'bg-tp-elite/15  text-tp-elite  border-tp-elite/30',
+// ── Status config ─────────────────────────────────────────────
+const STATUS_CFG = {
+  pass:             { color: 'text-tp-green',  dot: '#22c55e' },
+  baseline:         { color: 'text-tp-green',  dot: '#22c55e' },
+  good:             { color: 'text-tp-green',  dot: '#22c55e' },
+  fail:             { color: 'text-tp-danger', dot: '#e63946' },
+  below:            { color: 'text-tp-danger', dot: '#e63946' },
+  critical:         { color: 'text-tp-danger', dot: '#e63946' },
+  borderline:       { color: 'text-tp-amber',  dot: '#f59e0b' },
+  warn:             { color: 'text-tp-amber',  dot: '#f59e0b' },
+  above:            { color: 'text-tp-amber',  dot: '#f59e0b' },
 }
 
-// ── Shared header (shown on every tab) ───────────────────────
-function Header() {
+function StatusBadge({ status, label }) {
+  const cfg = STATUS_CFG[status] ?? STATUS_CFG.pass
   return (
-    <div className="grid sm:grid-cols-2 gap-4">
-      {/* Performance snapshot */}
-      <div className="card p-5 border-l-4 border-tp-red">
-        <div className="flex items-center gap-2 mb-3">
-          <Trophy size={15} className="text-tp-red" />
-          <p className="text-tp-white text-sm font-semibold">Performance snapshot</p>
-        </div>
-        <div className="flex items-center gap-3 mb-2">
-          <span className="font-mono font-bold text-4xl text-tp-white">{data.score}</span>
-          <span className={clsx('text-xs font-bold px-2 py-0.5 rounded border', TIER_BADGE[data.tier])}>
-            {data.tier.charAt(0).toUpperCase() + data.tier.slice(1)} Tier
-          </span>
-        </div>
-        <p className="text-tp-muted text-xs leading-relaxed mb-1">
-          Coach-uploaded testing is translated into training-ready insights for your current block.
-        </p>
-        <p className="text-tp-soft text-xs">{data.pointsToNext} points to {data.nextTierLabel} benchmark.</p>
-      </div>
+    <span className={clsx('flex items-center gap-1 text-[10px] font-bold whitespace-nowrap', cfg.color)}>
+      <span className="w-2 h-2 rounded-sm flex-shrink-0" style={{ background: cfg.dot }} />
+      {label}
+    </span>
+  )
+}
 
-      {/* Coach delivery model */}
-      <div className="card p-5 border-l-4 border-tp-red/40">
-        <div className="flex items-center gap-2 mb-3">
-          <Users size={15} className="text-tp-red/70" />
-          <p className="text-tp-white text-sm font-semibold">Coach delivery model</p>
-        </div>
-        <p className="text-tp-muted text-xs leading-relaxed">
-          Actions are prescribed by your coach. This page interprets test outputs into clear priorities while keeping the evidence context visible.
+function ChartTip({ active, payload, label }) {
+  if (!active || !payload?.length) return null
+  return (
+    <div className="bg-tp-elevated border border-tp-border rounded-lg px-3 py-2 text-xs shadow-xl">
+      <p className="text-tp-soft mb-1">{label}</p>
+      {payload.map(p => (
+        <p key={p.dataKey} className="font-mono font-bold" style={{ color: p.color ?? p.fill }}>
+          {p.name ?? p.dataKey}: {p.value}
         </p>
-      </div>
+      ))}
     </div>
   )
 }
 
-// ── TAB 1: Summary ────────────────────────────────────────────
-function SummaryTab() {
-  const { evidenceNote, trafficLight } = data
-
+function DataTable({ cols, rows }) {
   return (
-    <div className="space-y-4 animate-fade-in">
-      {/* Evidence note */}
-      <div className="card p-5">
-        <div className="flex items-center gap-2 mb-3">
-          <Zap size={14} className="text-tp-amber" />
-          <p className="text-tp-white text-sm font-semibold">Evidence note</p>
-        </div>
-        <p className="text-tp-soft text-sm leading-relaxed">{evidenceNote}</p>
-      </div>
-
-      {/* Traffic Light Signal Map */}
-      <div className="card p-5">
-        <h3 className="text-tp-white font-semibold text-sm mb-4">Traffic Light Signal Map</h3>
-        <div className="grid grid-cols-3 gap-3">
-          {/* RED */}
-          <div className="space-y-2">
-            <p className="text-tp-danger text-xs font-bold uppercase tracking-wider">RED: FOCUS NOW</p>
-            {trafficLight.red.map(item => (
-              <div key={item.name} className="bg-tp-raised border border-tp-danger/20 rounded-xl p-3">
-                <p className="text-tp-white text-xs font-bold mb-1">{item.name} ({item.score})</p>
-                <p className="text-tp-soft text-[11px] leading-relaxed mb-2">Interpretation: {item.interpretation}</p>
-                <p className="text-tp-muted text-[10px]">Monitor: {item.monitor}</p>
-              </div>
+    <div className="overflow-x-auto">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-tp-border">
+            {cols.map(c => (
+              <th key={c} className="text-tp-muted font-medium text-left px-3 py-2 whitespace-nowrap">{c}</th>
             ))}
-          </div>
-
-          {/* ORANGE */}
-          <div className="space-y-2">
-            <p className="text-tp-amber text-xs font-bold uppercase tracking-wider">ORANGE: IMPORTANT</p>
-            {trafficLight.orange.map(item => (
-              <div key={item.name} className="bg-tp-raised border border-tp-amber/20 rounded-xl p-3">
-                <p className="text-tp-white text-xs font-bold mb-1">{item.name} ({item.score})</p>
-                <p className="text-tp-soft text-[11px] leading-relaxed mb-2">Interpretation: {item.interpretation}</p>
-                <p className="text-tp-muted text-[10px]">Monitor: {item.monitor}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* GREEN */}
-          <div className="space-y-2">
-            <p className="text-tp-green text-xs font-bold uppercase tracking-wider">GREEN: MAINTAIN</p>
-            {trafficLight.green.map(item => (
-              <div key={item.name} className="bg-tp-raised border border-tp-green/20 rounded-xl p-3">
-                <p className="text-tp-white text-xs font-bold mb-1">{item.name} ({item.score})</p>
-                <p className="text-tp-soft text-[11px] leading-relaxed mb-2">Interpretation: {item.interpretation}</p>
-                <p className="text-tp-muted text-[10px]">Monitor: {item.monitor}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i} className="border-b border-tp-border/40 hover:bg-tp-raised/40 transition-colors">
+              <td className="px-3 py-2 text-tp-soft leading-tight">{row.factor}</td>
+              <td className="px-3 py-2 text-tp-white font-mono font-medium">{row.result}</td>
+              {row.norm !== undefined && <td className="px-3 py-2 text-tp-muted">{row.norm}</td>}
+              <td className="px-3 py-2"><StatusBadge status={row.status} label={row.statusLabel} /></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }
 
-// ── TAB 2: Testing Markers ────────────────────────────────────
-function TestingMarkersTab() {
-  const { powerProfiling, forceProfiling, speedProfiling } = data
-
+function AlertBanner({ alert }) {
+  if (!alert) return null
+  const isGreen = alert.level === 'pass'
+  const isRed   = alert.level === 'critical' || alert.level === 'fail'
   return (
-    <div className="space-y-5 animate-fade-in">
-      {/* Header row */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-tp-white font-semibold text-sm">Profiling results</h3>
-        <span className="text-tp-muted text-xs">Latest completed test: {data.latestTestDate}</span>
-      </div>
+    <div className={clsx(
+      'flex items-start gap-2 p-3 rounded-lg border text-xs leading-relaxed',
+      isGreen ? 'bg-tp-green/10 border-tp-green/30 text-tp-green'
+               : isRed ? 'bg-tp-danger/10 border-tp-danger/40 text-tp-danger'
+               : 'bg-tp-amber/10 border-tp-amber/40 text-tp-amber',
+    )}>
+      <span className="w-2 h-2 rounded-sm flex-shrink-0 mt-0.5"
+        style={{ background: isGreen ? '#22c55e' : isRed ? '#e63946' : '#f59e0b' }}
+      />
+      {alert.text}
+    </div>
+  )
+}
 
-      {/* Power Profiling */}
-      <div className="card p-5">
-        <h4 className="text-tp-white font-semibold text-sm mb-4">Power Profiling (Check List)</h4>
-
-        {/* Checklist */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {powerProfiling.checklist.map(item => (
-            <div key={item} className="flex items-center gap-1.5 bg-tp-raised border border-tp-green/30 rounded-lg px-3 py-1.5">
-              <div className="w-2 h-2 rounded-full bg-tp-green flex-shrink-0" />
-              <span className="text-tp-white text-xs font-medium">{item}</span>
-            </div>
-          ))}
+function Section({ number, title, defaultOpen = false, children }) {
+  const [open, setOpen] = useState(defaultOpen)
+  return (
+    <div className="card overflow-hidden">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center justify-between px-5 py-4 hover:bg-tp-raised/50 transition-colors text-left"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-tp-red text-[9px] font-bold uppercase tracking-widest flex-shrink-0">Section {number}</span>
+          <span className="text-tp-white font-bold text-sm">{title}</span>
         </div>
-
-        {/* Values grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {powerProfiling.values.map(({ label, value }) => (
-            <div key={label} className="bg-tp-raised border border-tp-border rounded-xl p-3">
-              <p className="text-tp-muted text-[10px] mb-1">{label}</p>
-              <p className="text-tp-white font-mono font-bold text-base">{value}</p>
-            </div>
-          ))}
+        <ChevronDown size={16} className={clsx('text-tp-muted transition-transform duration-300 flex-shrink-0', open && 'rotate-180')} />
+      </button>
+      {open && (
+        <div className="px-5 pb-5 space-y-4 border-t border-tp-border animate-fade-in">
+          {children}
         </div>
-      </div>
+      )}
+    </div>
+  )
+}
 
-      {/* Force Profiling */}
-      <div className="card overflow-hidden">
-        <div className="px-5 py-4 border-b border-tp-border">
-          <h4 className="text-tp-white font-semibold text-sm">Force Profiling</h4>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-tp-border">
-                {['Test no', 'Assessment', 'R-peak(kg)', 'R-avg(kg)', 'L-peak(kg)', 'L-avg(kg)', 'ND'].map(h => (
-                  <th key={h} className="text-tp-muted font-medium text-left px-4 py-2.5 whitespace-nowrap">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {forceProfiling.rows.map(row => (
-                <tr key={row.no} className="border-b border-tp-border/50 hover:bg-tp-raised/50 transition-colors">
-                  <td className="px-4 py-2.5 text-tp-muted">{row.no}</td>
-                  <td className="px-4 py-2.5 text-tp-white font-medium whitespace-nowrap">{row.assessment}</td>
-                  <td className="px-4 py-2.5 text-tp-soft font-mono">{row.rPeak}</td>
-                  <td className="px-4 py-2.5 text-tp-soft font-mono">{row.rAvg}</td>
-                  <td className="px-4 py-2.5 text-tp-soft font-mono">{row.lPeak}</td>
-                  <td className="px-4 py-2.5 text-tp-soft font-mono">{row.lAvg}</td>
-                  <td className={clsx('px-4 py-2.5 font-mono font-medium', row.nd === '--' ? 'text-tp-muted' : parseFloat(row.nd) >= 4 ? 'text-tp-danger' : 'text-tp-soft')}>{row.nd}</td>
-                </tr>
+function BessSection() {
+  const { bess } = data.sections
+  return (
+    <Section number={1} title="Modified BESS — Balance Assessment" defaultOpen>
+      <div className="mt-4">
+        <p className="text-tp-muted text-[10px] mb-2">{bess.chart.title}</p>
+        <ResponsiveContainer width="100%" height={190}>
+          <BarChart data={bess.chart.data} margin={{ top: 4, right: 8, bottom: 0, left: -15 }}>
+            <CartesianGrid stroke={GRID} vertical={false} />
+            <XAxis dataKey="name" tick={AXIS} axisLine={false} tickLine={false} />
+            <YAxis tick={AXIS} axisLine={false} tickLine={false} />
+            <Tooltip content={<ChartTip />} />
+            {bess.chart.refLines.map(r => (
+              <ReferenceLine key={r.value} y={r.value} stroke={r.color} strokeDasharray="4 2"
+                label={{ value: r.label, fill: r.color, fontSize: 9, position: 'insideTopRight' }}
+              />
+            ))}
+            <Bar dataKey="value" name="Sway (cm)" radius={[3, 3, 0, 0]}>
+              {bess.chart.data.map((d, i) => (
+                <Cell key={i} fill={d.value > d.norm ? '#e63946' : '#22c55e'} />
               ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* VO2 Max */}
-        <div className="px-5 py-4 border-t border-tp-border">
-          <p className="label mb-1.5">VO₂ MAX (ML/KG/MIN)</p>
-          <div className="inline-block bg-tp-raised border border-tp-border rounded-lg px-4 py-2">
-            <span className="text-tp-white font-mono font-bold">{forceProfiling.vo2max}</span>
-          </div>
-        </div>
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
       </div>
-
-      {/* Speed Profiling */}
-      <div className="card p-5">
-        <h4 className="text-tp-white font-semibold text-sm mb-4">Speed Profiling</h4>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {speedProfiling.map(({ label, value }) => (
-            <div key={label} className="bg-tp-raised border border-tp-border rounded-xl p-3">
-              <p className="text-tp-muted text-[10px] mb-1">{label}</p>
-              <p className="text-tp-white font-mono font-bold text-base">{value}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+      <AlertBanner alert={bess.alert} />
+      <DataTable cols={['Assessed Factor', 'Result (cm)', 'Norm', 'Status']} rows={bess.table} />
+    </Section>
   )
 }
 
-// ── TAB 3: Action Plan ────────────────────────────────────────
-function ActionPlanTab() {
-  const { focusBlocks, reviewCadence } = data
-
-  const BLOCK_ROWS = [
-    { key: 'thisWeek',     label: 'THIS WEEK PLAN'        },
-    { key: 'nextFewWeeks', label: 'NEXT FEW WEEKS'        },
-    { key: 'howWeKnow',    label: 'HOW WE KNOW IT IS WORKING' },
-    { key: 'whenAdjust',   label: 'WHEN COACH WILL ADJUST' },
-    { key: 'whyMatters',   label: 'Why this matters',      muted: true },
-  ]
-
+function ImtpSection() {
+  const { imtp } = data.sections
+  const donutData = [{ value: imtp.donut.value }, { value: 100 - imtp.donut.value }]
   return (
-    <div className="space-y-4 animate-fade-in">
-      {/* Header */}
-      <div className="card p-5">
-        <h3 className="text-tp-white font-bold text-sm mb-1">Coach Prescribed Action Plan</h3>
-        <p className="text-tp-muted text-xs leading-relaxed">
-          This is your exact training plan from coach interpretation. It tells you what to do now, what changes over the next few weeks, and how progress is checked.
-        </p>
-      </div>
-
-      {/* Focus blocks */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        {focusBlocks.map(block => (
-          <div key={block.id} className="card p-5 space-y-3">
-            <div>
-              <p className="text-tp-red text-[10px] font-bold uppercase tracking-widest mb-0.5">{block.label}</p>
-              <p className="text-tp-white font-bold text-base">{block.title}</p>
+    <Section number={2} title="Isometric Mid-Thigh Pull (IMTP)">
+      <div className="grid sm:grid-cols-2 gap-4 mt-4">
+        <div>
+          <p className="text-tp-muted text-[10px] mb-2">{imtp.chart.title}</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <LineChart data={imtp.chart.data} margin={{ top: 4, right: 8, bottom: 0, left: -15 }}>
+              <CartesianGrid stroke={GRID} vertical={false} />
+              <XAxis dataKey="time" tick={AXIS} axisLine={false} tickLine={false} />
+              <YAxis tick={AXIS} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTip />} />
+              <Line type="monotone" dataKey="rfd" name="RFD (N/s)" stroke="#06b6d4" strokeWidth={2.5}
+                dot={{ r: 4, fill: '#06b6d4', strokeWidth: 0 }} activeDot={{ r: 6, fill: '#06b6d4' }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="flex flex-col items-center justify-center gap-2">
+          <p className="text-tp-muted text-[10px]">L–R Asymmetry</p>
+          <div className="relative w-32 h-32">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={donutData} cx="50%" cy="50%" innerRadius={42} outerRadius={60}
+                  dataKey="value" startAngle={90} endAngle={-270}>
+                  <Cell fill="#e63946" strokeWidth={0} />
+                  <Cell fill="#3b82f6" strokeWidth={0} />
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-tp-danger font-mono font-bold text-xl leading-none">{imtp.donut.value}%</span>
+              <span className="text-tp-muted text-[9px]">asymmetry</span>
             </div>
-            {BLOCK_ROWS.map(({ key, label, muted }) => (
-              <div key={key}>
-                <p className="text-tp-muted text-[10px] font-medium uppercase tracking-wider mb-0.5">{label}</p>
-                <p className={clsx('text-xs leading-relaxed', muted ? 'text-tp-muted' : 'text-tp-soft')}>{block[key]}</p>
-              </div>
-            ))}
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+        {imtp.summary.map(s => (
+          <div key={s.label} className="bg-tp-raised border border-tp-border rounded-lg p-2 text-center">
+            <p className="text-tp-muted text-[9px] mb-0.5 leading-tight">{s.label}</p>
+            <p className={clsx('font-mono font-bold text-sm', s.color === 'red' ? 'text-tp-danger' : s.color === 'cyan' ? 'text-cyan-400' : 'text-tp-white')}>{s.value}</p>
           </div>
         ))}
       </div>
+      <DataTable cols={['Measured Factor', 'Result', 'Normative', 'Status']} rows={imtp.table} />
+    </Section>
+  )
+}
 
-      {/* Review & Accountability */}
-      <div className="card p-5">
-        <p className="text-tp-amber text-[10px] font-bold uppercase tracking-widest mb-1">REVIEW AND ACCOUNTABILITY</p>
-        <p className="text-tp-white font-bold text-sm mb-3">Coach Review Cadence</p>
-        <p className="text-tp-soft text-xs leading-relaxed mb-1">{reviewCadence.description}</p>
-        <p className="text-tp-soft text-xs leading-relaxed mb-2">
-          Planned review date: <span className="text-tp-white">{reviewCadence.reviewDate}</span>. If results do not improve for 2 weeks, coach updates your plan.
-        </p>
-        <p className="text-tp-muted text-xs">Goal: {reviewCadence.goal}</p>
+function LowerBodySection() {
+  const { lowerBody } = data.sections
+  return (
+    <Section number={3} title="Lower Body Isometric Strength">
+      <div className="grid sm:grid-cols-2 gap-4 mt-4">
+        <div>
+          <p className="text-tp-muted text-[10px] mb-2">Knee Extension & Curl — Left vs Right</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={lowerBody.kneeData} margin={{ top: 4, right: 8, bottom: 0, left: -15 }}>
+              <CartesianGrid stroke={GRID} vertical={false} />
+              <XAxis dataKey="name" tick={AXIS} axisLine={false} tickLine={false} />
+              <YAxis tick={AXIS} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTip />} />
+              <Bar dataKey="left" name="Left" fill={LEFT} radius={[3,3,0,0]} />
+              <Bar dataKey="right" name="Right" fill={RIGHT} radius={[3,3,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div>
+          <p className="text-tp-muted text-[10px] mb-2">Hamstring:Quad Ratio vs Target</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={lowerBody.hqData} margin={{ top: 4, right: 8, bottom: 0, left: -15 }}>
+              <CartesianGrid stroke={GRID} vertical={false} />
+              <XAxis dataKey="name" tick={AXIS} axisLine={false} tickLine={false} />
+              <YAxis tick={AXIS} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTip />} />
+              <Bar dataKey="actual" name="Actual" fill="#e63946" radius={[3,3,0,0]} />
+              <Bar dataKey="target" name="Target" fill="#22c55e" radius={[3,3,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <AlertBanner alert={lowerBody.alert} />
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div>
+          <p className="text-tp-muted text-[10px] mb-2">Hip Strength — Left vs Right (kg)</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={lowerBody.hipData} margin={{ top: 4, right: 8, bottom: 0, left: -15 }}>
+              <CartesianGrid stroke={GRID} vertical={false} />
+              <XAxis dataKey="name" tick={{ ...AXIS, fontSize: 9 }} axisLine={false} tickLine={false} />
+              <YAxis tick={AXIS} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTip />} />
+              <Bar dataKey="left" name="Left" fill={LEFT} radius={[3,3,0,0]} />
+              <Bar dataKey="right" name="Right" fill={RIGHT} radius={[3,3,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div>
+          <p className="text-tp-muted text-[10px] mb-2">Lower Body Asymmetry (%) — Norm &lt;10%</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={lowerBody.asymmetryData} layout="vertical" margin={{ top: 4, right: 20, bottom: 0, left: 8 }}>
+              <CartesianGrid stroke={GRID} horizontal={false} />
+              <XAxis type="number" tick={AXIS} axisLine={false} tickLine={false} />
+              <YAxis dataKey="name" type="category" tick={{ ...AXIS, fontSize: 8 }} axisLine={false} tickLine={false} width={85} />
+              <Tooltip content={<ChartTip />} />
+              <ReferenceLine x={10} stroke="#f59e0b" strokeDasharray="4 2" />
+              <Bar dataKey="value" name="Asymmetry %" radius={[0,3,3,0]}>
+                {lowerBody.asymmetryData.map((d, i) => (
+                  <Cell key={i} fill={d.value > 10 ? '#e63946' : '#22c55e'} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <DataTable cols={['Measured Factor', 'Result (kg)', 'Normative', 'Status']} rows={lowerBody.table} />
+    </Section>
+  )
+}
+
+function UpperBodySection() {
+  const { upperBody } = data.sections
+  return (
+    <Section number={4} title="Upper Body & Trunk Strength">
+      <div className="grid sm:grid-cols-2 gap-4 mt-4">
+        <div>
+          <p className="text-tp-muted text-[10px] mb-2">Shoulder Rotation — Right vs Left (kg)</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={upperBody.shoulderData} margin={{ top: 4, right: 8, bottom: 0, left: -15 }}>
+              <CartesianGrid stroke={GRID} vertical={false} />
+              <XAxis dataKey="name" tick={AXIS} axisLine={false} tickLine={false} />
+              <YAxis tick={AXIS} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTip />} />
+              <Bar dataKey="right" name="Right" fill={RIGHT} radius={[3,3,0,0]} />
+              <Bar dataKey="left" name="Left" fill={LEFT} radius={[3,3,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div>
+          <p className="text-tp-muted text-[10px] mb-2">Upper Body Asymmetry (%) — Norm &lt;10%</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={upperBody.asymmetryData} layout="vertical" margin={{ top: 4, right: 20, bottom: 0, left: 8 }}>
+              <CartesianGrid stroke={GRID} horizontal={false} />
+              <XAxis type="number" tick={AXIS} axisLine={false} tickLine={false} />
+              <YAxis dataKey="name" type="category" tick={{ ...AXIS, fontSize: 8 }} axisLine={false} tickLine={false} width={95} />
+              <Tooltip content={<ChartTip />} />
+              <ReferenceLine x={10} stroke="#f59e0b" strokeDasharray="4 2" />
+              <Bar dataKey="value" name="Asymmetry %" radius={[0,3,3,0]}>
+                {upperBody.asymmetryData.map((d, i) => (
+                  <Cell key={i} fill={d.value > 10 ? '#e63946' : '#22c55e'} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div>
+          <p className="text-tp-muted text-[10px] mb-2">Trunk Rotation & Active Straight Leg (kg)</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={upperBody.trunkData} margin={{ top: 4, right: 8, bottom: 0, left: -15 }}>
+              <CartesianGrid stroke={GRID} vertical={false} />
+              <XAxis dataKey="name" tick={AXIS} axisLine={false} tickLine={false} />
+              <YAxis tick={AXIS} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTip />} />
+              <Bar dataKey="right" name="Right" fill={RIGHT} radius={[3,3,0,0]} />
+              <Bar dataKey="left" name="Left" fill={LEFT} radius={[3,3,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div>
+          <p className="text-tp-muted text-[10px] mb-2">Hand Grip Strength (kg)</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={upperBody.gripData} margin={{ top: 4, right: 8, bottom: 0, left: -15 }}>
+              <CartesianGrid stroke={GRID} vertical={false} />
+              <XAxis dataKey="name" tick={AXIS} axisLine={false} tickLine={false} />
+              <YAxis tick={AXIS} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTip />} />
+              <ReferenceLine y={30.5} stroke="#f59e0b" strokeDasharray="4 2"
+                label={{ value: '30.5 kg norm', fill: '#f59e0b', fontSize: 9, position: 'insideTopRight' }}
+              />
+              <Bar dataKey="value" name="kg" radius={[3,3,0,0]}>
+                {upperBody.gripData.map((d, i) => (
+                  <Cell key={i} fill={d.name === 'Threshold' ? '#444' : '#22c55e'} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <DataTable cols={['Measured Factor', 'Result', 'Normative', 'Status']} rows={upperBody.table} />
+    </Section>
+  )
+}
+
+function JumpSection() {
+  const { jump } = data.sections
+  const PHASE_COLORS = ['#f59e0b', '#3b82f6', '#e63946']
+  const RSI_COLORS   = ['#e63946', '#22c55e', '#22c55e']
+  return (
+    <Section number={5} title="Jump Performance — CMJ & Drop Jump">
+      <div className="grid sm:grid-cols-2 gap-4 mt-4">
+        <div>
+          <p className="text-tp-muted text-[10px] mb-2">CMJ — Force Phase Summary (N)</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={jump.cmjPhases} margin={{ top: 4, right: 8, bottom: 0, left: -15 }}>
+              <CartesianGrid stroke={GRID} vertical={false} />
+              <XAxis dataKey="name" tick={{ ...AXIS, fontSize: 9 }} axisLine={false} tickLine={false} />
+              <YAxis tick={AXIS} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTip />} />
+              <Bar dataKey="value" name="Force (N)" radius={[3,3,0,0]}>
+                {jump.cmjPhases.map((_, i) => <Cell key={i} fill={PHASE_COLORS[i]} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div>
+          <p className="text-tp-muted text-[10px] mb-2">CMJ — Left vs Right Force Breakdown (N)</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={jump.cmjLR} margin={{ top: 4, right: 8, bottom: 0, left: -15 }}>
+              <CartesianGrid stroke={GRID} vertical={false} />
+              <XAxis dataKey="name" tick={AXIS} axisLine={false} tickLine={false} />
+              <YAxis tick={AXIS} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTip />} />
+              <Bar dataKey="left" name="Left" fill={LEFT} radius={[3,3,0,0]} />
+              <Bar dataKey="right" name="Right" fill="#e63946" radius={[3,3,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <AlertBanner alert={jump.alert} />
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div>
+          <p className="label mb-2">CMJ Metrics</p>
+          <DataTable cols={['CMJ Metric', 'Result', 'Target', 'Status']} rows={jump.cmjTable} />
+        </div>
+        <div>
+          <p className="label mb-2">Drop Jump Metrics</p>
+          <DataTable cols={['Drop Jump Metric', 'Result', 'Target', 'Status']} rows={jump.dropJumpTable} />
+        </div>
+      </div>
+      <div>
+        <p className="text-tp-muted text-[10px] mb-2">Drop Jump RSI vs Target Range</p>
+        <ResponsiveContainer width="100%" height={160}>
+          <BarChart data={jump.dropJumpChart} margin={{ top: 4, right: 8, bottom: 0, left: -15 }}>
+            <CartesianGrid stroke={GRID} vertical={false} />
+            <XAxis dataKey="name" tick={{ ...AXIS, fontSize: 9 }} axisLine={false} tickLine={false} />
+            <YAxis tick={AXIS} axisLine={false} tickLine={false} />
+            <Tooltip content={<ChartTip />} />
+            <Bar dataKey="value" name="RSI" radius={[3,3,0,0]}>
+              {jump.dropJumpChart.map((_, i) => <Cell key={i} fill={RSI_COLORS[i]} />)}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </Section>
+  )
+}
+
+function MedBallSection() {
+  const { medBall } = data.sections
+  return (
+    <Section number={6} title="Med Ball Power">
+      <div className="grid sm:grid-cols-2 gap-4 mt-4">
+        <div>
+          <p className="text-tp-muted text-[10px] mb-2">Med Ball Throw Velocities — Left vs Right (m/s)</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={medBall.throwData} margin={{ top: 4, right: 8, bottom: 0, left: -15 }}>
+              <CartesianGrid stroke={GRID} vertical={false} />
+              <XAxis dataKey="name" tick={{ ...AXIS, fontSize: 8 }} axisLine={false} tickLine={false} />
+              <YAxis tick={AXIS} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTip />} />
+              <Bar dataKey="left" name="Left (m/s)" fill={LEFT} radius={[3,3,0,0]} />
+              <Bar dataKey="right" name="Right (m/s)" fill={RIGHT} radius={[3,3,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div>
+          <p className="text-tp-muted text-[10px] mb-2">Downward Slam (m/s)</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={medBall.slamData} margin={{ top: 4, right: 8, bottom: 0, left: -15 }}>
+              <CartesianGrid stroke={GRID} vertical={false} />
+              <XAxis dataKey="name" tick={AXIS} axisLine={false} tickLine={false} />
+              <YAxis tick={AXIS} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTip />} />
+              <Bar dataKey="value" name="m/s" fill="#22c55e" radius={[3,3,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+function AerobicSection() {
+  const { aerobic } = data.sections
+  const DSI_COLORS = ['#f59e0b', '#3b82f6', '#22c55e', '#22c55e']
+  const vo2Display  = [{ value: aerobic.vo2 }, { value: Math.max(0, 60 - aerobic.vo2) }]
+  return (
+    <Section number={7} title="Aerobic Capacity, Grip & Dynamic Strength Index">
+      <div className="grid sm:grid-cols-2 gap-4 mt-4">
+        <div className="flex flex-col items-center justify-center gap-1">
+          <p className="text-tp-muted text-[10px]">VO₂ Max (ml/kg/min)</p>
+          <div className="relative w-32 h-32">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={vo2Display} cx="50%" cy="50%" innerRadius={42} outerRadius={60}
+                  dataKey="value" startAngle={90} endAngle={-270}>
+                  <Cell fill="#22c55e" strokeWidth={0} />
+                  <Cell fill="#1a2e1a" strokeWidth={0} />
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-tp-danger font-mono font-bold text-xl leading-none">{aerobic.vo2}</span>
+              <span className="text-tp-muted text-[9px]">ml/kg/min</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p className="text-tp-muted text-[10px] mb-2">Dynamic Strength Index (DSI)</p>
+          <ResponsiveContainer width="100%" height={140}>
+            <BarChart data={aerobic.dsiData} margin={{ top: 4, right: 8, bottom: 0, left: -15 }}>
+              <CartesianGrid stroke={GRID} vertical={false} />
+              <XAxis dataKey="name" tick={{ ...AXIS, fontSize: 8 }} axisLine={false} tickLine={false} />
+              <YAxis tick={AXIS} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTip />} />
+              <Bar dataKey="value" name="DSI" radius={[3,3,0,0]}>
+                {aerobic.dsiData.map((_, i) => <Cell key={i} fill={DSI_COLORS[i] ?? '#666'} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <AlertBanner alert={aerobic.alert} />
+      <DataTable cols={['Metric', 'Result', 'Target', 'Status']} rows={aerobic.table} />
+    </Section>
+  )
+}
+
+function OverviewTab() {
+  return (
+    <div className="card overflow-hidden animate-fade-in">
+      <div className="px-5 py-4 border-b border-tp-border">
+        <h3 className="text-tp-white font-bold text-sm">Full Results Summary — Traffic Light Status</h3>
+        <p className="text-tp-muted text-xs mt-0.5">All measured factors across all assessments in this test</p>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b border-tp-border bg-tp-raised/50">
+              {['Assessment', 'Factor', 'Result', 'Norm', 'Status'].map(h => (
+                <th key={h} className="text-tp-muted font-medium text-left px-4 py-2.5 whitespace-nowrap">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data.fullResultsSummary.map((row, i) => (
+              <tr key={i} className="border-b border-tp-border/40 hover:bg-tp-raised/40 transition-colors">
+                <td className="px-4 py-2 text-tp-muted text-[10px]">{row.assessment}</td>
+                <td className="px-4 py-2 text-tp-soft">{row.factor}</td>
+                <td className="px-4 py-2 text-tp-white font-mono font-medium">{row.result}</td>
+                <td className="px-4 py-2 text-tp-muted">{row.norm}</td>
+                <td className="px-4 py-2"><StatusBadge status={row.status} label={row.statusLabel} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   )
 }
 
-// ── Main page ─────────────────────────────────────────────────
+function PrioritiesTab() {
+  return (
+    <div className="space-y-3 animate-fade-in">
+      {data.priorities.map(p => (
+        <div key={p.id} className={clsx(
+          'card p-4 border-l-4',
+          p.level === 'critical' ? 'border-tp-danger' : p.level === 'warn' ? 'border-tp-amber' : 'border-tp-green',
+        )}>
+          <div className="flex items-start gap-3">
+            <span className={clsx(
+              'flex-shrink-0 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest',
+              p.level === 'critical' ? 'bg-tp-danger/15 text-tp-danger' : p.level === 'warn' ? 'bg-tp-amber/15 text-tp-amber' : 'bg-tp-green/15 text-tp-green',
+            )}>
+              {p.priority}
+            </span>
+            <div>
+              <p className="text-tp-white font-bold text-sm mb-1">{p.title}</p>
+              <p className="text-tp-soft text-xs leading-relaxed">{p.description}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const KPI_STATUS_CFG = {
+  pass:  { color: 'text-tp-green',  dot: '#22c55e' },
+  below: { color: 'text-tp-danger', dot: '#e63946' },
+  fail:  { color: 'text-tp-danger', dot: '#e63946' },
+  warn:  { color: 'text-tp-amber',  dot: '#f59e0b' },
+  above: { color: 'text-tp-amber',  dot: '#f59e0b' },
+}
+
 export default function Assessment() {
-  const [tab, setTab] = useState('summary')
+  const [tab, setTab] = useState('overview')
+  const { member, kpis } = data
 
   return (
     <div className="space-y-4 animate-fade-in">
-      <Header />
+      <div className="card p-4 border-l-4 border-tp-red">
+        <p className="text-tp-red text-[9px] font-bold uppercase tracking-widest mb-1">Performance Assessment Report</p>
+        <h2 className="text-tp-white font-bold text-xl mb-1">{member.name}</h2>
+        <p className="text-tp-soft text-xs">{member.id} · {member.sport} · {member.position} · Test No. {member.testNo}</p>
+        <p className="text-tp-soft text-xs mt-0.5">Assessment Date: {member.assessmentDate} | Body Weight: {member.bodyWeight} kg | Baseline Assessment</p>
+        <p className="text-tp-muted text-xs italic mt-0.5">Report by Lead Performance Coach: {member.coach}</p>
+      </div>
 
-      {/* Tab switcher */}
-      <div className="grid grid-cols-3 gap-1 bg-tp-surface p-1 rounded-xl border border-tp-border">
-        {TABS.map(t => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className={clsx(
-              'py-2.5 rounded-lg text-sm font-medium transition-all',
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {kpis.map(kpi => {
+          const cfg = KPI_STATUS_CFG[kpi.status] ?? KPI_STATUS_CFG.pass
+          return (
+            <div key={kpi.label} className="card p-3">
+              <p className="text-tp-muted text-[9px] mb-1 leading-tight">{kpi.label}</p>
+              <p className="font-mono font-bold text-tp-white text-xl leading-none mb-0.5">
+                {kpi.value}
+                {kpi.unit && <span className="text-tp-muted text-[10px] ml-1 font-normal">{kpi.unit}</span>}
+              </p>
+              <p className="text-tp-muted text-[9px] mb-1">Target: {kpi.target}</p>
+              <span className={clsx('flex items-center gap-1 text-[10px] font-bold', cfg.color)}>
+                <span className="w-2 h-2 rounded-sm" style={{ background: cfg.dot }} />
+                {kpi.statusLabel}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="flex gap-1 bg-tp-surface p-1 rounded-xl border border-tp-border">
+        {[
+          { id: 'overview',   label: 'Overview'   },
+          { id: 'sections',   label: 'Sections'   },
+          { id: 'priorities', label: 'Priorities' },
+        ].map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)}
+            className={clsx('flex-1 py-2 rounded-lg text-sm font-medium transition-all',
               tab === t.id ? 'bg-tp-red text-white' : 'text-tp-muted hover:text-tp-white',
-            )}
-          >
+            )}>
             {t.label}
           </button>
         ))}
       </div>
 
-      {tab === 'summary' && <SummaryTab />}
-      {tab === 'testing' && <TestingMarkersTab />}
-      {tab === 'action'  && <ActionPlanTab />}
+      {tab === 'overview' && <OverviewTab />}
+      {tab === 'sections' && (
+        <div className="space-y-3 animate-fade-in">
+          <BessSection />
+          <ImtpSection />
+          <LowerBodySection />
+          <UpperBodySection />
+          <JumpSection />
+          <MedBallSection />
+          <AerobicSection />
+        </div>
+      )}
+      {tab === 'priorities' && <PrioritiesTab />}
     </div>
   )
 }

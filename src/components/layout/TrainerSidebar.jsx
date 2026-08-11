@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Users, ClipboardList, Dumbbell, MessageCircle, BarChart2, LogOut, Zap, GitBranch } from 'lucide-react'
+import { LayoutDashboard, Users, ClipboardList, Dumbbell, MessageCircle, BarChart2, LogOut, Zap, GitBranch, Upload } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useRoster } from '../../hooks/useTrainerApi'
 import clsx from 'clsx'
@@ -9,6 +9,7 @@ const NAV = [
   { to: '/trainer/roster',       label: 'Roster',       icon: Users           },
   { to: '/trainer/assessments',  label: 'Assessments',  icon: ClipboardList   },
   { to: '/trainer/programs',     label: 'Programs',     icon: Dumbbell        },
+  { to: '/trainer/upload',       label: 'Upload Data',  icon: Upload          },
   { to: '/trainer/messages',     label: 'Messages',     icon: MessageCircle   },
   { to: '/trainer/analytics',    label: 'Analytics',    icon: BarChart2       },
   { to: '/userflow',             label: 'User Journey', icon: GitBranch, external: true },

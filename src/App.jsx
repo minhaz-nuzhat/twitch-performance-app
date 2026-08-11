@@ -27,6 +27,7 @@ import ProgramBuilderPage   from './pages/trainer/ProgramBuilderPage'
 import NutritionBuilderPage from './pages/trainer/NutritionBuilderPage'
 import TrainerMessages      from './pages/trainer/TrainerMessages'
 import TrainerAnalytics     from './pages/trainer/TrainerAnalytics'
+import CoachUpload          from './pages/trainer/CoachUpload'
 import UserFlow             from './pages/UserFlow'
 
 // ── Auth guards ───────────────────────────────────────────────
@@ -97,6 +98,7 @@ function AppRoutes() {
                 <Route path="/trainer/nutrition/new"        element={<NutritionBuilderPage />} />
                 <Route path="/trainer/messages"             element={<TrainerMessages      />} />
                 <Route path="/trainer/analytics"            element={<TrainerAnalytics     />} />
+                <Route path="/trainer/upload"               element={<CoachUpload          />} />
               </Route>
             </Route>
           </Route>
