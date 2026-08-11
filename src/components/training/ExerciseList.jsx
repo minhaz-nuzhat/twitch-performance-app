@@ -5,7 +5,7 @@ import { ExerciseRow } from './ExerciseRow'
  */
 export function ExerciseList({ exercises, onToggle, onLogChange }) {
   return (
-    <div className="space-y-2">
+    <div className="grid grid-cols-2 gap-2">
       {exercises.map((ex) => (
         <ExerciseRow
           key={ex.id}
