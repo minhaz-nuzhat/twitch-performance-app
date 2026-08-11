@@ -5,6 +5,8 @@ import DimensionCard from '../components/ui/DimensionCard'
 import RadarChartWidget from '../components/ui/RadarChartWidget'
 import InsightCard from '../components/ui/InsightCard'
 import { Brain, Activity, Zap } from 'lucide-react'
+import { InfoTooltip } from '../components/ui/InfoTooltip'
+import { DERIVED_TOOLTIPS } from '../data/scienceTooltips'
 import clsx from 'clsx'
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip,
@@ -79,7 +81,10 @@ export default function Performance() {
         <div className="grid grid-cols-2 gap-4">
           {/* Athletic Age */}
           <div className="card p-5">
-            <span className="label block mb-2">Athletic Age</span>
+            <div className="flex items-center gap-1.5 mb-2">
+              <span className="label">Athletic Age</span>
+              <InfoTooltip text={DERIVED_TOOLTIPS.athleticAge} />
+            </div>
             <div className="flex items-baseline gap-2">
               <span className="font-mono font-bold text-4xl text-tp-white">{perf.derived.athleticAge}</span>
               <span className="text-tp-soft text-sm">yrs</span>
@@ -91,7 +96,10 @@ export default function Performance() {
 
           {/* Fatigue Score */}
           <div className={clsx('card p-5 border', fatigueConfig.border)}>
-            <span className="label block mb-2">Fatigue Score</span>
+            <div className="flex items-center gap-1.5 mb-2">
+              <span className="label">Fatigue Score</span>
+              <InfoTooltip text={DERIVED_TOOLTIPS.fatigueScore} />
+            </div>
             <div className="flex items-baseline gap-2">
               <span className={clsx('font-bold text-2xl', fatigueConfig.color)}>
                 {fatigueConfig.label}

@@ -2,6 +2,8 @@ import { useState } from 'react'
 import clsx from 'clsx'
 import { ChevronDown } from 'lucide-react'
 import { mockAssessmentReport as data } from '../data/mockData'
+import { InfoTooltip } from '../components/ui/InfoTooltip'
+import { KPI_TOOLTIPS } from '../data/scienceTooltips'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine, LineChart, Line,
@@ -578,7 +580,10 @@ export default function Assessment() {
           const cfg = KPI_STATUS_CFG[kpi.status] ?? KPI_STATUS_CFG.pass
           return (
             <div key={kpi.label} className="card p-3">
-              <p className="text-tp-muted text-[9px] mb-1 leading-tight">{kpi.label}</p>
+              <div className="flex items-center gap-1 mb-1">
+                <p className="text-tp-muted text-[9px] leading-tight">{kpi.label}</p>
+                <InfoTooltip text={KPI_TOOLTIPS[kpi.label]} size={10} position="below" />
+              </div>
               <p className="font-mono font-bold text-tp-white text-xl leading-none mb-0.5">
                 {kpi.value}
                 {kpi.unit && <span className="text-tp-muted text-[10px] ml-1 font-normal">{kpi.unit}</span>}

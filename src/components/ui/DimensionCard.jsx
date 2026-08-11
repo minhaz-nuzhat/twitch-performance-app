@@ -1,5 +1,7 @@
 import clsx from 'clsx'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { InfoTooltip } from './InfoTooltip'
+import { DIMENSION_TOOLTIPS } from '../../data/scienceTooltips'
 
 function scoreColor(score, inverted = false) {
   const s = inverted ? 100 - score : score
@@ -26,9 +28,10 @@ export default function DimensionCard({ dimension, delay = 0 }) {
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <span className="text-base">{icon}</span>
           <span className="text-tp-soft text-xs font-medium leading-tight">{label}</span>
+          <InfoTooltip text={DIMENSION_TOOLTIPS[label]} size={11} />
         </div>
         <div className={clsx('flex items-center gap-0.5 text-xs font-medium', changeColor)}>
           <ChangeIcon size={11} />

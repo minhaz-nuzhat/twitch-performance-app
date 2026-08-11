@@ -7,6 +7,8 @@ import TierBadge from '../components/ui/TierBadge'
 import DimensionCard from '../components/ui/DimensionCard'
 import RadarChartWidget from '../components/ui/RadarChartWidget'
 import InsightCard from '../components/ui/InsightCard'
+import { InfoTooltip } from '../components/ui/InfoTooltip'
+import { DASHBOARD_TOOLTIPS } from '../data/scienceTooltips'
 import { ChevronRight, ChevronDown, Trophy, AlertTriangle, Clock, Dumbbell, TrendingUp, X, Brain, Activity, Zap } from 'lucide-react'
 import clsx from 'clsx'
 import { useState } from 'react'
@@ -103,7 +105,9 @@ function ReadinessHero({ perf }) {
 
         {/* Centre info */}
         <div className="flex-1 min-w-0">
-          <p className="label mb-2">Readiness Score</p>
+          <div className="flex items-center gap-1.5 mb-2">
+            <p className="label">Readiness Score</p>
+            <InfoTooltip text={DASHBOARD_TOOLTIPS.compositeScore} position="below" /></div>
           <p className={clsx('font-mono font-bold text-4xl mb-2', TIER_TEXT[tier])}>{composite}</p>
           <div className="flex items-center gap-3 mb-2 flex-wrap">
             <span className="inline-flex items-center gap-1.5 bg-tp-amber/15 border border-tp-amber/40 text-tp-amber text-xs font-semibold px-3 py-1 rounded-full">
@@ -143,7 +147,10 @@ function StrengthIndexCard({ perf }) {
   return (
     <div className="card p-4">
       <div className="flex items-center justify-between mb-3">
-        <p className="label">Strength Index</p>
+        <div className="flex items-center gap-1.5">
+          <p className="label">Strength Index</p>
+          <InfoTooltip text={DASHBOARD_TOOLTIPS.strengthIndex} />
+        </div>
         <Link to="/assessment" className="text-tp-muted text-xs hover:text-tp-red transition-colors">View testing</Link>
       </div>
       <p className="font-mono font-bold text-4xl text-tp-white mb-1">{s.score}</p>
@@ -177,7 +184,10 @@ function PriorityFocusCard({ perf }) {
   return (
     <div className="card p-4">
       <div className="flex items-center justify-between mb-3">
-        <p className="label">Priority Focus</p>
+        <div className="flex items-center gap-1.5">
+          <p className="label">Priority Focus</p>
+          <InfoTooltip text={DASHBOARD_TOOLTIPS.priorityFocus} />
+        </div>
         <span className="bg-tp-danger/15 text-tp-danger border border-tp-danger/30 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
           {pf.urgency}
         </span>
@@ -200,7 +210,10 @@ function RecoveryRiskCard({ perf }) {
   return (
     <div className="card p-4">
       <div className="flex items-center justify-between mb-3">
-        <p className="label">Recovery Risk</p>
+        <div className="flex items-center gap-1.5">
+          <p className="label">Recovery Risk</p>
+          <InfoTooltip text={DASHBOARD_TOOLTIPS.recoveryRisk} />
+        </div>
         <span className={clsx('text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border', riskConfig.color, riskConfig.bg, riskConfig.border)}>
           {rr.label}
         </span>
@@ -220,7 +233,10 @@ function SessionAdherenceCard({ perf }) {
   return (
     <div className="card p-4">
       <div className="flex items-center justify-between mb-3">
-        <p className="label">Session Adherence</p>
+        <div className="flex items-center gap-1.5">
+          <p className="label">Session Adherence</p>
+          <InfoTooltip text={DASHBOARD_TOOLTIPS.sessionAdherence} />
+        </div>
         <span className="text-tp-muted text-xs">14d / 30d</span>
       </div>
       <div className="grid grid-cols-2 gap-3 mb-3">
