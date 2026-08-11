@@ -46,7 +46,7 @@ export function InfoTooltip({ text, size = 12, align = 'left', position = 'above
       {show && (
         <div
           className={clsx(
-            'absolute z-50 w-64 bg-tp-elevated border border-tp-border rounded-xl p-3 shadow-2xl pointer-events-none',
+            'absolute z-50 w-64 bg-tp-card border border-tp-border-bright rounded-xl p-3 shadow-[0_8px_32px_rgba(0,0,0,0.8)] pointer-events-none',
             vertClass,
             horizClass,
           )}

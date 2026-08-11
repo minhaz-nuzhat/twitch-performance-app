@@ -5,7 +5,7 @@ import clsx from 'clsx'
 const CustomTip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-tp-elevated border border-tp-border rounded-lg px-3 py-2 text-xs shadow-xl">
+    <div className="bg-tp-card border border-tp-border-bright rounded-lg px-3 py-2 text-xs shadow-[0_8px_32px_rgba(0,0,0,0.8)]">
       <p className="text-tp-soft mb-0.5">{label ?? payload[0].payload.dimension ?? payload[0].payload.name}</p>
       <p className="text-tp-white font-mono font-bold">{payload[0].value}</p>
     </div>

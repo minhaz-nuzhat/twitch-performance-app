@@ -66,7 +66,7 @@ export default function TrainerTopBar() {
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 top-full mt-1.5 w-48 bg-tp-elevated border border-tp-border rounded-xl shadow-2xl py-1 z-50 animate-fade-in">
+            <div className="absolute right-0 top-full mt-1.5 w-48 bg-tp-card border border-tp-border-bright rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.8)] py-1 z-50 animate-fade-in">
               <div className="px-3 py-2 border-b border-tp-border mb-1">
                 <p className="text-tp-white text-xs font-semibold">{user?.name ?? 'Coach'}</p>
                 <p className="text-tp-muted text-[10px]">Trainer</p>

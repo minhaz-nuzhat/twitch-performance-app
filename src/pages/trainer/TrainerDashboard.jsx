@@ -45,7 +45,7 @@ function MemberRow({ member }) {
 const SparkTip = ({ active, payload }) => {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-tp-elevated border border-tp-border rounded px-2 py-1 text-xs text-tp-white">
+    <div className="bg-tp-card border border-tp-border-bright rounded px-2 py-1 text-xs text-tp-white">
       {payload[0].payload.label}: <span className="font-mono font-bold">{payload[0].value}</span>
     </div>
   )

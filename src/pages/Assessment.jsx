@@ -42,7 +42,7 @@ function StatusBadge({ status, label }) {
 function ChartTip({ active, payload, label }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-tp-elevated border border-tp-border rounded-lg px-3 py-2 text-xs shadow-xl">
+    <div className="bg-tp-card border border-tp-border-bright rounded-lg px-3 py-2 text-xs shadow-[0_8px_32px_rgba(0,0,0,0.8)]">
       <p className="text-tp-soft mb-1">{label}</p>
       {payload.map(p => (
         <p key={p.dataKey} className="font-mono font-bold" style={{ color: p.color ?? p.fill }}>
