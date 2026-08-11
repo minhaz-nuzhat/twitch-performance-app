@@ -331,8 +331,8 @@ export default function Progress() {
             </div>
           </div>
 
-          {/* Sub-tabs */}
-          <div className="flex gap-1 bg-tp-surface p-1 rounded-xl border border-tp-border">
+          {/* Filter pills */}
+          <div className="flex gap-2">
             {[
               { id: 'goals',        label: 'Goals'        },
               { id: 'assessments',  label: 'Assessments'  },
@@ -342,8 +342,10 @@ export default function Progress() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={clsx(
-                  'flex-1 py-2 rounded-lg text-xs font-medium transition-all',
-                  activeTab === tab.id ? 'bg-tp-red text-white' : 'text-tp-muted hover:text-tp-white',
+                  'px-3 py-1 rounded-full text-xs font-medium border transition-all',
+                  activeTab === tab.id
+                    ? 'bg-tp-red/15 border-tp-red/40 text-tp-red'
+                    : 'bg-tp-raised border-tp-border text-tp-muted hover:text-tp-white hover:border-tp-border-bright',
                 )}
               >
                 {tab.label}
