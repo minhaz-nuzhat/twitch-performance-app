@@ -102,11 +102,16 @@ export default function AgentPanel({ isOpen, onClose, userRole = 'member', entit
                 <div className="text-2xl">{mockUserData.icon}</div>
                 <div>
                   <h2 className="text-tp-white font-bold text-sm tracking-tight">
-                    {userRole === 'coach' ? 'Foundry Coach Assistant' : 'Foundry Performance AI'}
+                    {userRole === 'coach' ? 'Foundry Coach Assistant' : 'Twitch Assistant'}
                   </h2>
                   <p className="text-tp-red text-xs font-semibold">
-                    {userRole === 'coach' ? 'Real-time coaching amplifier' : 'Your AI coaching co-pilot'}
+                    {userRole === 'coach' ? 'Real-time coaching amplifier' : 'Your AI coach when your real coach isn\'t around'}
                   </p>
+                  {userRole === 'member' && (
+                    <p className="text-tp-soft text-[11px] leading-relaxed mt-2">
+                      Ask about your performance, training, nutrition, recovery, or goals, understanding the data in front of you. Trained on real coaching outcomes.
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
