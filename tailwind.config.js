@@ -16,9 +16,9 @@ export default {
         'tp-red-dim':   '#c1121f',
         'tp-red-muted': 'rgba(230,57,70,0.12)',
 
-        'tp-white':   '#f0f0f0',
-        'tp-soft':    '#a0a0a0',
-        'tp-muted':   '#555555',
+        'tp-white':   '#ffffff',
+        'tp-soft':    '#d0d0d0',
+        'tp-muted':   '#8a8a8a',
 
         'tp-bronze': '#cd7f32',
         'tp-silver': '#c0c0c0',

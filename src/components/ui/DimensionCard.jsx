@@ -30,19 +30,19 @@ export default function DimensionCard({ dimension, delay = 0 }) {
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-1.5">
           <span className="text-base">{icon}</span>
-          <span className="text-tp-soft text-xs font-medium leading-tight">{label}</span>
+          <span className="text-tp-white text-sm font-semibold leading-tight">{label}</span>
           <InfoTooltip text={DIMENSION_TOOLTIPS[label]} size={11} />
         </div>
-        <div className={clsx('flex items-center gap-0.5 text-xs font-medium', changeColor)}>
-          <ChangeIcon size={11} />
+        <div className={clsx('flex items-center gap-0.5 text-sm font-semibold', changeColor)}>
+          <ChangeIcon size={14} />
           <span>{change !== 0 ? Math.abs(change) : '—'}</span>
         </div>
       </div>
 
       {/* Score */}
       <div className="flex items-end justify-between mb-2">
-        <span className={clsx('font-mono font-bold text-2xl', text)}>{score}</span>
-        <span className="text-tp-muted text-xs text-right leading-tight max-w-[80px]">{raw}</span>
+        <span className={clsx('font-mono font-bold text-3xl', text)}>{score}</span>
+        <span className="text-tp-soft text-xs text-right leading-tight max-w-[80px]">{raw}</span>
       </div>
 
       {/* Bar */}
@@ -55,7 +55,7 @@ export default function DimensionCard({ dimension, delay = 0 }) {
 
       {/* Inverted label */}
       {inverted && (
-        <p className="text-tp-muted text-[10px] mt-1.5">Lower = better</p>
+        <p className="text-tp-soft text-xs mt-1.5 font-medium">Lower = better</p>
       )}
     </div>
   )

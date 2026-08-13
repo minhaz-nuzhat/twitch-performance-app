@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Send, X, Loader, Copy, ExternalLink, Zap, TrendingUp, Shield, User } from 'lucide-react'
+import { Send, X, Loader, Copy, ExternalLink, Zap, Shield, User } from 'lucide-react'
 import { useAgent } from '../../hooks/useAgent'
 import clsx from 'clsx'
 
@@ -96,15 +96,15 @@ export default function AgentPanel({ isOpen, onClose, userRole = 'member', entit
       <div className="fixed right-0 top-0 h-screen w-full sm:w-96 bg-gradient-to-b from-tp-card to-tp-black border-l border-tp-red/20 shadow-2xl z-50 flex flex-col animate-slide-in">
         {/* Premium Header */}
         <div className="p-4 border-b border-tp-red/10 backdrop-blur-sm flex-shrink-0">
-          <div className="flex items-start justify-between mb-3">
+          <div className="flex items-start justify-between">
             <div className="flex-1">
-              <div className="flex items-center gap-2.5 mb-2">
+              <div className="flex items-center gap-2.5">
                 <div className="text-2xl">{mockUserData.icon}</div>
                 <div>
                   <h2 className="text-tp-white font-bold text-sm tracking-tight">
                     {userRole === 'coach' ? 'Foundry Coach Assistant' : 'Foundry Performance AI'}
                   </h2>
-                  <p className="text-tp-red text-[10px] font-semibold">
+                  <p className="text-tp-red text-xs font-semibold">
                     {userRole === 'coach' ? 'Real-time coaching amplifier' : 'Your AI coaching co-pilot'}
                   </p>
                 </div>
@@ -116,40 +116,6 @@ export default function AgentPanel({ isOpen, onClose, userRole = 'member', entit
             >
               <X size={18} />
             </button>
-          </div>
-
-          {/* Context Card */}
-          <div className={clsx(
-            'rounded-lg p-3 border',
-            userRole === 'coach'
-              ? 'bg-tp-red/5 border-tp-red/20'
-              : 'bg-tp-green/5 border-tp-green/20'
-          )}>
-            {userRole === 'coach' ? (
-              <div className="space-y-1.5">
-                <p className="text-[10px] text-tp-muted font-semibold">COACHING CONTEXT</p>
-                <p className="text-tp-white text-xs font-medium">{mockUserData.name}</p>
-                <p className="text-tp-soft text-[10px]">{mockUserData.credential}</p>
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <p className="text-[10px] text-tp-muted font-semibold">YOUR PERFORMANCE</p>
-                  <span className="text-[10px] font-mono text-tp-green flex items-center gap-0.5">
-                    <TrendingUp size={10} /> {mockUserData.trend}
-                  </span>
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-black text-tp-white">{mockUserData.score}</span>
-                  <span className={clsx(
-                    'text-xs font-bold px-1.5 py-0.5 rounded',
-                    'bg-tp-gold/10 text-tp-gold'
-                  )}>
-                    {mockUserData.tier}
-                  </span>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
