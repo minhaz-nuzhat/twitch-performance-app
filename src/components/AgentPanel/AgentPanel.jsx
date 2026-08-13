@@ -4,7 +4,7 @@ import { useAgent } from '../../hooks/useAgent'
 import clsx from 'clsx'
 
 export default function AgentPanel({ isOpen, onClose, userRole = 'member', entityId = null }) {
-  const mode = userRole === 'coach' ? 'coach-train' : 'member-query'
+  const mode = userRole === 'coach' ? 'coach-assist' : 'member-query'
   const { sendMessage, applyScenario, isLoading, error, clearError } = useAgent(mode, entityId)
 
   const [messages, setMessages] = useState([
@@ -12,7 +12,7 @@ export default function AgentPanel({ isOpen, onClose, userRole = 'member', entit
       role: 'assistant',
       content:
         userRole === 'coach'
-          ? "Hi Coach! Tell me about an injury intervention that worked well, and I'll help you capture it as a reusable scenario."
+          ? "Hey Coach! Ask me anything—training programs, nutrition plans, member analysis, injury protocols, performance trends. I'm here to amplify your coaching."
           : "Hi! I'm your injury coaching assistant. Ask me anything about your injury or current protocols.",
       timestamp: new Date(),
       type: 'greeting'
@@ -99,11 +99,11 @@ export default function AgentPanel({ isOpen, onClose, userRole = 'member', entit
           <div className="flex-1">
             <h2 className="text-tp-white font-semibold text-sm flex items-center gap-2">
               <span className="text-lg">🤖</span>
-              {userRole === 'coach' ? 'Scenario Trainer' : 'Injury Coach'}
+              {userRole === 'coach' ? 'Coach Assistant' : 'Injury Coach'}
             </h2>
             <p className="text-tp-muted text-xs mt-1">
               {userRole === 'coach'
-                ? 'Build & refine injury protocols'
+                ? 'AI-powered coaching assistant by Foundry'
                 : 'Coach-trained guidance powered by Foundry'}
             </p>
           </div>
@@ -326,7 +326,7 @@ export default function AgentPanel({ isOpen, onClose, userRole = 'member', entit
             onChange={(e) => setInput(e.target.value)}
             placeholder={
               userRole === 'coach'
-                ? 'Describe an intervention...'
+                ? 'Ask about training, nutrition, protocols, members...'
                 : 'Ask about your injury...'
             }
             className="flex-1 bg-tp-raised border border-tp-border text-tp-white text-xs rounded-lg px-3 py-2.5 placeholder-tp-muted focus:outline-none focus:border-tp-red/50 focus:ring-1 focus:ring-tp-red/20 transition-all"

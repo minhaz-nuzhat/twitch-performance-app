@@ -15,8 +15,8 @@ export function useAgent(mode = 'member-query', entityId = null) {
 
       try {
         const endpoint =
-          mode === 'coach-train'
-            ? '/api/agent/coach-train'
+          mode === 'coach-assist'
+            ? '/api/agent/coach-assist'
             : '/api/agent/member-query'
 
         const response = await fetch(endpoint, {
@@ -28,7 +28,7 @@ export function useAgent(mode = 'member-query', entityId = null) {
           body: JSON.stringify({
             message,
             context: conversationHistory,
-            [mode === 'coach-train' ? 'coachId' : 'memberId']: entityId
+            [mode === 'coach-assist' ? 'coachId' : 'memberId']: entityId
           })
         })
 
