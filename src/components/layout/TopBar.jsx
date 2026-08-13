@@ -69,7 +69,7 @@ export default function TopBar() {
                 ? 'bg-tp-red/20 text-tp-red border border-tp-red/40'
                 : 'text-tp-soft hover:text-tp-red hover:bg-tp-red/10'
             )}
-            title={user?.role === 'coach' ? 'Coach Assistant' : 'Injury Coach'}
+            title={user?.role === 'coach' ? 'Coach Assistant' : 'Performance Assistant'}
           >
             <MessageCircle size={18} />
             {agentOpen && (

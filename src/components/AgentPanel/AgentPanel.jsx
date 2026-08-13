@@ -13,7 +13,7 @@ export default function AgentPanel({ isOpen, onClose, userRole = 'member', entit
       content:
         userRole === 'coach'
           ? "Hey Coach! Ask me anything—training programs, nutrition plans, member analysis, injury protocols, performance trends. I'm here to amplify your coaching."
-          : "Hi! I'm your injury coaching assistant. Ask me anything about your injury or current protocols.",
+          : "Hey! Ask me anything about your performance, training plans, nutrition, recovery, goals, or how to improve. I'm here to help you level up.",
       timestamp: new Date(),
       type: 'greeting'
     }
@@ -99,12 +99,10 @@ export default function AgentPanel({ isOpen, onClose, userRole = 'member', entit
           <div className="flex-1">
             <h2 className="text-tp-white font-semibold text-sm flex items-center gap-2">
               <span className="text-lg">🤖</span>
-              {userRole === 'coach' ? 'Coach Assistant' : 'Injury Coach'}
+              {userRole === 'coach' ? 'Coach Assistant' : 'Performance Assistant'}
             </h2>
             <p className="text-tp-muted text-xs mt-1">
-              {userRole === 'coach'
-                ? 'AI-powered coaching assistant by Foundry'
-                : 'Coach-trained guidance powered by Foundry'}
+              AI-powered assistant by Foundry
             </p>
           </div>
           <button
@@ -327,7 +325,7 @@ export default function AgentPanel({ isOpen, onClose, userRole = 'member', entit
             placeholder={
               userRole === 'coach'
                 ? 'Ask about training, nutrition, protocols, members...'
-                : 'Ask about your injury...'
+                : 'Ask about your performance, training, nutrition, goals...'
             }
             className="flex-1 bg-tp-raised border border-tp-border text-tp-white text-xs rounded-lg px-3 py-2.5 placeholder-tp-muted focus:outline-none focus:border-tp-red/50 focus:ring-1 focus:ring-tp-red/20 transition-all"
             disabled={isLoading}
