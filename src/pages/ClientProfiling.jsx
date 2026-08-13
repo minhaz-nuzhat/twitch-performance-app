@@ -10,6 +10,7 @@ const SECTIONS = [
     questions: [
       { key: 'q01', label: 'Primary sport' },
       { key: 'q02', label: 'Playing role' },
+      { key: 'q02b', label: 'Professional or Recreational?' },
       { key: 'q03', label: 'Training age (years)' },
     ],
   },
@@ -70,7 +71,6 @@ const SECTIONS = [
     questions: [
       { key: 'q31', label: 'Training days available/week' },
       { key: 'q32', label: 'Session duration preference' },
-      { key: 'q33', label: 'Preferred training environment' },
       { key: 'q34', label: 'Equipment access', long: true },
       { key: 'q35', label: 'Travel frequency affecting training' },
     ],
@@ -81,9 +81,7 @@ const SECTIONS = [
       { key: 'q36', label: 'Work/study stress level (1–10)' },
       { key: 'q37', label: 'Motivation level (1–10)' },
       { key: 'q38', label: 'Adherence confidence (1–10)' },
-      { key: 'q39', label: 'Preferred coach communication', long: true },
       { key: 'q40', label: 'Check-in frequency preferred' },
-      { key: 'q41', label: 'Preferred feedback format', long: true },
       { key: 'q42', label: 'Biggest performance limiter', long: true },
       { key: 'q43', label: 'What success looks like in 12 weeks', long: true },
     ],

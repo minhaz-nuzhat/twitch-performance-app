@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { mockRoster } from '../../data/mockTrainerData'
-import { CheckCircle2, Plus, Trash2 } from 'lucide-react'
+import { CheckCircle2, Plus, Trash2, FileText, AlertCircle } from 'lucide-react'
 import clsx from 'clsx'
 
 const PLAN_TEMPLATES = [
@@ -135,6 +135,20 @@ export default function NutritionBuilderPage() {
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-tp-red" />Protein</span>
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-tp-amber" />Carbs</span>
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-tp-green" />Fat</span>
+        </div>
+      </div>
+
+      {/* ── Blood Test & Medical History Reference ── */}
+      <div className="card p-5 border-tp-amber/25 bg-tp-amber/3">
+        <div className="flex items-start gap-3">
+          <FileText size={16} className="text-tp-amber flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-tp-white font-semibold text-sm mb-1">Blood Work & Medical History</p>
+            <p className="text-tp-soft text-xs leading-relaxed mb-2">
+              Member can upload blood tests, metabolic panels, or medical reports in their Nutrition tab. Review these before finalizing macro recommendations to identify any deficiencies (iron, B12, vitamin D, lipids, etc.) that may require nutrition adjustments.
+            </p>
+            <p className="text-tp-amber text-xs font-semibold">💡 Tip: Ask member to share recent blood work when assigning this plan.</p>
+          </div>
         </div>
       </div>
 

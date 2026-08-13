@@ -33,7 +33,7 @@ export const mockPerformanceScore = {
   nextTierName: 'Gold',
 
   dimensions: {
-    relativeStrength:   { score: 68, label: 'Relative Strength',   raw: '1.4× BW Squat',   change: +3,  icon: '💪' },
+    forceIndex:         { score: 68, label: 'Force Index',          raw: '3.2× BW IMTP',    change: +3,  icon: '💪' },
     explosiveScore:     { score: 71, label: 'Explosive Score',      raw: '52 cm CMJ',        change: +6,  icon: '⚡' },
     powerIndex:         { score: 65, label: 'Power Index',          raw: '14.2 W/kg',        change: +2,  icon: '🔋' },
     cardiovascular:     { score: 58, label: 'Cardiovascular',       raw: 'VO₂ 48.2 ml/kg',  change: -2,  icon: '❤️' },
@@ -55,7 +55,7 @@ export const mockPerformanceScore = {
 
   // Radar uses 8 primary dimensions (UI choice — cleaner chart)
   radarData: [
-    { dimension: 'Strength',   current: 68, previous: 65 },
+    { dimension: 'Force',      current: 68, previous: 65 },
     { dimension: 'Explosive',  current: 71, previous: 65 },
     { dimension: 'Power',      current: 65, previous: 63 },
     { dimension: 'Cardio',     current: 58, previous: 60 },

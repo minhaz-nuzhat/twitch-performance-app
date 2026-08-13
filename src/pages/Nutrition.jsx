@@ -1,10 +1,12 @@
+import { useState } from 'react'
 import { useNutrition } from '../hooks/useApi'
 import MacroRing from '../components/ui/MacroRing'
-import { CheckCircle2, Circle, Info } from 'lucide-react'
+import { CheckCircle2, Circle, Info, Upload, FileText, Trash2 } from 'lucide-react'
 import clsx from 'clsx'
 
 export default function Nutrition() {
   const { data: plan, loading } = useNutrition()
+  const [uploadedFiles, setUploadedFiles] = useState([])
 
   if (loading || !plan) {
     return <div className="space-y-4">{[...Array(3)].map((_, i) => <div key={i} className="skeleton h-24 rounded-xl" />)}</div>
@@ -15,6 +17,23 @@ export default function Nutrition() {
   const calPct      = Math.min(Math.round((todayLog.calories / targets.calories) * 100), 100)
   const remaining   = targets.calories - todayLog.calories
   const loggedMeals = meals.filter((m) => m.logged).length
+
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files)
+    files.forEach(file => {
+      const newFile = {
+        id: `file_${Date.now()}_${Math.random()}`,
+        name: file.name,
+        size: (file.size / 1024).toFixed(1),
+        uploadedAt: new Date().toLocaleDateString('en-IN'),
+      }
+      setUploadedFiles(prev => [...prev, newFile])
+    })
+  }
+
+  const removeFile = (fileId) => {
+    setUploadedFiles(prev => prev.filter(f => f.id !== fileId))
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -93,6 +112,62 @@ export default function Nutrition() {
           </div>
         </div>
       )}
+
+      {/* ── Blood Tests & Medical Reports ── */}
+      <div>
+        <h3 className="text-tp-white font-semibold mb-3">Nutrition Diagnostics</h3>
+        <div className="card p-5 border-tp-border">
+          <div className="flex items-start gap-3 mb-4">
+            <FileText size={16} className="text-tp-red flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-tp-white font-medium text-sm mb-0.5">Blood Tests & Medical Reports</p>
+              <p className="text-tp-muted text-xs">Upload blood work, metabolic panels, or medical reports to help your coach understand nutritional deficiencies and optimize your plan.</p>
+            </div>
+          </div>
+
+          {/* Upload Area */}
+          <div className="mb-4">
+            <label className="relative block">
+              <input
+                type="file"
+                multiple
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+              <div className="border-2 border-dashed border-tp-border-bright rounded-lg p-6 hover:border-tp-red/50 hover:bg-tp-red/3 transition-all cursor-pointer text-center">
+                <Upload size={24} className="mx-auto mb-2 text-tp-muted" />
+                <p className="text-tp-white text-sm font-medium">Click to upload files</p>
+                <p className="text-tp-muted text-xs mt-1">PDF, images, or documents (Max 10 MB)</p>
+              </div>
+            </label>
+          </div>
+
+          {/* Uploaded Files List */}
+          {uploadedFiles.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-tp-soft text-xs font-semibold mb-2">Uploaded Files ({uploadedFiles.length})</p>
+              {uploadedFiles.map(file => (
+                <div key={file.id} className="flex items-center justify-between bg-tp-raised p-3 rounded-lg border border-tp-border/50">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FileText size={14} className="text-tp-red flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-tp-white text-xs font-medium truncate">{file.name}</p>
+                      <p className="text-tp-muted text-[10px]">{file.size} KB • {file.uploadedAt}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => removeFile(file.id)}
+                    className="flex-shrink-0 text-tp-muted hover:text-tp-danger transition-colors"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* ── Meal Plan ── */}
       <div>

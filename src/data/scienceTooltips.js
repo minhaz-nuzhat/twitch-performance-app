@@ -5,14 +5,14 @@
 
 // ── Performance Dimensions (11 + 2 derived) ───────────────────
 export const DIMENSION_TOOLTIPS = {
-  'Relative Strength':
-    'Strength output normalised to body weight (e.g. squat 1RM ÷ BW). The foundational predictor of speed, power, and injury resilience in team sports. Benchmark for athletes: ≥1.4× BW squat.',
+  'Force Index':
+    'Peak isometric force production (IMTP) normalised to body weight. The foundational predictor of speed, power, and injury resilience in team sports. Benchmark for athletes: ≥33.3× BW. Raw force underlies all other athletic qualities.',
 
   'Explosive Score':
-    'Combines CMJ height, Rate of Force Development, and sprint acceleration — the key determinants of first-step quickness and sport-specific power. One of the strongest predictors of match performance in cricket.',
+    'Rate of Force Development (RFD) and reactive strength from jump/sprint tests. Measures how quickly you generate force — essential for match-winning first-step acceleration and repeat-sprint ability in cricket.',
 
   'Power Index':
-    'Force × velocity product derived from force-plate data. Distinguishes strength-limited athletes (high force, low velocity) from velocity-limited ones — critical information for programming the right training emphasis.',
+    'Force × velocity product (includes explosive power components). Integrates Explosive Score with movement velocity to identify whether athletes are strength-limited, power-limited, or velocity-limited — critical for programming emphasis. Distinguishes which quality needs development.',
 
   'Cardiovascular Fitness':
     'VO₂ max proxy from submaximal testing. Aerobic capacity determines how well you recover between high-intensity efforts and sustains consistent performance across a full training session or match.',
@@ -78,7 +78,7 @@ export const KPI_TOOLTIPS = {
 // ── Dashboard metric cards ─────────────────────────────────────
 export const DASHBOARD_TOOLTIPS = {
   performanceScore:
-    'Composite score (0–100) weighted across 11 performance dimensions, normalised to sport and age benchmarks from published standards (NSCA, ACSM, EXOS). Tiers: Bronze <50 · Silver 50–64 · Gold 65–79 · Elite ≥80.',
+    'Composite score (0–100) weighted across 11 performance dimensions (Force Index, Explosive Score, Power Index, Cardiovascular, Mobility, Symmetry, Injury Risk, Body Composition, Training Adherence, Nutrition Compliance, Recovery), normalised to sport and age benchmarks from published standards (NSCA, ACSM, EXOS). Tiers: Bronze <50 · Silver 50–64 · Gold 65–79 · Elite ≥80.',
 
   strengthIndex:
     'Your primary force production metric trended between assessments. Strength is the foundational prerequisite for all athletic performance qualities — power, speed, and injury resistance all require a sufficient strength base.',
@@ -93,5 +93,5 @@ export const DASHBOARD_TOOLTIPS = {
     'Sessions completed vs. assigned in a rolling 30-day window. The most consistent predictor of long-term performance improvement — more so than any individual training quality variable.',
 
   compositeScore:
-    'A single number summarising your performance profile across 11 scientifically validated dimensions, each normalised to age, sex, and sport-specific benchmarks. Updated automatically after each assessment or logged session.',
+    'A single number summarising your performance profile across 11 scientifically validated dimensions (Force Index, Explosive Score, Power Index, Cardiovascular, Mobility, Symmetry, Injury Risk, Body Composition, Training Adherence, Nutrition Compliance, Recovery), each normalised to age, sex, and sport-specific benchmarks. Updated automatically after each assessment or logged session.'
 }
