@@ -37,6 +37,7 @@ export default {
         'fade-up':   'fadeUp 0.4s ease forwards',
         'fade-in':   'fadeIn 0.3s ease forwards',
         'pulse-red': 'pulseRed 2s ease-in-out infinite',
+        'slide-in':  'slideIn 0.3s ease-out forwards',
       },
       keyframes: {
         fadeUp: {
@@ -50,6 +51,10 @@ export default {
         pulseRed: {
           '0%, 100%': { boxShadow: '0 0 0 0 rgba(230,57,70,0)' },
           '50%':      { boxShadow: '0 0 0 6px rgba(230,57,70,0.15)' },
+        },
+        slideIn: {
+          '0%':   { opacity: 0, transform: 'translateX(100%)' },
+          '100%': { opacity: 1, transform: 'translateX(0)' },
         },
       },
     },

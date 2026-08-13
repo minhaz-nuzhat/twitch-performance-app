@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { useLocation, Link } from 'react-router-dom'
-import { Bell, User, ChevronRight } from 'lucide-react'
+import { Bell, MessageCircle, ChevronRight } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useNotifications, usePerformance } from '../../hooks/useApi'
+import AgentPanel from '../AgentPanel'
 import clsx from 'clsx'
 
 const ROUTE_LABELS = {
@@ -23,6 +25,7 @@ export default function TopBar() {
   const { pathname }           = useLocation()
   const { data: notifs }       = useNotifications()
   const { data: perf }         = usePerformance()
+  const [agentOpen, setAgentOpen] = useState(false)
 
   const pageTitle = ROUTE_LABELS[pathname] ?? 'Twitch Performance'
   const unread    = notifs?.filter((n) => !n.read).length ?? 0
@@ -33,50 +36,77 @@ export default function TopBar() {
   }[perf?.tier ?? 'silver']
 
   return (
-    <header className="flex items-center justify-between h-14 px-4 lg:px-6 border-b border-tp-border bg-tp-surface/80 backdrop-blur-sm flex-shrink-0">
-      {/* Page title */}
-      <div className="flex items-center gap-2">
-        <h1 className="text-tp-white font-semibold text-base">{pageTitle}</h1>
-      </div>
+    <>
+      <header className="flex items-center justify-between h-14 px-4 lg:px-6 border-b border-tp-border bg-tp-surface/80 backdrop-blur-sm flex-shrink-0">
+        {/* Page title */}
+        <div className="flex items-center gap-2">
+          <h1 className="text-tp-white font-semibold text-base">{pageTitle}</h1>
+        </div>
 
-      {/* Right controls */}
-      <div className="flex items-center gap-3">
-        {/* Compact score chip — always visible */}
-        {perf && (
-          <Link
-            to="/performance"
-            className={clsx(
-              'hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold transition-all',
-              'bg-tp-card border-tp-border hover:border-tp-red/40',
-              tierColor,
-            )}
-          >
-            <span className="text-tp-white font-mono">{perf.composite}</span>
-            <span className="uppercase tracking-wider">{perf.tier}</span>
-          </Link>
-        )}
-
-        {/* Notifications */}
-        <Link
-          to="/profile"
-          className="relative p-2 rounded-lg text-tp-soft hover:text-tp-white hover:bg-tp-raised transition-all"
-        >
-          <Bell size={18} />
-          {unread > 0 && (
-            <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-tp-red text-[9px] text-white font-bold flex items-center justify-center">
-              {unread}
-            </span>
+        {/* Right controls */}
+        <div className="flex items-center gap-3">
+          {/* Compact score chip — always visible */}
+          {perf && (
+            <Link
+              to="/performance"
+              className={clsx(
+                'hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold transition-all',
+                'bg-tp-card border-tp-border hover:border-tp-red/40',
+                tierColor,
+              )}
+            >
+              <span className="text-tp-white font-mono">{perf.composite}</span>
+              <span className="uppercase tracking-wider">{perf.tier}</span>
+            </Link>
           )}
-        </Link>
 
-        {/* Avatar */}
-        <Link
-          to="/profile"
-          className="w-8 h-8 rounded-full bg-tp-red/20 border border-tp-red/30 flex items-center justify-center hover:border-tp-red/60 transition-colors"
-        >
-          <span className="text-tp-red text-xs font-bold">{user?.avatarInitials ?? '?'}</span>
-        </Link>
-      </div>
-    </header>
+          {/* Agent Button */}
+          <button
+            onClick={() => setAgentOpen(!agentOpen)}
+            className={clsx(
+              'p-2 rounded-lg transition-all relative',
+              agentOpen
+                ? 'bg-tp-red/20 text-tp-red border border-tp-red/40'
+                : 'text-tp-soft hover:text-tp-red hover:bg-tp-red/10'
+            )}
+            title={user?.role === 'coach' ? 'Scenario Trainer' : 'Injury Coach'}
+          >
+            <MessageCircle size={18} />
+            {agentOpen && (
+              <span className="absolute top-1 right-1 w-2 h-2 bg-tp-red rounded-full animate-pulse" />
+            )}
+          </button>
+
+          {/* Notifications */}
+          <Link
+            to="/profile"
+            className="relative p-2 rounded-lg text-tp-soft hover:text-tp-white hover:bg-tp-raised transition-all"
+          >
+            <Bell size={18} />
+            {unread > 0 && (
+              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-tp-red text-[9px] text-white font-bold flex items-center justify-center">
+                {unread}
+              </span>
+            )}
+          </Link>
+
+          {/* Avatar */}
+          <Link
+            to="/profile"
+            className="w-8 h-8 rounded-full bg-tp-red/20 border border-tp-red/30 flex items-center justify-center hover:border-tp-red/60 transition-colors"
+          >
+            <span className="text-tp-red text-xs font-bold">{user?.avatarInitials ?? '?'}</span>
+          </Link>
+        </div>
+      </header>
+
+      {/* Agent Panel */}
+      <AgentPanel
+        isOpen={agentOpen}
+        onClose={() => setAgentOpen(false)}
+        userRole={user?.role}
+        entityId={user?.id}
+      />
+    </>
   )
 }
