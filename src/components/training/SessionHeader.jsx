@@ -1,4 +1,4 @@
-import { Clock, Dumbbell, Zap } from 'lucide-react'
+import { Clock, Dumbbell } from 'lucide-react'
 
 /**
  * Session header card with summary info and progress bar
@@ -38,22 +38,6 @@ export function SessionHeader({ session, completionStats }) {
           className="h-full rounded-full bg-tp-green transition-all duration-500"
           style={{ width: `${percentage}%` }}
         />
-      </div>
-
-      {/* Warmup / Cooldown Info */}
-      <div className="mt-3 space-y-1 text-[10px] text-tp-muted">
-        <div className="flex items-center gap-2">
-          <Zap size={10} className="text-tp-amber flex-shrink-0" />
-          <span>
-            <span className="text-tp-amber font-medium">Warm-up:</span> {session.warmup}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Zap size={10} className="text-tp-amber flex-shrink-0" />
-          <span>
-            <span className="text-tp-amber font-medium">Cool-down:</span> {session.cooldown}
-          </span>
-        </div>
       </div>
     </div>
   )

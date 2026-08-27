@@ -162,6 +162,20 @@ export const mockTrainingProgram = {
     completed: false,
     warmup: '10 min activation — hip circles, leg swings, jump rope',
     cooldown: '10 min — static stretch, hip flexor focus',
+    warmupExercises: [
+      { id: 'wu_1', order: 1, name: 'Jump Rope',            sets: 1, reps: '3 min',      load: 'BW', rest: '—',    notes: 'Steady pace — raise core temperature', videoUrl: '' },
+      { id: 'wu_2', order: 2, name: 'Hip 90/90 Stretch',    sets: 2, reps: '60s each',   load: 'BW', rest: '30 s', notes: 'Open the hips before loading',        videoUrl: 'https://www.youtube.com/watch?v=sdkPLCSzLMc' },
+      { id: 'wu_3', order: 3, name: 'Leg Swings',           sets: 2, reps: '12 each',    load: 'BW', rest: '30 s', notes: 'Front-to-back then lateral',          videoUrl: '' },
+      { id: 'wu_4', order: 4, name: 'Ankle Dorsiflexion',   sets: 2, reps: '10 each',    load: 'BW', rest: '30 s', notes: 'Critical for squat depth',            videoUrl: '' },
+      { id: 'wu_5', order: 5, name: 'Bodyweight Squat',     sets: 2, reps: '10',         load: 'BW', rest: '30 s', notes: 'Groove the pattern before adding bar', videoUrl: '' },
+    ],
+    cooldownExercises: [
+      { id: 'cd_1', order: 1, name: 'Hip Flexor Stretch',   sets: 2, reps: '45s each',   load: 'BW', rest: '—', notes: 'Primary focus after heavy squatting', videoUrl: '' },
+      { id: 'cd_2', order: 2, name: 'Hamstring Stretch',    sets: 2, reps: '45s each',   load: 'BW', rest: '—', notes: 'Ease off if RDLs left you tight',     videoUrl: '' },
+      { id: 'cd_3', order: 3, name: 'Quad Stretch',         sets: 2, reps: '45s each',   load: 'BW', rest: '—', notes: '',                                    videoUrl: '' },
+      { id: 'cd_4', order: 4, name: 'Thoracic Rotation',    sets: 2, reps: '10 each',    load: 'BW', rest: '—', notes: 'Unwind bar position from squatting',  videoUrl: 'https://www.youtube.com/watch?v=sdkPLCSzLMc' },
+      { id: 'cd_5', order: 5, name: 'Box Breathing',        sets: 1, reps: '2 min',      load: 'BW', rest: '—', notes: '4 in · 4 hold · 4 out — shift to recovery', videoUrl: '' },
+    ],
     exercises: [
       { id: 'ex_1', order: 1, name: 'Back Squat',             sets: 4, reps: '5',          load: '100 kg', rest: '3 min',   notes: 'Focus on bar speed out of the hole',       videoUrl: 'https://www.youtube.com/watch?v=ultWZbUMPL8', completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
       { id: 'ex_2', order: 2, name: 'Romanian Deadlift',      sets: 3, reps: '8',          load: '80 kg',  rest: '2 min',   notes: '',                                         videoUrl: 'https://www.youtube.com/watch?v=JCXUYuzwNrM', completed: false, setsLogged: null, repsLogged: null, weightLogged: null },

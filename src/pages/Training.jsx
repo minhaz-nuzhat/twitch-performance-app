@@ -3,7 +3,7 @@ import { useTraining } from '../hooks/useApi'
 import { useWeeklySchedule } from '../hooks/useWeeklySchedule'
 import { useExerciseLogs } from '../hooks/useExerciseLogs'
 import { useSessionState } from '../hooks/useSessionState'
-import { CheckCircle2, Play, ChevronDown, ClipboardCheck } from 'lucide-react'
+import { CheckCircle2, Play, ChevronDown, ClipboardCheck, Flame, Snowflake } from 'lucide-react'
 import clsx from 'clsx'
 
 import { WeeklyPlanner } from '../components/training/WeeklyPlanner'
@@ -27,6 +27,53 @@ function ReadinessChips({ readiness }) {
           </span>
         )
       })}
+    </div>
+  )
+}
+
+// Warm-up and cool-down are always available — they don't require the readiness gate.
+function PrepBlock({ title, subtitle, summary, exercises, icon: Icon, accent, defaultOpen = false }) {
+  const [open, setOpen] = useState(defaultOpen)
+  const [done, setDone] = useState({})
+
+  const completed = exercises.filter(ex => done[ex.id]).length
+  const pct = exercises.length ? Math.round((completed / exercises.length) * 100) : 0
+
+  return (
+    <div className="card overflow-hidden">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-tp-raised/50 transition-colors text-left"
+      >
+        <div className={clsx('w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0', accent.bg)}>
+          <Icon size={15} className={accent.text} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-tp-white text-sm font-semibold">{title}</p>
+          <p className="text-tp-soft text-xs truncate">{subtitle}</p>
+        </div>
+        <span className={clsx('font-mono text-xs font-bold flex-shrink-0', completed === exercises.length ? 'text-tp-green' : 'text-tp-soft')}>
+          {completed}/{exercises.length}
+        </span>
+        <ChevronDown size={14} className={clsx('text-tp-soft transition-transform flex-shrink-0', open && 'rotate-180')} />
+      </button>
+
+      <div className="px-4 pb-2">
+        <div className="h-1 rounded-full bg-tp-raised overflow-hidden">
+          <div className={clsx('h-full rounded-full transition-all duration-500', accent.bar)} style={{ width: `${pct}%` }} />
+        </div>
+      </div>
+
+      {open && (
+        <div className="px-4 pb-4 pt-2 space-y-2 animate-fade-in">
+          <p className="text-tp-soft text-xs leading-relaxed">{summary}</p>
+          <ExerciseList
+            exercises={exercises.map(ex => ({ ...ex, completed: !!done[ex.id] }))}
+            onToggle={id => setDone(d => ({ ...d, [id]: !d[id] }))}
+            onLogChange={() => {}}
+          />
+        </div>
+      )}
     </div>
   )
 }
@@ -223,6 +270,16 @@ export default function Training() {
             completionStats={exercises.completionStats}
           />
 
+          <PrepBlock
+            title="Warm-Up"
+            subtitle="Do this before you start — no check-in needed"
+            summary={training.todaySession.warmup}
+            exercises={training.todaySession.warmupExercises}
+            icon={Flame}
+            accent={{ bg: 'bg-tp-amber/15', text: 'text-tp-amber', bar: 'bg-tp-amber' }}
+            defaultOpen={!session.started}
+          />
+
           {!session.started
             ? (
                 <div className="card p-6 text-center border-2 border-tp-red/30">
@@ -287,6 +344,15 @@ export default function Training() {
                   )}
                 </>
               )}
+
+          <PrepBlock
+            title="Cool-Down"
+            subtitle="Finish here — no check-in needed"
+            summary={training.todaySession.cooldown}
+            exercises={training.todaySession.cooldownExercises}
+            icon={Snowflake}
+            accent={{ bg: 'bg-tp-green/15', text: 'text-tp-green', bar: 'bg-tp-green' }}
+          />
         </div>
       )}
 
