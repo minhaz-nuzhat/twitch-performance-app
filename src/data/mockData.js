@@ -163,11 +163,11 @@ export const mockTrainingProgram = {
     warmup: '10 min activation — hip circles, leg swings, jump rope',
     cooldown: '10 min — static stretch, hip flexor focus',
     exercises: [
-      { id: 'ex_1', order: 1, name: 'Back Squat',             sets: 4, reps: '5',          load: '100 kg', rest: '3 min',   notes: 'Focus on bar speed out of the hole',       completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
-      { id: 'ex_2', order: 2, name: 'Romanian Deadlift',      sets: 3, reps: '8',          load: '80 kg',  rest: '2 min',   notes: '',                                         completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
-      { id: 'ex_3', order: 3, name: 'Box Jump',               sets: 4, reps: '5',          load: 'BW',     rest: '90 sec',  notes: 'Max height each rep — full reset',        completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
-      { id: 'ex_4', order: 4, name: 'Bulgarian Split Squat',  sets: 3, reps: '10 each',    load: '40 kg',  rest: '90 s',   notes: 'Control eccentric phase',                  completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
-      { id: 'ex_5', order: 5, name: 'Nordic Curl',            sets: 3, reps: '6',          load: 'BW',     rest: '2 min',   notes: 'Eccentric focus — control descent',       completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
+      { id: 'ex_1', order: 1, name: 'Back Squat',             sets: 4, reps: '5',          load: '100 kg', rest: '3 min',   notes: 'Focus on bar speed out of the hole',       videoUrl: 'https://www.youtube.com/watch?v=ultWZbUMPL8', completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
+      { id: 'ex_2', order: 2, name: 'Romanian Deadlift',      sets: 3, reps: '8',          load: '80 kg',  rest: '2 min',   notes: '',                                         videoUrl: 'https://www.youtube.com/watch?v=JCXUYuzwNrM', completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
+      { id: 'ex_3', order: 3, name: 'Box Jump',               sets: 4, reps: '5',          load: 'BW',     rest: '90 sec',  notes: 'Max height each rep — full reset',        videoUrl: 'https://www.youtube.com/watch?v=52r_Ul5k03g', completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
+      { id: 'ex_4', order: 4, name: 'Bulgarian Split Squat',  sets: 3, reps: '10 each',    load: '40 kg',  rest: '90 s',   notes: 'Control eccentric phase',                  videoUrl: 'https://www.youtube.com/watch?v=2C-uNgKwPLE', completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
+      { id: 'ex_5', order: 5, name: 'Nordic Curl',            sets: 3, reps: '6',          load: 'BW',     rest: '2 min',   notes: 'Eccentric focus — control descent',       videoUrl: 'https://www.youtube.com/watch?v=1__g4QHPUss', completed: false, setsLogged: null, repsLogged: null, weightLogged: null },
     ],
   },
 
@@ -178,12 +178,54 @@ export const mockTrainingProgram = {
   ],
 
   recentSessions: [
-    { date: '2026-08-04', name: 'Upper Body Strength', completed: true,  rpe: 7,    notes: '' },
-    { date: '2026-08-01', name: 'Full Body Speed',     completed: true,  rpe: 8,    notes: 'Felt strong' },
-    { date: '2026-07-30', name: 'Lower Body Power',    completed: true,  rpe: 7,    notes: '' },
-    { date: '2026-07-27', name: 'Upper Body Strength', completed: false, rpe: null, notes: 'Missed — travel' },
-    { date: '2026-07-23', name: 'Full Body Speed',     completed: true,  rpe: 6,    notes: '' },
-    { date: '2026-07-20', name: 'Lower Body Power',    completed: true,  rpe: 8,    notes: 'New squat PB' },
+    {
+      date: '2026-08-04', name: 'Upper Body Strength', completed: true, rpe: 7, notes: '',
+      readiness: { sleep: 4, mood: 4, energy: 3, stress: 4, soreness: 3, average: 3.6 },
+      loggedExercises: [
+        { name: 'Bench Press',   setsLogged: 4, repsLogged: 5,  weightLogged: '85 kg' },
+        { name: 'Pull-Up',       setsLogged: 4, repsLogged: 8,  weightLogged: 'BW' },
+        { name: 'Overhead Press',setsLogged: 3, repsLogged: 8,  weightLogged: '45 kg' },
+        { name: 'Dumbbell Row',  setsLogged: 3, repsLogged: 10, weightLogged: '32 kg' },
+      ],
+    },
+    {
+      date: '2026-08-01', name: 'Full Body Speed', completed: true, rpe: 8, notes: 'Felt strong',
+      readiness: { sleep: 5, mood: 5, energy: 5, stress: 4, soreness: 4, average: 4.6 },
+      loggedExercises: [
+        { name: '30m Sprint',        setsLogged: 4, repsLogged: 1, weightLogged: 'BW' },
+        { name: 'Power Clean',       setsLogged: 4, repsLogged: 4, weightLogged: '70 kg' },
+        { name: 'Medicine Ball Slam',setsLogged: 4, repsLogged: 8, weightLogged: '6 kg' },
+      ],
+    },
+    {
+      date: '2026-07-30', name: 'Lower Body Power', completed: true, rpe: 7, notes: '',
+      readiness: { sleep: 3, mood: 4, energy: 3, stress: 3, soreness: 3, average: 3.2 },
+      loggedExercises: [
+        { name: 'Back Squat',           setsLogged: 4, repsLogged: 5,  weightLogged: '97.5 kg' },
+        { name: 'Romanian Deadlift',    setsLogged: 3, repsLogged: 8,  weightLogged: '77.5 kg' },
+        { name: 'Box Jump',             setsLogged: 4, repsLogged: 5,  weightLogged: 'BW' },
+        { name: 'Bulgarian Split Squat',setsLogged: 3, repsLogged: 10, weightLogged: '38 kg' },
+        { name: 'Nordic Curl',          setsLogged: 3, repsLogged: 6,  weightLogged: 'BW' },
+      ],
+    },
+    { date: '2026-07-27', name: 'Upper Body Strength', completed: false, rpe: null, notes: 'Missed — travel', readiness: null, loggedExercises: [] },
+    {
+      date: '2026-07-23', name: 'Full Body Speed', completed: true, rpe: 6, notes: '',
+      readiness: { sleep: 2, mood: 3, energy: 2, stress: 2, soreness: 3, average: 2.4 },
+      loggedExercises: [
+        { name: '30m Sprint',  setsLogged: 3, repsLogged: 1, weightLogged: 'BW' },
+        { name: 'Power Clean', setsLogged: 3, repsLogged: 4, weightLogged: '62.5 kg' },
+      ],
+    },
+    {
+      date: '2026-07-20', name: 'Lower Body Power', completed: true, rpe: 8, notes: 'New squat PB',
+      readiness: { sleep: 5, mood: 5, energy: 4, stress: 4, soreness: 4, average: 4.4 },
+      loggedExercises: [
+        { name: 'Back Squat',        setsLogged: 4, repsLogged: 5, weightLogged: '95 kg' },
+        { name: 'Romanian Deadlift', setsLogged: 3, repsLogged: 8, weightLogged: '75 kg' },
+        { name: 'Box Jump',          setsLogged: 4, repsLogged: 5, weightLogged: 'BW' },
+      ],
+    },
   ],
 }
 

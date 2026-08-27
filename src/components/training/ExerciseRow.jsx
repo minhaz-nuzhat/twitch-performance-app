@@ -1,7 +1,12 @@
 import { useState } from 'react'
-import { CheckCircle2, Circle, Clock, ChevronDown } from 'lucide-react'
+import { CheckCircle2, Circle, Clock, ChevronDown, Youtube, PlayCircle } from 'lucide-react'
 import clsx from 'clsx'
 import { useRestTimer } from '../../hooks/useRestTimer'
+
+function getYouTubeId(url = '') {
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/)
+  return m ? m[1] : null
+}
 
 /**
  * ExerciseRow — compact single-line design.
@@ -10,6 +15,8 @@ import { useRestTimer } from '../../hooks/useRestTimer'
 export function ExerciseRow({ ex, onToggle, onLogChange }) {
   const timer = useRestTimer(ex.id, ex.rest)
   const [expanded, setExpanded] = useState(false)
+  const ytId = getYouTubeId(ex.videoUrl ?? '')
+  const thumbUrl = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : null
 
   return (
     <div
@@ -50,6 +57,19 @@ export function ExerciseRow({ ex, onToggle, onLogChange }) {
 
         {/* Order badge + expand chevron */}
         <span className="label flex-shrink-0 text-[9px]">#{ex.order}</span>
+        {ex.videoUrl && (
+          <a
+            href={ex.videoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={e => e.stopPropagation()}
+            title="Watch coach demo"
+            aria-label={`Watch coach demo for ${ex.name}`}
+            className="flex-shrink-0 text-tp-red hover:text-tp-red-bright transition-colors"
+          >
+            <Youtube size={15} />
+          </a>
+        )}
         <button
           onClick={() => setExpanded(v => !v)}
           className="flex-shrink-0 text-tp-muted hover:text-tp-white transition-colors"
@@ -64,6 +84,33 @@ export function ExerciseRow({ ex, onToggle, onLogChange }) {
           {ex.notes && (
             <p className="text-tp-red text-[10px] italic leading-snug">{ex.notes}</p>
           )}
+
+          {/* Coach demo video */}
+          {ex.videoUrl
+            ? (
+                <a
+                  href={ex.videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 bg-tp-raised border border-tp-border rounded-lg p-2 hover:border-tp-red/50 transition-colors group"
+                >
+                  {thumbUrl
+                    ? <img src={thumbUrl} alt="" className="w-16 h-10 object-cover rounded flex-shrink-0" />
+                    : (
+                        <div className="w-16 h-10 rounded bg-tp-black flex items-center justify-center flex-shrink-0">
+                          <PlayCircle size={16} className="text-tp-red" />
+                        </div>
+                      )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-tp-white text-xs font-semibold">Watch coach demo</p>
+                    <p className="text-tp-soft text-[10px] truncate">Technique reference for {ex.name}</p>
+                  </div>
+                  <PlayCircle size={16} className="text-tp-soft group-hover:text-tp-red transition-colors flex-shrink-0" />
+                </a>
+              )
+            : (
+                <p className="text-tp-muted text-[10px] italic">No demo video attached by your coach yet.</p>
+              )}
 
           {/* Logging inputs */}
           <div className="grid grid-cols-3 gap-1.5">
