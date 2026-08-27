@@ -3,16 +3,18 @@ import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { InfoTooltip } from './InfoTooltip'
 import { DIMENSION_TOOLTIPS } from '../../data/scienceTooltips'
 
+// Inverted dimensions (e.g. Injury Risk) are flipped so "high number = bad" reads the same way.
 function scoreColor(score, inverted = false) {
   const s = inverted ? 100 - score : score
-  if (s >= 70) return { bar: 'bg-tp-green', text: 'text-tp-green', bg: 'bg-tp-green/10' }
-  if (s >= 50) return { bar: 'bg-tp-amber', text: 'text-tp-amber', bg: 'bg-tp-amber/10' }
-  return          { bar: 'bg-tp-danger',  text: 'text-tp-danger', bg: 'bg-tp-danger/10' }
+  if (s >= 70) return { bar: 'bg-tp-green',  text: 'text-tp-green',  bg: 'bg-tp-green/10',  band: 'Strong',    critical: false }
+  if (s >= 60) return { bar: 'bg-tp-amber',  text: 'text-tp-amber',  bg: 'bg-tp-amber/10',  band: 'Developing', critical: false }
+  if (s >= 45) return { bar: 'bg-tp-danger', text: 'text-tp-danger', bg: 'bg-tp-danger/10', band: 'Needs work', critical: false }
+  return          { bar: 'bg-tp-danger', text: 'text-tp-danger', bg: 'bg-tp-danger/15', band: 'Critical',  critical: true }
 }
 
 export default function DimensionCard({ dimension, delay = 0 }) {
   const { label, score, raw, change, icon, inverted = false } = dimension
-  const { bar, text, bg } = scoreColor(score, inverted)
+  const { bar, text, bg, band, critical } = scoreColor(score, inverted)
 
   const ChangeIcon = change > 0 ? TrendingUp : change < 0 ? TrendingDown : Minus
   const changeColor = change > 0
@@ -23,7 +25,10 @@ export default function DimensionCard({ dimension, delay = 0 }) {
 
   return (
     <div
-      className="card p-4 hover:border-tp-border-bright transition-all duration-200 animate-fade-up opacity-0"
+      className={clsx(
+        'card p-4 transition-all duration-200 animate-fade-up opacity-0',
+        critical ? 'border-tp-danger/60 shadow-[0_0_16px_rgba(239,68,68,0.18)]' : 'hover:border-tp-border-bright',
+      )}
       style={{ animationDelay: `${delay}ms`, animationFillMode: 'forwards' }}
     >
       {/* Header */}
@@ -53,10 +58,11 @@ export default function DimensionCard({ dimension, delay = 0 }) {
         />
       </div>
 
-      {/* Inverted label */}
-      {inverted && (
-        <p className="text-tp-soft text-xs mt-1.5 font-medium">Lower = better</p>
-      )}
+      {/* Band label */}
+      <div className="flex items-center justify-between mt-2">
+        <span className={clsx('text-[11px] font-bold px-1.5 py-0.5 rounded', text, bg)}>{band}</span>
+        {inverted && <span className="text-tp-soft text-xs font-medium">Lower = better</span>}
+      </div>
     </div>
   )
 }

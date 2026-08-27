@@ -100,7 +100,7 @@ export const mockPerformanceScore = {
 
   strengthIndex: {
     score: 68,
-    description: 'Based on latest force, power, and speed markers.',
+    description: 'Composite of force, power, speed, and movement quality from your latest testing block.',
     change: +7,
   },
 

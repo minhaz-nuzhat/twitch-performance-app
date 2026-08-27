@@ -10,7 +10,7 @@ const ROUTE_LABELS = {
   '/':            'Dashboard',
   '/training':    'Training',
   '/nutrition':   'Nutrition',
-  '/progress':    'Progress',
+  '/progress':    'Performance Score',
   '/assessment':  'Assessment',
   '/performance': 'Performance',
   '/messages':    'Messages',

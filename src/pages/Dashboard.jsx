@@ -91,7 +91,7 @@ const SparkTip = ({ active, payload }) => {
 // ── Sub-cards ─────────────────────────────────────────────────
 
 function ReadinessHero({ perf }) {
-  const { readinessRecommendation: rec, tier, composite, trendValue, last7Days, nextTierName, nextTierTarget } = perf
+  const { readinessRecommendation: rec, tier, composite, trendValue, last7Days, nextTierName, nextTierTarget, adherenceWindows } = perf
   const ptsAway = nextTierTarget - composite
 
   return (
@@ -106,7 +106,7 @@ function ReadinessHero({ perf }) {
         {/* Centre info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-2">
-            <p className="label">Readiness Score</p>
+            <p className="label">Performance Score</p>
             <InfoTooltip text={DASHBOARD_TOOLTIPS.compositeScore} position="below" /></div>
           <p className={clsx('font-mono font-bold text-4xl mb-2', TIER_TEXT[tier])}>{composite}</p>
           <div className="flex items-center gap-3 mb-2 flex-wrap">
@@ -118,6 +118,23 @@ function ReadinessHero({ perf }) {
               +{trendValue} vs last assessment
             </span>
           </div>
+
+          {/* The two drivers behind the score */}
+          <div className="grid grid-cols-2 gap-2 my-3">
+            <div className="bg-tp-raised border border-tp-border rounded-lg px-3 py-2">
+              <p className="text-tp-soft text-[11px] font-semibold mb-0.5">Assessment Change</p>
+              <p className="text-tp-green font-mono font-bold text-lg">+{trendValue}</p>
+              <p className="text-tp-muted text-[10px]">vs. previous 3-month test</p>
+            </div>
+            <div className="bg-tp-raised border border-tp-border rounded-lg px-3 py-2">
+              <p className="text-tp-soft text-[11px] font-semibold mb-0.5">Program Adherence</p>
+              <p className={clsx('font-mono font-bold text-lg', adherenceWindows.last30d.pct >= 85 ? 'text-tp-green' : adherenceWindows.last30d.pct >= 70 ? 'text-tp-amber' : 'text-tp-danger')}>
+                {adherenceWindows.last30d.pct}%
+              </p>
+              <p className="text-tp-muted text-[10px]">last 30 days · {adherenceWindows.last30d.sessions}</p>
+            </div>
+          </div>
+
           <p className="text-tp-soft text-xs leading-relaxed mb-1">{rec.description}</p>
           <p className="text-tp-muted text-xs">{ptsAway} points to {nextTierName} tier.</p>
         </div>
@@ -148,7 +165,7 @@ function StrengthIndexCard({ perf }) {
     <div className="card p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-1.5">
-          <p className="label">Strength Index</p>
+          <p className="label">Athletic Ability</p>
           <InfoTooltip text={DASHBOARD_TOOLTIPS.strengthIndex} />
         </div>
         <Link to="/assessment" className="text-tp-muted text-xs hover:text-tp-red transition-colors">View testing</Link>

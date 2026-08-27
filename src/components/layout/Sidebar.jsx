@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { to: '/',            label: 'Dashboard',    icon: LayoutDashboard },
   { to: '/training',    label: 'Training',     icon: Dumbbell        },
   { to: '/nutrition',   label: 'Nutrition',    icon: Utensils        },
-  { to: '/progress',    label: 'Progress',     icon: TrendingUp      },
+  { to: '/progress',    label: 'Performance Score', icon: TrendingUp },
   { to: '/assessment',  label: 'Assessment',   icon: Activity        },
   { to: '/messages',    label: 'Messages',     icon: MessageCircle   },
   { to: '/profiling',   label: 'My Profile',   icon: ClipboardList   },

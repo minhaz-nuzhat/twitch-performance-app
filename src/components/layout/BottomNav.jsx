@@ -7,7 +7,7 @@ const TABS = [
   { to: '/training',   label: 'Training',   icon: Dumbbell                   },
   { to: '/nutrition',  label: 'Eat',        icon: Utensils                   },
   { to: '/assessment', label: 'Assessment', icon: Activity                   },
-  { to: '/progress',   label: 'Progress',   icon: TrendingUp                 },
+  { to: '/progress',   label: 'Score',      icon: TrendingUp                 },
   { to: '/messages',   label: 'Messages',   icon: MessageCircle              },
 ]
 

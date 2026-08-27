@@ -81,13 +81,13 @@ export const DASHBOARD_TOOLTIPS = {
     'Composite score (0–100) weighted across 11 performance dimensions (Force Index, Explosive Score, Power Index, Cardiovascular, Mobility, Symmetry, Injury Risk, Body Composition, Training Adherence, Nutrition Compliance, Recovery), normalised to sport and age benchmarks from published standards (NSCA, ACSM, EXOS). Tiers: Bronze <50 · Silver 50–64 · Gold 65–79 · Elite ≥80.',
 
   strengthIndex:
-    'Your primary force production metric trended between assessments. Strength is the foundational prerequisite for all athletic performance qualities — power, speed, and injury resistance all require a sufficient strength base.',
+    'Athletic Ability blends your force production, explosive power, speed, and movement quality into one trended number. It answers a simple question: how much raw athletic capacity do you currently have to work with? Strength underpins all of it — power, speed, and injury resistance all require a sufficient force base.',
 
   priorityFocus:
     'The dimension where targeted improvement would generate the largest composite score gain, given current performance gaps vs. sport-specific benchmarks. Verified by your coach before surfacing.',
 
   recoveryRisk:
-    'Calculated from your Acute:Chronic Workload Ratio (ACWR). Managing training load is one of the most evidence-supported injury prevention strategies in sports science. Safe target range: 0.8–1.3.',
+    'Acute:Chronic Workload Ratio (ACWR) = your last 7 days of training load ÷ your rolling 28-day average load. Load per session = session RPE × duration in minutes. Below 0.8 you are undertrained and detraining; 0.8–1.3 is the "sweet spot"; above 1.5 sits in the danger zone, where studies by Gabbett and colleagues found injury likelihood rises 2–4× in the following 7 days. The ratio works because tissue tolerance adapts to chronic load — spiking acute load faster than that adaptation is what causes breakdown.',
 
   sessionAdherence:
     'Sessions completed vs. assigned in a rolling 30-day window. The most consistent predictor of long-term performance improvement — more so than any individual training quality variable.',
