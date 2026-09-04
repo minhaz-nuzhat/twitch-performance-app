@@ -234,7 +234,9 @@ export default function Nutrition() {
           <div>
             <span className="label block mb-1">Active Plan</span>
             <h2 className="text-tp-white font-bold text-base">{plan.name}</h2>
-            <p className="text-tp-muted text-xs mt-0.5">Assigned by {plan.assignedBy}</p>
+            <p className="text-tp-soft text-xs mt-0.5">
+              {plan.duration} · Assigned by {plan.assignedBy}
+            </p>
           </div>
           <div className="text-right flex-shrink-0">
             <p className="text-tp-white font-mono font-bold text-2xl">{loggedCount}/{meals.length}</p>

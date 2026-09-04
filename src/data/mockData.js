@@ -248,6 +248,7 @@ export const mockNutritionPlan = {
   name: 'Cricket Pre-Season — Lean Performance',
   assignedBy: 'Coach Ravi',
   effectiveFrom: '2026-07-01',
+  duration: '12 weeks',
   targets: { calories: 2800, protein: 165, carbs: 340, fat: 75 },
   dayTypes: {
     heavy: { label: 'Heavy Training Day', calories: 4100, protein: 124, carbs: 624, fat: 123, description: 'S&C plus both skill sessions. Carbohydrate rises to cover the highest training demand.' },
