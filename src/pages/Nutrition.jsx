@@ -1,12 +1,22 @@
 import { useState } from 'react'
 import { useNutrition } from '../hooks/useApi'
 import MacroRing from '../components/ui/MacroRing'
-import { CheckCircle2, Circle, Info, Upload, FileText, Trash2 } from 'lucide-react'
+import { CheckCircle2, Circle, Info, Upload, FileText, Trash2, Check } from 'lucide-react'
 import clsx from 'clsx'
+
+const MEAL_LOG_KEY = 'tp-nutrition-meal-log'
 
 export default function Nutrition() {
   const { data: plan, loading } = useNutrition()
   const [uploadedFiles, setUploadedFiles] = useState([])
+  const [loggedMeals, setLoggedMeals] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(MEAL_LOG_KEY) || '{}')
+    } catch {
+      return {}
+    }
+  })
+  const [uploadError, setUploadError] = useState('')
 
   if (loading || !plan) {
     return <div className="space-y-4">{[...Array(3)].map((_, i) => <div key={i} className="skeleton h-24 rounded-xl" />)}</div>
@@ -14,13 +24,31 @@ export default function Nutrition() {
 
   const { targets, todayLog, meals, trainerNote } = plan
 
+  const mealState = meals.map(meal => ({
+    ...meal,
+    logged: loggedMeals[meal.id] ?? meal.logged,
+  }))
+
   const calPct      = Math.min(Math.round((todayLog.calories / targets.calories) * 100), 100)
   const remaining   = targets.calories - todayLog.calories
-  const loggedMeals = meals.filter((m) => m.logged).length
+  const loggedCount  = mealState.filter((m) => m.logged).length
+
+  const toggleMeal = (mealId) => {
+    setLoggedMeals(prev => {
+      const next = { ...prev, [mealId]: !(prev[mealId] ?? meals.find(m => m.id === mealId)?.logged) }
+      localStorage.setItem(MEAL_LOG_KEY, JSON.stringify(next))
+      return next
+    })
+  }
 
   const handleFileUpload = (e) => {
+    setUploadError('')
     const files = Array.from(e.target.files)
     files.forEach(file => {
+      if (file.size > 10 * 1024 * 1024) {
+        setUploadError(`${file.name} is larger than the 10 MB limit.`)
+        return
+      }
       const newFile = {
         id: `file_${Date.now()}_${Math.random()}`,
         name: file.name,
@@ -47,7 +75,7 @@ export default function Nutrition() {
             <p className="text-tp-muted text-xs mt-0.5">Assigned by {plan.assignedBy}</p>
           </div>
           <div className="text-right flex-shrink-0">
-            <p className="text-tp-white font-mono font-bold text-2xl">{loggedMeals}/{meals.length}</p>
+            <p className="text-tp-white font-mono font-bold text-2xl">{loggedCount}/{meals.length}</p>
             <p className="text-tp-muted text-xs">meals logged</p>
           </div>
         </div>
@@ -80,7 +108,7 @@ export default function Nutrition() {
               style={{ width: `${calPct}%` }}
             />
           </div>
-          <p className="text-tp-muted text-xs mt-1">{calPct}% of daily target consumed</p>
+            <p className="text-tp-soft text-xs mt-1">{calPct}% of daily target consumed</p>
         </div>
 
         {/* Macro rings */}
@@ -110,6 +138,10 @@ export default function Nutrition() {
               <p className="text-tp-soft text-xs leading-relaxed">{trainerNote}</p>
             </div>
           </div>
+
+          {uploadError && (
+            <p className="text-tp-danger text-xs mb-3" role="alert">{uploadError}</p>
+          )}
         </div>
       )}
 
@@ -173,7 +205,7 @@ export default function Nutrition() {
       <div>
         <h3 className="text-tp-white font-semibold mb-3">Meal Plan</h3>
         <div className="space-y-3">
-          {meals.map((meal) => (
+          {mealState.map((meal) => (
             <div
               key={meal.id}
               className={clsx(
@@ -183,17 +215,22 @@ export default function Nutrition() {
             >
               <div className="flex items-start gap-3">
                 {/* Log indicator */}
-                <div className="flex-shrink-0 mt-0.5">
+                <button
+                  type="button"
+                  onClick={() => toggleMeal(meal.id)}
+                  aria-label={`${meal.logged ? 'Unlog' : 'Log'} ${meal.name}`}
+                  className="flex-shrink-0 mt-0.5 w-11 h-11 flex items-center justify-center rounded-lg hover:bg-tp-raised transition-colors"
+                >
                   {meal.logged
-                    ? <CheckCircle2 size={18} className="text-tp-green" />
-                    : <Circle       size={18} className="text-tp-border" />}
-                </div>
+                    ? <CheckCircle2 size={20} className="text-tp-green" />
+                    : <Circle       size={20} className="text-tp-soft" />}
+                </button>
 
                 {/* Meal info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <h4 className="text-tp-white font-medium text-sm">{meal.name}</h4>
-                    <span className="text-tp-muted text-xs flex-shrink-0">{meal.time}</span>
+                    <h4 className="text-tp-white font-semibold text-sm">{meal.name}</h4>
+                    <span className="text-tp-soft text-xs flex-shrink-0">{meal.time}</span>
                   </div>
 
                   {/* Macros row */}
@@ -215,6 +252,20 @@ export default function Nutrition() {
                       </span>
                     ))}
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={() => toggleMeal(meal.id)}
+                    className={clsx(
+                      'mt-3 inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition-colors',
+                      meal.logged
+                        ? 'bg-tp-green/10 text-tp-green border border-tp-green/30'
+                        : 'bg-tp-raised text-tp-white border border-tp-border hover:border-tp-red/50',
+                    )}
+                  >
+                    {meal.logged ? <Check size={13} /> : <Circle size={13} />}
+                    {meal.logged ? 'Meal logged' : 'Log this meal'}
+                  </button>
                 </div>
               </div>
             </div>
