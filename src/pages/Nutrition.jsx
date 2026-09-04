@@ -20,6 +20,7 @@ export default function Nutrition() {
   const [selectedDayType, setSelectedDayType] = useState(plan?.selectedDayType ?? 'heavy')
   const [openAlternatives, setOpenAlternatives] = useState(null)
   const [coachNoteOpen, setCoachNoteOpen] = useState(false)
+  const [guidanceOpen, setGuidanceOpen] = useState(false)
 
   if (loading || !plan) {
     return <div className="space-y-4">{[...Array(3)].map((_, i) => <div key={i} className="skeleton h-24 rounded-xl" />)}</div>
@@ -261,11 +262,19 @@ export default function Nutrition() {
 
       {/* ── Coach reasoning ── */}
       {(plan.planReasoning?.length > 0 || plan.suggestions?.length > 0 || plan.hydration?.length > 0) && (
-        <div className="card p-5">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="card overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setGuidanceOpen(value => !value)}
+            aria-expanded={guidanceOpen}
+            className="w-full flex items-center gap-2 p-5 text-left hover:bg-tp-raised/50 transition-colors"
+          >
             <Lightbulb size={16} className="text-tp-amber" />
-            <h3 className="text-tp-white font-semibold">Coach’s reasoning & suggestions</h3>
-          </div>
+            <h3 className="text-tp-white font-semibold flex-1">Coach’s reasoning & suggestions</h3>
+            <ChevronDown size={15} className={clsx('text-tp-soft transition-transform', guidanceOpen && 'rotate-180')} />
+          </button>
+          {guidanceOpen && (
+            <div className="px-5 pb-5 animate-fade-in">
           <div className="space-y-3">
             {plan.planReasoning?.map(item => (
               <div key={item.title} className="border-l-2 border-tp-red/60 pl-3">
@@ -288,6 +297,8 @@ export default function Nutrition() {
               <ul className="space-y-2">
                 {plan.hydration.map(item => <li key={item} className="text-tp-soft text-xs leading-relaxed flex gap-2"><span className="text-tp-green">•</span>{item}</li>)}
               </ul>
+            </div>
+          )}
             </div>
           )}
         </div>
