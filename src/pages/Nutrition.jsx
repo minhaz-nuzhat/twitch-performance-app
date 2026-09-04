@@ -89,9 +89,11 @@ export default function Nutrition() {
 
       <div className="grid lg:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
 
+      <div className="space-y-6 lg:col-start-1">
+
       {/* ── Day type ── */}
       {plan.dayTypes && (
-        <div className="card p-5 lg:col-start-1 lg:row-start-1">
+        <div className="card p-5">
           <div className="flex items-start justify-between gap-3 mb-3">
             <div>
               <h3 className="text-tp-white font-semibold">Today’s fuel target</h3>
@@ -120,7 +122,7 @@ export default function Nutrition() {
       )}
 
       {/* ── Calories + Macros ── */}
-      <div className="card p-5 lg:col-start-1 lg:row-start-2">
+      <div className="card p-5">
         <h3 className="text-tp-white font-semibold mb-4">Today's Intake</h3>
 
         {/* Calorie bar */}
@@ -166,9 +168,13 @@ export default function Nutrition() {
         </div>
       </div>
 
+      </div>
+
+      <div className="space-y-6 lg:col-start-2 lg:row-start-1">
+
       {/* ── Trainer Note ── */}
       {trainerNote && (
-        <div className="card border-tp-amber/25 bg-tp-amber/5 overflow-hidden lg:col-start-2 lg:row-start-1">
+        <div className="card border-tp-amber/25 bg-tp-amber/5 overflow-hidden">
           <button
             type="button"
             onClick={() => setCoachNoteOpen(value => !value)}
@@ -185,7 +191,7 @@ export default function Nutrition() {
 
       {/* ── Coach reasoning ── */}
       {(plan.planReasoning?.length > 0 || plan.suggestions?.length > 0 || plan.hydration?.length > 0) && (
-        <div className="card p-5 lg:col-start-2 lg:row-start-2">
+        <div className="card p-5">
           <div className="flex items-center gap-2 mb-4">
             <Lightbulb size={16} className="text-tp-amber" />
             <h3 className="text-tp-white font-semibold">Coach’s reasoning & suggestions</h3>
@@ -218,7 +224,7 @@ export default function Nutrition() {
       )}
 
       {/* ── Blood Tests & Medical Reports ── */}
-      <div className="lg:col-start-2 lg:row-start-3">
+      <div>
         <h3 className="text-tp-white font-semibold mb-3">Nutrition Diagnostics</h3>
         <div className="card p-5 border-tp-border">
           <div className="flex items-start gap-3 mb-4">
@@ -277,8 +283,10 @@ export default function Nutrition() {
         </div>
       </div>
 
+      </div>
+
       {/* ── Meal Plan ── */}
-      <div className="lg:col-start-1 lg:row-start-3">
+      <div className="lg:col-start-1">
         <h3 className="text-tp-white font-semibold mb-3">Meal Plan</h3>
         <div className="space-y-3">
           {mealState.map((meal) => (
