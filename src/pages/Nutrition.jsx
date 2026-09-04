@@ -73,21 +73,6 @@ export default function Nutrition() {
   return (
     <div className="space-y-6 animate-fade-in">
 
-      {/* ── Plan Header ── */}
-      <div className="card p-5 border-red-glow">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <span className="label block mb-1">Active Plan</span>
-            <h2 className="text-tp-white font-bold text-base">{plan.name}</h2>
-            <p className="text-tp-muted text-xs mt-0.5">Assigned by {plan.assignedBy}</p>
-          </div>
-          <div className="text-right flex-shrink-0">
-            <p className="text-tp-white font-mono font-bold text-2xl">{loggedCount}/{meals.length}</p>
-            <p className="text-tp-muted text-xs">meals logged</p>
-          </div>
-        </div>
-      </div>
-
       <div className="grid lg:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
 
       <div className="space-y-6 lg:col-start-1">
@@ -242,6 +227,21 @@ export default function Nutrition() {
       </div>
 
       <div className="space-y-6 lg:col-start-2 lg:row-start-1">
+
+      {/* ── Plan Header ── */}
+      <div className="card p-5 border-red-glow">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <span className="label block mb-1">Active Plan</span>
+            <h2 className="text-tp-white font-bold text-base">{plan.name}</h2>
+            <p className="text-tp-muted text-xs mt-0.5">Assigned by {plan.assignedBy}</p>
+          </div>
+          <div className="text-right flex-shrink-0">
+            <p className="text-tp-white font-mono font-bold text-2xl">{loggedCount}/{meals.length}</p>
+            <p className="text-tp-muted text-xs">meals logged</p>
+          </div>
+        </div>
+      </div>
 
       {/* ── Trainer Note ── */}
       {trainerNote && (
