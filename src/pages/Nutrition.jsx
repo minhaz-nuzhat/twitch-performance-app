@@ -168,6 +168,76 @@ export default function Nutrition() {
         </div>
       </div>
 
+      {/* ── Meal Plan ── */}
+      <div>
+        <h3 className="text-tp-white font-semibold mb-3">Meal Plan</h3>
+        <div className="space-y-3">
+          {mealState.map((meal) => (
+            <div
+              key={meal.id}
+              className={clsx(
+                'card p-4 transition-all',
+                meal.logged ? 'border-tp-green/20 bg-tp-green/3' : '',
+              )}
+            >
+              <div className="flex items-start gap-3">
+                <button
+                  type="button"
+                  onClick={() => toggleMeal(meal.id)}
+                  aria-label={`${meal.logged ? 'Unlog' : 'Log'} ${meal.name}`}
+                  className="flex-shrink-0 mt-0.5 w-11 h-11 flex items-center justify-center rounded-lg hover:bg-tp-raised transition-colors"
+                >
+                  {meal.logged
+                    ? <CheckCircle2 size={20} className="text-tp-green" />
+                    : <Circle size={20} className="text-tp-soft" />}
+                </button>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <h4 className="text-tp-white font-semibold text-sm">{meal.name}</h4>
+                    <span className="text-tp-soft text-xs flex-shrink-0">{meal.time}</span>
+                  </div>
+                  {meal.purpose && <p className="text-tp-soft text-xs mt-1">{meal.purpose}</p>}
+                  <div className="flex gap-3 mt-1.5">
+                    {meal.calories > 0 && <span className="text-tp-soft text-xs font-mono">{meal.calories} kcal</span>}
+                    {meal.protein > 0 && <span className="text-tp-red text-xs">P: {meal.protein}g</span>}
+                    {meal.carbs > 0 && <span className="text-tp-amber text-xs">C: {meal.carbs}g</span>}
+                    {meal.fat > 0 && <span className="text-tp-green text-xs">F: {meal.fat}g</span>}
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {meal.items.map((item, i) => (
+                      <span key={i} className="bg-tp-raised text-tp-soft text-[10px] px-2 py-0.5 rounded-full border border-tp-border">{item}</span>
+                    ))}
+                  </div>
+                  {meal.calories === 0 && <p className="text-tp-muted text-xs italic mt-2">No meal scheduled for this day type.</p>}
+                  {meal.alternatives?.length > 0 && meal.calories > 0 && (
+                    <div className="mt-3 border-t border-tp-border pt-2">
+                      <button type="button" onClick={() => setOpenAlternatives(openAlternatives === meal.id ? null : meal.id)} className="flex items-center gap-1.5 text-tp-red text-xs font-semibold py-1" aria-expanded={openAlternatives === meal.id}>
+                        <ChevronDown size={13} className={clsx('transition-transform', openAlternatives === meal.id && 'rotate-180')} />
+                        See coach-approved alternatives
+                      </button>
+                      {openAlternatives === meal.id && (
+                        <div className="mt-2 space-y-1.5">
+                          {meal.alternatives.map((alternative, index) => (
+                            <div key={alternative} className="flex gap-2 bg-tp-raised rounded-lg px-3 py-2 text-xs text-tp-soft">
+                              <span className="text-tp-red font-bold">{String.fromCharCode(65 + index)}</span>
+                              <span>{alternative}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <button type="button" onClick={() => toggleMeal(meal.id)} className={clsx('mt-3 inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition-colors', meal.logged ? 'bg-tp-green/10 text-tp-green border border-tp-green/30' : 'bg-tp-raised text-tp-white border border-tp-border hover:border-tp-red/50')}>
+                    {meal.logged ? <Check size={13} /> : <Circle size={13} />}
+                    {meal.logged ? 'Meal logged' : 'Log this meal'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       </div>
 
       <div className="space-y-6 lg:col-start-2 lg:row-start-1">
@@ -285,8 +355,8 @@ export default function Nutrition() {
 
       </div>
 
-      {/* ── Meal Plan ── */}
-      <div className="lg:col-start-1">
+      {/* ── Meal Plan (rendered in the left column above) ── */}
+      <div className="hidden">
         <h3 className="text-tp-white font-semibold mb-3">Meal Plan</h3>
         <div className="space-y-3">
           {mealState.map((meal) => (
