@@ -249,14 +249,35 @@ export const mockNutritionPlan = {
   assignedBy: 'Coach Ravi',
   effectiveFrom: '2026-07-01',
   targets: { calories: 2800, protein: 165, carbs: 340, fat: 75 },
+  dayTypes: {
+    heavy: { label: 'Heavy Training Day', calories: 4100, protein: 124, carbs: 624, fat: 123, description: 'S&C plus both skill sessions. Carbohydrate rises to cover the highest training demand.' },
+    skill: { label: 'Skill Day', calories: 3700, protein: 124, carbs: 530, fat: 120, description: 'Skill work only. Keep protein steady and reduce carbohydrate slightly.' },
+    rest: { label: 'Rest / Low Day', calories: 3300, protein: 124, carbs: 406, fat: 131, description: 'Recovery or travel day. Keep regular meals, but lower training fuel.' },
+  },
+  selectedDayType: 'heavy',
+  planReasoning: [
+    { title: 'Fuel the work you actually do', text: 'Heavy days carry the most carbohydrates because you have S&C and two skill sessions. Skill and rest days scale down without removing protein.' },
+    { title: 'Protect the recovery windows', text: 'The post-training meals pair protein with carbohydrate within 30–60 minutes to support glycogen replacement and muscle repair.' },
+    { title: 'Make it practical', text: 'Each slot has interchangeable options with a similar nutrition purpose, so the plan can work with your home kitchen, travel, and appetite.' },
+  ],
+  suggestions: [
+    'Choose one option from each meal slot rather than combining every option.',
+    'Use cooked or raw weights exactly as the coach has written them; ask before changing the measurement method.',
+    'On long outdoor sessions, bring water plus a carbohydrate-electrolyte drink and tell your coach if your appetite or energy drops.',
+  ],
+  hydration: [
+    'Start with 400–500 ml of water before training.',
+    'During training lasting more than four hours, use a carbohydrate-electrolyte drink and replace fluids gradually afterward.',
+    'Pale straw-coloured urine is a simple day-to-day hydration check, not a medical test.',
+  ],
   todayLog:  { calories: 1940, protein: 118, carbs: 230, fat: 52 },
   trainerNote: 'Increase carbs by 50 g on training days around session window. Recovery days drop to 2500 kcal. Prioritise protein within 30 min post-session.',
   meals: [
-    { id: 'meal_1', name: 'Breakfast',       time: '07:30', calories: 650, protein: 40, carbs: 75, fat: 18, logged: true,  items: ['Oats with whey protein', 'Banana', '3 whole eggs'] },
-    { id: 'meal_2', name: 'Pre-Training',    time: '11:30', calories: 320, protein: 15, carbs: 55, fat:  5, logged: true,  items: ['Rice cakes', 'Peanut butter (1 tbsp)', 'Apple'] },
-    { id: 'meal_3', name: 'Post-Training',   time: '14:30', calories: 520, protein: 42, carbs: 65, fat:  8, logged: true,  items: ['Whey protein shake', 'White rice 150 g', 'Chicken breast 150 g'] },
-    { id: 'meal_4', name: 'Dinner',          time: '19:30', calories: 680, protein: 45, carbs: 75, fat: 18, logged: false, items: ['Salmon 180 g', 'Sweet potato', 'Mixed salad'] },
-    { id: 'meal_5', name: 'Evening Snack',   time: '21:30', calories: 250, protein: 22, carbs: 15, fat: 10, logged: false, items: ['Greek yogurt 200 g', 'Mixed nuts 20 g'] },
+    { id: 'meal_1', name: 'Breakfast',       time: '07:30', calories: 650, protein: 40, carbs: 75, fat: 18, logged: true,  purpose: 'Fuel the first training block', items: ['Oats with whey protein', 'Banana', '3 whole eggs'], alternatives: ['2 egg-white masala omelette + 2 idli + milk', 'Paneer paratha + curd + 1 boiled egg', 'Rolled oats + milk + 2 boiled eggs + banana'] },
+    { id: 'meal_2', name: 'Pre-Training',    time: '11:30', calories: 320, protein: 15, carbs: 55, fat:  5, logged: true,  purpose: 'Easy carbohydrate before training', items: ['Rice cakes', 'Peanut butter (1 tbsp)', 'Apple'], alternatives: ['Whey shake + banana + soaked almonds', 'Greek yogurt + granola + honey', 'Boiled eggs + toast + fruit'] },
+    { id: 'meal_3', name: 'Post-Training',   time: '14:30', calories: 520, protein: 42, carbs: 65, fat:  8, logged: true,  purpose: 'Replace fuel and start muscle repair', items: ['Whey protein shake', 'White rice 150 g', 'Chicken breast 150 g'], alternatives: ['Whey shake + banana + rice', 'Greek yogurt + granola + honey + whey', 'Eggs + toast + milk'] },
+    { id: 'meal_4', name: 'Dinner',          time: '19:30', calories: 680, protein: 45, carbs: 75, fat: 18, logged: false, purpose: 'Complete the day with a balanced plate', items: ['Salmon 180 g', 'Sweet potato', 'Mixed salad'], alternatives: ['Roti + chicken or fish curry + dal + vegetables', 'Rice + rajma or chana + paneer + salad', 'Vegetable khichdi + eggs + curd + salad'] },
+    { id: 'meal_5', name: 'Evening Snack',   time: '21:30', calories: 250, protein: 22, carbs: 15, fat: 10, logged: false, purpose: 'Optional slow-digesting protein before sleep', items: ['Greek yogurt 200 g', 'Mixed nuts 20 g'], alternatives: ['Curd or warm milk with turmeric', '150 g paneer, lightly sautéed', 'Greek yogurt + 1 tsp honey'] },
   ],
 }
 

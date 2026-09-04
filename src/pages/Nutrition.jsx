@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNutrition } from '../hooks/useApi'
 import MacroRing from '../components/ui/MacroRing'
-import { CheckCircle2, Circle, Info, Upload, FileText, Trash2, Check } from 'lucide-react'
+import { CheckCircle2, Circle, Info, Upload, FileText, Trash2, Check, ChevronDown, Lightbulb, Droplets } from 'lucide-react'
 import clsx from 'clsx'
 
 const MEAL_LOG_KEY = 'tp-nutrition-meal-log'
@@ -17,20 +17,24 @@ export default function Nutrition() {
     }
   })
   const [uploadError, setUploadError] = useState('')
+  const [selectedDayType, setSelectedDayType] = useState(plan?.selectedDayType ?? 'heavy')
+  const [openAlternatives, setOpenAlternatives] = useState(null)
 
   if (loading || !plan) {
     return <div className="space-y-4">{[...Array(3)].map((_, i) => <div key={i} className="skeleton h-24 rounded-xl" />)}</div>
   }
 
   const { targets, todayLog, meals, trainerNote } = plan
+  const dayPlan = plan.dayTypes?.[selectedDayType]
+  const activeTargets = dayPlan ?? targets
 
   const mealState = meals.map(meal => ({
     ...meal,
     logged: loggedMeals[meal.id] ?? meal.logged,
   }))
 
-  const calPct      = Math.min(Math.round((todayLog.calories / targets.calories) * 100), 100)
-  const remaining   = targets.calories - todayLog.calories
+  const calPct      = Math.min(Math.round((todayLog.calories / activeTargets.calories) * 100), 100)
+  const remaining   = activeTargets.calories - todayLog.calories
   const loggedCount  = mealState.filter((m) => m.logged).length
 
   const toggleMeal = (mealId) => {
@@ -81,6 +85,36 @@ export default function Nutrition() {
         </div>
       </div>
 
+      {/* ── Day type ── */}
+      {plan.dayTypes && (
+        <div className="card p-5">
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <div>
+              <h3 className="text-tp-white font-semibold">Today’s fuel target</h3>
+              <p className="text-tp-soft text-xs mt-1">Your coach sets different targets for different training demands.</p>
+            </div>
+            <span className="text-tp-red text-xs font-semibold whitespace-nowrap">Coach prescribed</span>
+          </div>
+          <div className="grid grid-cols-3 gap-2 mb-3">
+            {Object.entries(plan.dayTypes).map(([key, day]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setSelectedDayType(key)}
+                className={clsx(
+                  'rounded-lg border px-2 py-3 text-left transition-colors',
+                  selectedDayType === key ? 'border-tp-red bg-tp-red/10' : 'border-tp-border bg-tp-raised hover:border-tp-border-bright',
+                )}
+              >
+                <p className={clsx('text-xs font-semibold', selectedDayType === key ? 'text-tp-red' : 'text-tp-white')}>{day.label}</p>
+                <p className="text-tp-soft text-[11px] mt-1 font-mono">{day.calories.toLocaleString()} kcal</p>
+              </button>
+            ))}
+          </div>
+          {dayPlan && <p className="text-tp-soft text-xs leading-relaxed">{dayPlan.description}</p>}
+        </div>
+      )}
+
       {/* ── Calories + Macros ── */}
       <div className="card p-5">
         <h3 className="text-tp-white font-semibold mb-4">Today's Intake</h3>
@@ -90,7 +124,7 @@ export default function Nutrition() {
           <div className="flex justify-between items-baseline mb-2">
             <div>
               <span className="font-mono font-bold text-3xl text-tp-white">{todayLog.calories}</span>
-              <span className="text-tp-muted text-sm ml-1">/ {targets.calories} kcal</span>
+              <span className="text-tp-soft text-sm ml-1">/ {activeTargets.calories} kcal</span>
             </div>
             <span className={clsx(
               'text-sm font-semibold',
@@ -114,15 +148,15 @@ export default function Nutrition() {
         {/* Macro rings */}
         <div className="flex justify-around">
           <MacroRing
-            value={todayLog.protein} target={targets.protein}
+            value={todayLog.protein} target={activeTargets.protein}
             label="Protein" color="#e63946" size={90}
           />
           <MacroRing
-            value={todayLog.carbs} target={targets.carbs}
+            value={todayLog.carbs} target={activeTargets.carbs}
             label="Carbs" color="#f59e0b" size={90}
           />
           <MacroRing
-            value={todayLog.fat} target={targets.fat}
+            value={todayLog.fat} target={activeTargets.fat}
             label="Fat" color="#22c55e" size={90}
           />
         </div>
@@ -139,8 +173,39 @@ export default function Nutrition() {
             </div>
           </div>
 
-          {uploadError && (
-            <p className="text-tp-danger text-xs mb-3" role="alert">{uploadError}</p>
+        </div>
+      )}
+
+      {/* ── Coach reasoning ── */}
+      {(plan.planReasoning?.length > 0 || plan.suggestions?.length > 0 || plan.hydration?.length > 0) && (
+        <div className="card p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Lightbulb size={16} className="text-tp-amber" />
+            <h3 className="text-tp-white font-semibold">Coach’s reasoning & suggestions</h3>
+          </div>
+          <div className="space-y-3">
+            {plan.planReasoning?.map(item => (
+              <div key={item.title} className="border-l-2 border-tp-red/60 pl-3">
+                <p className="text-tp-white text-sm font-semibold">{item.title}</p>
+                <p className="text-tp-soft text-xs leading-relaxed mt-1">{item.text}</p>
+              </div>
+            ))}
+          </div>
+          {plan.suggestions?.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-tp-border">
+              <p className="label mb-2">Practical suggestions</p>
+              <ul className="space-y-2">
+                {plan.suggestions.map(suggestion => <li key={suggestion} className="text-tp-soft text-xs leading-relaxed flex gap-2"><span className="text-tp-red">•</span>{suggestion}</li>)}
+              </ul>
+            </div>
+          )}
+          {plan.hydration?.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-tp-border">
+              <div className="flex items-center gap-2 mb-2"><Droplets size={14} className="text-tp-green" /><p className="label">Hydration & electrolytes</p></div>
+              <ul className="space-y-2">
+                {plan.hydration.map(item => <li key={item} className="text-tp-soft text-xs leading-relaxed flex gap-2"><span className="text-tp-green">•</span>{item}</li>)}
+              </ul>
+            </div>
           )}
         </div>
       )}
@@ -174,6 +239,10 @@ export default function Nutrition() {
               </div>
             </label>
           </div>
+
+          {uploadError && (
+            <p className="text-tp-danger text-xs mb-3" role="alert">{uploadError}</p>
+          )}
 
           {/* Uploaded Files List */}
           {uploadedFiles.length > 0 && (
@@ -233,6 +302,8 @@ export default function Nutrition() {
                     <span className="text-tp-soft text-xs flex-shrink-0">{meal.time}</span>
                   </div>
 
+                  {meal.purpose && <p className="text-tp-soft text-xs mt-1">{meal.purpose}</p>}
+
                   {/* Macros row */}
                   <div className="flex gap-3 mt-1.5">
                     <span className="text-tp-soft text-xs font-mono">{meal.calories} kcal</span>
@@ -252,6 +323,30 @@ export default function Nutrition() {
                       </span>
                     ))}
                   </div>
+
+                  {meal.alternatives?.length > 0 && (
+                    <div className="mt-3 border-t border-tp-border pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setOpenAlternatives(openAlternatives === meal.id ? null : meal.id)}
+                        className="flex items-center gap-1.5 text-tp-red text-xs font-semibold py-1"
+                        aria-expanded={openAlternatives === meal.id}
+                      >
+                        <ChevronDown size={13} className={clsx('transition-transform', openAlternatives === meal.id && 'rotate-180')} />
+                        See coach-approved alternatives
+                      </button>
+                      {openAlternatives === meal.id && (
+                        <div className="mt-2 space-y-1.5">
+                          {meal.alternatives.map((alternative, index) => (
+                            <div key={alternative} className="flex gap-2 bg-tp-raised rounded-lg px-3 py-2 text-xs text-tp-soft">
+                              <span className="text-tp-red font-bold">{String.fromCharCode(65 + index)}</span>
+                              <span>{alternative}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   <button
                     type="button"
