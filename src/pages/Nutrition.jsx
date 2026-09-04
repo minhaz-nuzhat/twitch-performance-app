@@ -19,6 +19,7 @@ export default function Nutrition() {
   const [uploadError, setUploadError] = useState('')
   const [selectedDayType, setSelectedDayType] = useState(plan?.selectedDayType ?? 'heavy')
   const [openAlternatives, setOpenAlternatives] = useState(null)
+  const [coachNoteOpen, setCoachNoteOpen] = useState(false)
 
   if (loading || !plan) {
     return <div className="space-y-4">{[...Array(3)].map((_, i) => <div key={i} className="skeleton h-24 rounded-xl" />)}</div>
@@ -30,6 +31,7 @@ export default function Nutrition() {
 
   const mealState = meals.map(meal => ({
     ...meal,
+    ...(meal.dayTypeAdjustments?.[selectedDayType] ?? {}),
     logged: loggedMeals[meal.id] ?? meal.logged,
   }))
 
@@ -164,15 +166,18 @@ export default function Nutrition() {
 
       {/* ── Trainer Note ── */}
       {trainerNote && (
-        <div className="card p-4 border-tp-amber/25 bg-tp-amber/5">
-          <div className="flex items-start gap-2">
-            <Info size={14} className="text-tp-amber flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="text-tp-amber text-xs font-semibold mb-0.5">Coach's Note</p>
-              <p className="text-tp-soft text-xs leading-relaxed">{trainerNote}</p>
-            </div>
-          </div>
-
+        <div className="card border-tp-amber/25 bg-tp-amber/5 overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setCoachNoteOpen(value => !value)}
+            aria-expanded={coachNoteOpen}
+            className="w-full flex items-center gap-2 p-4 text-left hover:bg-tp-amber/5 transition-colors"
+          >
+            <Info size={15} className="text-tp-amber flex-shrink-0" />
+            <span className="text-tp-amber text-sm font-semibold flex-1">Coach's Note</span>
+            <ChevronDown size={15} className={clsx('text-tp-amber transition-transform', coachNoteOpen && 'rotate-180')} />
+          </button>
+          {coachNoteOpen && <p className="px-4 pb-4 text-tp-soft text-sm leading-relaxed animate-fade-in">{trainerNote}</p>}
         </div>
       )}
 
@@ -306,10 +311,10 @@ export default function Nutrition() {
 
                   {/* Macros row */}
                   <div className="flex gap-3 mt-1.5">
-                    <span className="text-tp-soft text-xs font-mono">{meal.calories} kcal</span>
-                    <span className="text-tp-red text-xs">P: {meal.protein}g</span>
-                    <span className="text-tp-amber text-xs">C: {meal.carbs}g</span>
-                    <span className="text-tp-green text-xs">F: {meal.fat}g</span>
+                    {meal.calories > 0 && <span className="text-tp-soft text-xs font-mono">{meal.calories} kcal</span>}
+                    {meal.protein > 0 && <span className="text-tp-red text-xs">P: {meal.protein}g</span>}
+                    {meal.carbs > 0 && <span className="text-tp-amber text-xs">C: {meal.carbs}g</span>}
+                    {meal.fat > 0 && <span className="text-tp-green text-xs">F: {meal.fat}g</span>}
                   </div>
 
                   {/* Items */}
@@ -324,7 +329,9 @@ export default function Nutrition() {
                     ))}
                   </div>
 
-                  {meal.alternatives?.length > 0 && (
+                  {meal.calories === 0 && <p className="text-tp-muted text-xs italic mt-2">No meal scheduled for this day type.</p>}
+
+                  {meal.alternatives?.length > 0 && meal.calories > 0 && (
                     <div className="mt-3 border-t border-tp-border pt-2">
                       <button
                         type="button"
