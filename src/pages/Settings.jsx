@@ -128,7 +128,7 @@ export default function Settings() {
             </div>
           </div>
           <div className="mt-4 pt-4 border-t border-tp-border flex items-center justify-between gap-4">
-            <div><p className="text-tp-white text-sm font-medium">Visual progress check-ins</p><p className="text-tp-muted text-xs mt-0.5">Show optional photo milestones on Progress.</p></div>
+            <div><p className="text-tp-white text-sm font-medium">Visual progress check-ins</p><p className="text-tp-muted text-xs mt-0.5">Optional photo milestones visible to you and your assigned coach.</p></div>
             <Toggle value={photoCheckIns} onChange={(value) => updatePreferences({ photoCheckIns: value })} />
           </div>
         </div>
