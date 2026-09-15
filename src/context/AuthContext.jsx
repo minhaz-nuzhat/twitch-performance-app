@@ -52,8 +52,29 @@ export function AuthProvider({ children }) {
     setUser(null)
   }
 
+  const updateUser = (updates) => {
+    setUser((current) => {
+      if (!current) return current
+      const next = { ...current, ...updates }
+      localStorage.setItem('tp_session', JSON.stringify(next))
+      return next
+    })
+  }
+
+  const updatePreferences = (updates) => {
+    setUser((current) => {
+      if (!current) return current
+      const next = {
+        ...current,
+        preferences: { ...current.preferences, ...updates },
+      }
+      localStorage.setItem('tp_session', JSON.stringify(next))
+      return next
+    })
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUser, updatePreferences, loading }}>
       {children}
     </AuthContext.Provider>
   )

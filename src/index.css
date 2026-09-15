@@ -11,6 +11,18 @@
   .nutrition-print-area [class*="text-tp-white"] { color: #111827 !important; }
   .nutrition-print-area [class*="text-tp-soft"],
   .nutrition-print-area [class*="text-tp-muted"] { color: #4b5563 !important; }
+
+  .assessment-screen > *:not(.assessment-print-only) { display: none !important; }
+  .assessment-print-only { display: block !important; visibility: visible !important; position: absolute; inset: 0; padding: 24px; color: #111827; background: white; font: 11px/1.4 Arial, sans-serif; }
+  .assessment-print-only * { visibility: visible !important; }
+  .assessment-print-only h1 { font-size: 22px; margin: 0 0 4px; }
+  .assessment-print-only h2 { font-size: 15px; margin: 20px 0 8px; border-bottom: 1px solid #d1d5db; padding-bottom: 4px; }
+  .assessment-print-only h3 { font-size: 11px; margin: 10px 0 2px; }
+  .assessment-print-only p { margin: 2px 0; }
+  .assessment-print-only table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .assessment-print-only th, .assessment-print-only td { border: 1px solid #d1d5db; padding: 5px; text-align: left; vertical-align: top; }
+  .assessment-print-only th { background: #f3f4f6; }
+  .assessment-print-note { margin-top: 16px !important; font-style: italic; color: #4b5563; }
 }
 
 @layer base {

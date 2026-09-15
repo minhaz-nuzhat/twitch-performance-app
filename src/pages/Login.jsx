@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Zap, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { Zap, Eye, EyeOff, AlertCircle, Sparkles } from 'lucide-react'
 
 export default function Login() {
   const { login }                       = useAuth()
@@ -19,6 +19,19 @@ export default function Login() {
     try {
       await login(email, password)
       navigate('/')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleOnboardingPreview = async () => {
+    setError('')
+    setLoading(true)
+    try {
+      await login('arjun@test.com', 'demo')
+      navigate('/onboarding')
     } catch (err) {
       setError(err.message)
     } finally {
@@ -138,6 +151,16 @@ export default function Login() {
               <span className="text-tp-soft text-xs flex-1">Coach demo: <span className="text-tp-white font-mono">coach@twitchperformance.in</span></span>
               <span className="text-tp-muted text-[10px]">click to fill</span>
             </div>
+            <button
+              type="button"
+              onClick={handleOnboardingPreview}
+              disabled={loading}
+              className="w-full flex items-center gap-2 bg-tp-red/10 border border-tp-red/30 rounded-lg px-3 py-2 text-left hover:bg-tp-red/15 transition-colors disabled:opacity-40"
+            >
+              <Sparkles size={13} className="text-tp-red" />
+              <span className="text-tp-white text-xs flex-1">Preview member onboarding</span>
+              <span className="text-tp-red text-[10px]">open demo</span>
+            </button>
           </div>
         </div>
       </div>

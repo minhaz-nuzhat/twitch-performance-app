@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Shield, Bell, Eye, Moon, ChevronRight } from 'lucide-react'
+import { Shield, Bell, Eye, RotateCcw, SlidersHorizontal } from 'lucide-react'
 import clsx from 'clsx'
 
 function Toggle({ value, onChange }) {
@@ -36,16 +37,20 @@ function SettingRow({ label, description, value, onChange }) {
 }
 
 export default function Settings() {
-  const { user } = useAuth()
+  const { user, updatePreferences } = useAuth()
+  const navigate = useNavigate()
   const [settings, setSettings] = useState({
     pushNotifications:  true,
     sessionReminders:   true,
     scoreAlerts:        true,
     marketingEmails:    false,
-    researchConsent:    true,
+    researchConsent:    user?.preferences?.researchConsent ?? true,
     showAthleteAge:     true,
     darkMode:           true,
   })
+
+  const insightMode = user?.preferences?.insightMode ?? 'guided'
+  const photoCheckIns = user?.preferences?.photoCheckIns ?? true
 
   const toggle = (key) => setSettings((s) => ({ ...s, [key]: !s[key] }))
 
@@ -77,7 +82,10 @@ export default function Settings() {
             label="Research Consent"
             description="Allow anonymised performance data to be used in Twitch's performance science research (DPDP Act 2023 compliant)"
             value={settings.researchConsent}
-            onChange={() => toggle('researchConsent')}
+            onChange={(value) => {
+              setSettings((current) => ({ ...current, researchConsent: value }))
+              updatePreferences({ researchConsent: value })
+            }}
           />
           <SettingRow
             label="Show Athletic Age"
@@ -102,16 +110,52 @@ export default function Settings() {
       {/* ── Display ── */}
       <div>
         <div className="flex items-center gap-2 px-1 mb-2">
-          <Moon size={14} className="text-tp-red" />
-          <p className="label">Display</p>
+          <SlidersHorizontal size={14} className="text-tp-red" />
+          <p className="label">Display & Insights</p>
         </div>
-        <div className="card divide-y divide-tp-border">
+        <div className="card p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <p className="text-tp-white text-sm font-medium">Performance detail</p>
+              <p className="text-tp-muted text-xs mt-0.5">Choose what Assessment and Progress show first. All details remain available.</p>
+            </div>
+            <div className="flex bg-tp-raised border border-tp-border rounded-lg p-1 flex-shrink-0">
+              {['guided', 'advanced'].map((mode) => (
+                <button key={mode} type="button" onClick={() => updatePreferences({ insightMode: mode })} className={clsx('px-4 py-2 rounded text-xs font-semibold capitalize transition-colors', insightMode === mode ? 'bg-tp-red text-white' : 'text-tp-muted hover:text-tp-white')}>
+                  {mode}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t border-tp-border flex items-center justify-between gap-4">
+            <div><p className="text-tp-white text-sm font-medium">Visual progress check-ins</p><p className="text-tp-muted text-xs mt-0.5">Show optional photo milestones on Progress.</p></div>
+            <Toggle value={photoCheckIns} onChange={(value) => updatePreferences({ photoCheckIns: value })} />
+          </div>
+        </div>
+        <div className="card divide-y divide-tp-border mt-2">
           <SettingRow
             label="Dark Mode"
             description="Dark theme is required for this app — cannot be disabled"
             value={settings.darkMode}
             onChange={() => {}}
           />
+        </div>
+      </div>
+
+      {/* ── Demo ── */}
+      <div>
+        <div className="flex items-center gap-2 px-1 mb-2">
+          <RotateCcw size={14} className="text-tp-red" />
+          <p className="label">Onboarding</p>
+        </div>
+        <div className="card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <p className="text-tp-white text-sm font-medium">Restart onboarding</p>
+            <p className="text-tp-muted text-xs mt-0.5">Preview the setup again with your current choices preselected.</p>
+          </div>
+          <button type="button" onClick={() => navigate('/onboarding')} className="btn-ghost px-4 py-2.5 text-xs inline-flex items-center justify-center gap-2 flex-shrink-0">
+            <RotateCcw size={13} /> Restart
+          </button>
         </div>
       </div>
 

@@ -1,7 +1,12 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import clsx from 'clsx'
-import { ChevronDown } from 'lucide-react'
+import {
+  Activity, ArrowUpRight, CheckCircle2, ChevronDown, Download,
+  Dumbbell, Gauge, MessageCircle, ShieldCheck, Target,
+} from 'lucide-react'
 import { mockAssessmentReport as data } from '../data/mockData'
+import { useAuth } from '../context/AuthContext'
 import { InfoTooltip } from '../components/ui/InfoTooltip'
 import { KPI_TOOLTIPS } from '../data/scienceTooltips'
 import {
@@ -561,20 +566,129 @@ const KPI_STATUS_CFG = {
   above: { color: 'text-tp-amber',  dot: '#f59e0b' },
 }
 
+function GuidedView() {
+  return (
+    <div className="space-y-5 animate-fade-in">
+      <section className="grid md:grid-cols-3 gap-3">
+        <div className="card p-4 border-tp-green/25">
+          <div className="flex items-center gap-2 text-tp-green"><CheckCircle2 size={15} /><p className="text-[10px] font-bold uppercase">Baseline established</p></div>
+          <h3 className="text-tp-white font-bold mt-3">Your starting profile is recorded</h3>
+          <p className="text-tp-soft text-xs leading-relaxed mt-2">This assessment gives your coach a repeatable reference for the next training block and reassessment.</p>
+        </div>
+        <div className="card p-4 border-tp-green/25">
+          <div className="flex items-center gap-2 text-tp-green"><Gauge size={15} /><p className="text-[10px] font-bold uppercase">Current strengths</p></div>
+          <h3 className="text-tp-white font-bold mt-3">Aerobic fitness and grip meet the reference</h3>
+          <p className="text-tp-soft text-xs leading-relaxed mt-2">These qualities can be maintained while your next block focuses on force production and movement control.</p>
+        </div>
+        <div className="card p-4 border-tp-amber/30">
+          <div className="flex items-center gap-2 text-tp-amber"><Target size={15} /><p className="text-[10px] font-bold uppercase">Primary focus</p></div>
+          <h3 className="text-tp-white font-bold mt-3">Build lower-body strength and control</h3>
+          <p className="text-tp-soft text-xs leading-relaxed mt-2">Your coach is prioritizing hamstring capacity, right-leg control and more balanced landing mechanics.</p>
+        </div>
+      </section>
+
+      <section className="card overflow-hidden">
+        <div className="px-5 py-4 border-b border-tp-border">
+          <p className="label">What this changes in your program</p>
+          <h2 className="text-tp-white font-bold text-lg mt-1">Assessment → coaching action</h2>
+        </div>
+        <div className="divide-y divide-tp-border">
+          {[
+            { number: '01', title: 'Hamstring capacity', finding: 'Current hamstring-to-quadriceps force balance needs development.', action: 'Progressive hamstring loading and controlled eccentric work.', color: 'text-tp-red' },
+            { number: '02', title: 'Single-leg control', finding: 'Right-leg balance differs from the left under the test protocol.', action: 'Single-leg stability and proprioception work added to preparation.', color: 'text-tp-amber' },
+            { number: '03', title: 'Landing mechanics', finding: 'Landing force was distributed unevenly in the jump assessment.', action: 'Landing technique and force-absorption drills before higher plyometric demand.', color: 'text-tp-amber' },
+          ].map((item) => (
+            <div key={item.number} className="grid sm:grid-cols-[44px_1fr_1fr] gap-3 sm:gap-5 p-4 sm:p-5">
+              <span className={clsx('font-mono text-xs font-bold', item.color)}>{item.number}</span>
+              <div><p className="text-tp-white text-sm font-semibold">{item.title}</p><p className="text-tp-muted text-xs leading-relaxed mt-1">{item.finding}</p></div>
+              <div className="sm:border-l sm:border-tp-border sm:pl-5"><p className="text-tp-red text-[10px] font-bold uppercase">Coach response</p><p className="text-tp-soft text-xs leading-relaxed mt-1">{item.action}</p></div>
+            </div>
+          ))}
+        </div>
+        <div className="px-5 py-4 bg-tp-raised/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <p className="text-tp-muted text-xs">These are coaching signals from this assessment, not medical diagnoses.</p>
+          <Link to="/training" className="text-tp-red text-xs font-semibold inline-flex items-center gap-1">View program <ArrowUpRight size={13} /></Link>
+        </div>
+      </section>
+
+      <section className="grid md:grid-cols-[1fr_0.8fr] gap-4">
+        <div className="card p-5">
+          <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-tp-red" /><p className="label">Coach interpretation</p></div>
+          <h2 className="text-tp-white font-bold text-lg mt-4">Build the force base, then express it faster</h2>
+          <p className="text-tp-soft text-sm leading-relaxed mt-2">The current block should develop maximal lower-body strength while improving control on the right side. Aerobic capacity can be maintained rather than becoming the main training priority.</p>
+          <p className="text-tp-muted text-xs mt-4">Reviewed by Coach Ravi · Baseline assessment</p>
+          <Link to="/messages" className="btn-ghost mt-5 px-4 py-2.5 text-xs inline-flex items-center gap-2"><MessageCircle size={14} /> Ask Coach Ravi</Link>
+        </div>
+        <div className="card p-5">
+          <div className="flex items-center gap-2"><Activity size={16} className="text-tp-red" /><p className="label">Next checkpoint</p></div>
+          <p className="text-tp-white font-mono font-bold text-2xl mt-4">6 weeks</p>
+          <p className="text-tp-soft text-xs leading-relaxed mt-2">Repeat key force, jump and symmetry tests after the current training block.</p>
+          <Link to="/progress" className="text-tp-red text-xs font-semibold inline-flex items-center gap-1 mt-5">See milestone timeline <ArrowUpRight size={13} /></Link>
+        </div>
+      </section>
+    </div>
+  )
+}
+
+function PrintReport({ member }) {
+  return (
+    <div className="assessment-print-only hidden">
+      <h1>Twitch Performance Assessment</h1>
+      <p>{member.name} · {member.sport} · {member.position}</p>
+      <p>{member.assessmentDate} · Baseline assessment · Reviewed by {member.coach}</p>
+      <h2>Coach priorities</h2>
+      {data.priorities.map((priority) => <div key={priority.id}><h3>{priority.priority}: {priority.title}</h3><p>{priority.description}</p></div>)}
+      <h2>Key performance indicators</h2>
+      <table><thead><tr><th>Metric</th><th>Result</th><th>Reference</th><th>Status</th></tr></thead><tbody>{data.kpis.map((kpi) => <tr key={kpi.label}><td>{kpi.label}</td><td>{kpi.value} {kpi.unit}</td><td>{kpi.target}</td><td>{kpi.statusLabel}</td></tr>)}</tbody></table>
+      <h2>Complete results</h2>
+      <table><thead><tr><th>Assessment</th><th>Factor</th><th>Result</th><th>Reference</th><th>Status</th></tr></thead><tbody>{data.fullResultsSummary.map((row, index) => <tr key={index}><td>{row.assessment}</td><td>{row.factor}</td><td>{row.result}</td><td>{row.norm}</td><td>{row.statusLabel}</td></tr>)}</tbody></table>
+      <p className="assessment-print-note">Assessment findings are coaching information and are not a medical diagnosis.</p>
+    </div>
+  )
+}
+
 export default function Assessment() {
   const [tab, setTab] = useState('overview')
-  const { member, kpis } = data
+  const [mode, setMode] = useState('guided')
+  const { user } = useAuth()
+  const { kpis } = data
+  const member = {
+    ...data.member,
+    name: user?.name ?? data.member.name,
+    id: user?.id ?? data.member.id,
+    sport: user?.sport ?? data.member.sport,
+    position: user?.position ?? data.member.position,
+    coach: user?.trainer?.name ?? data.member.coach,
+  }
 
   return (
-    <div className="space-y-4 animate-fade-in">
-      <div className="card p-4 border-l-4 border-tp-red">
-        <p className="text-tp-red text-[9px] font-bold uppercase tracking-widest mb-1">Performance Assessment Report</p>
-        <h2 className="text-tp-white font-bold text-xl mb-1">{member.name}</h2>
-        <p className="text-tp-soft text-xs">{member.id} · {member.sport} · {member.position} · Test No. {member.testNo}</p>
-        <p className="text-tp-soft text-xs mt-0.5">Assessment Date: {member.assessmentDate} | Body Weight: {member.bodyWeight} kg | Baseline Assessment</p>
-        <p className="text-tp-muted text-xs italic mt-0.5">Report by Lead Performance Coach: {member.coach}</p>
-      </div>
+    <div className="space-y-5 animate-fade-in assessment-screen">
+      <PrintReport member={member} />
 
+      <header className="card p-5 border-l-4 border-tp-red">
+        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
+          <div>
+            <p className="text-tp-red text-[10px] font-bold uppercase">Baseline performance assessment</p>
+            <h1 className="text-tp-white font-bold text-2xl mt-2">{member.name}</h1>
+            <p className="text-tp-soft text-xs mt-1">{member.sport} · {member.position}</p>
+            <p className="text-tp-muted text-xs mt-3">Assessed {member.assessmentDate} · Reviewed by {member.coach}</p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 print:hidden">
+            <div className="flex bg-tp-raised border border-tp-border rounded-lg p-1" aria-label="Assessment detail level">
+              {['guided', 'advanced'].map((option) => <button key={option} type="button" onClick={() => setMode(option)} className={clsx('px-4 py-2 rounded text-xs font-semibold capitalize', mode === option ? 'bg-tp-red text-white' : 'text-tp-muted hover:text-tp-white')}>{option}</button>)}
+            </div>
+            <button type="button" onClick={() => window.print()} className="btn-ghost px-4 py-2 inline-flex items-center justify-center gap-2 text-xs"><Download size={14} /> Export PDF</button>
+          </div>
+        </div>
+        <div className="mt-4 pt-4 border-t border-tp-border flex items-center justify-between gap-3">
+          <p className="text-tp-soft text-xs">{mode === 'guided' ? 'Meaning and coaching action first. Full test data remains available in Advanced.' : 'Full measurements, reference values and test-domain detail.'}</p>
+          <span className="hidden sm:inline-flex text-tp-green text-[10px] font-bold uppercase items-center gap-1"><CheckCircle2 size={12} /> Coach reviewed</span>
+        </div>
+      </header>
+
+      {mode === 'guided' && <GuidedView />}
+
+      {mode === 'advanced' && <div className="space-y-4 animate-fade-in">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {kpis.map(kpi => {
           const cfg = KPI_STATUS_CFG[kpi.status] ?? KPI_STATUS_CFG.pass
@@ -584,15 +698,9 @@ export default function Assessment() {
                 <p className="text-tp-muted text-[9px] leading-tight">{kpi.label}</p>
                 <InfoTooltip text={KPI_TOOLTIPS[kpi.label]} size={10} position="below" />
               </div>
-              <p className="font-mono font-bold text-tp-white text-xl leading-none mb-0.5">
-                {kpi.value}
-                {kpi.unit && <span className="text-tp-muted text-[10px] ml-1 font-normal">{kpi.unit}</span>}
-              </p>
-              <p className="text-tp-muted text-[9px] mb-1">Target: {kpi.target}</p>
-              <span className={clsx('flex items-center gap-1 text-[10px] font-bold', cfg.color)}>
-                <span className="w-2 h-2 rounded-sm" style={{ background: cfg.dot }} />
-                {kpi.statusLabel}
-              </span>
+              <p className="font-mono font-bold text-tp-white text-xl leading-none mb-0.5">{kpi.value}{kpi.unit && <span className="text-tp-muted text-[10px] ml-1 font-normal">{kpi.unit}</span>}</p>
+              <p className="text-tp-muted text-[9px] mb-1">Reference: {kpi.target}</p>
+              <span className={clsx('flex items-center gap-1 text-[10px] font-bold', cfg.color)}><span className="w-2 h-2 rounded-sm" style={{ background: cfg.dot }} />{kpi.statusLabel}</span>
             </div>
           )
         })}
@@ -600,9 +708,9 @@ export default function Assessment() {
 
       <div className="flex gap-1 bg-tp-surface p-1 rounded-xl border border-tp-border">
         {[
-          { id: 'overview',   label: 'Overview'   },
-          { id: 'sections',   label: 'Sections'   },
-          { id: 'priorities', label: 'Priorities' },
+          { id: 'overview', label: 'All results' },
+          { id: 'sections', label: 'Test domains' },
+          { id: 'priorities', label: 'Coach priorities' },
         ].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
             className={clsx('flex-1 py-2 rounded-lg text-sm font-medium transition-all',
@@ -626,6 +734,7 @@ export default function Assessment() {
         </div>
       )}
       {tab === 'priorities' && <PrioritiesTab />}
+      </div>}
     </div>
   )
 }

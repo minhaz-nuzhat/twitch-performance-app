@@ -15,6 +15,23 @@ export const mockMember = {
   fitnessLevel: 'Intermediate',
   joinedAt: '2025-10-01',
   avatarInitials: 'AS',
+  onboardingCompleted: true,
+  clientProfile: {
+    primaryGoal: 'performance-pathway',
+    athleteContext: 'competitive-amateur',
+    trainingAge: '3-6 years',
+    seasonPhase: 'Pre-season',
+    sessionsPerWeek: 3,
+    scheduleStyle: 'flexible',
+    preferredTime: 'Morning',
+    healthFlags: [],
+    healthNotes: '',
+  },
+  preferences: {
+    insightMode: 'guided',
+    photoCheckIns: true,
+    researchConsent: true,
+  },
   trainer: {
     id: 'tr_001',
     name: 'Coach Ravi',

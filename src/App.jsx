@@ -6,18 +6,18 @@ import { AuthProvider } from './context/AuthContext'
 import AppShell      from './components/layout/AppShell'
 import TrainerShell  from './components/layout/TrainerShell'
 import Login         from './pages/Login'
-import Dashboard     from './pages/Dashboard'
+import Dashboard     from './pages/ClientDashboard'
 import Performance   from './pages/Performance'
 import Training      from './pages/Training'
 import Nutrition     from './pages/NutritionPlan'
-import Progress      from './pages/Progress'
+import Progress      from './pages/ClientProgress'
 import Messages      from './pages/Messages'
 import Profile       from './pages/Profile'
 import Payment       from './pages/Payment'
 import Settings      from './pages/Settings'
 import ClientProfiling from './pages/ClientProfiling'
 import Assessment     from './pages/Assessment'
-import Onboarding     from './pages/Onboarding'
+import Onboarding     from './pages/ClientOnboarding'
 
 import TrainerDashboard     from './pages/trainer/TrainerDashboard'
 import Roster               from './pages/trainer/Roster'
@@ -51,6 +51,12 @@ function RequireMember() {
   return <Outlet />
 }
 
+function RequireOnboarding() {
+  const { user } = useAuth()
+  if (!user?.onboardingCompleted) return <Navigate to="/onboarding" replace />
+  return <Outlet />
+}
+
 function RequireTrainer() {
   const { user } = useAuth()
   if (user?.role !== 'trainer') return <Navigate to="/" replace />
@@ -72,18 +78,20 @@ function AppRoutes() {
             {/* ── Member routes ── */}
             <Route element={<RequireMember />}>
               <Route path="/onboarding" element={<Onboarding />} />
-              <Route element={<AppShell />}>
-                <Route path="/"            element={<Dashboard   />} />
-                <Route path="/performance" element={<Performance />} />
-                <Route path="/training"    element={<Training    />} />
-                <Route path="/nutrition"   element={<Nutrition   />} />
-                <Route path="/progress"    element={<Progress    />} />
-                <Route path="/messages"    element={<Messages    />} />
-                <Route path="/profile"     element={<Profile     />} />
-                <Route path="/profiling"   element={<ClientProfiling />} />
-                <Route path="/assessment"  element={<Assessment     />} />
-                <Route path="/payment"     element={<Payment     />} />
-                <Route path="/settings"    element={<Settings    />} />
+              <Route element={<RequireOnboarding />}>
+                <Route element={<AppShell />}>
+                  <Route path="/"            element={<Dashboard   />} />
+                  <Route path="/performance" element={<Performance />} />
+                  <Route path="/training"    element={<Training    />} />
+                  <Route path="/nutrition"   element={<Nutrition   />} />
+                  <Route path="/progress"    element={<Progress    />} />
+                  <Route path="/messages"    element={<Messages    />} />
+                  <Route path="/profile"     element={<Profile     />} />
+                  <Route path="/profiling"   element={<ClientProfiling />} />
+                  <Route path="/assessment"  element={<Assessment     />} />
+                  <Route path="/payment"     element={<Payment     />} />
+                  <Route path="/settings"    element={<Settings    />} />
+                </Route>
               </Route>
             </Route>
 
