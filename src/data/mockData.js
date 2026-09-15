@@ -146,10 +146,49 @@ export const mockTrainingProgram = {
 
   // Workout templates available for assignment
   workoutTemplates: [
-    { id: 'wkt_1', name: 'Upper Body Strength', duration: 60 },
-    { id: 'wkt_2', name: 'Lower Body Power',    duration: 65 },
-    { id: 'wkt_3', name: 'Full Body Speed',     duration: 55 },
-    { id: 'wkt_4', name: 'Mobility & Recovery', duration: 45 },
+    {
+      id: 'wkt_1',
+      name: 'Upper Body Strength',
+      duration: 60,
+      exercises: [
+        { id: 'ex_u1', order: 1, name: 'Barbell Bench Press', sets: 4, reps: '5', load: '85 kg', rest: '3 min', notes: 'Explosive drive off chest', videoUrl: 'https://www.youtube.com/watch?v=rT7DgCr-3pg', completed: false },
+        { id: 'ex_u2', order: 2, name: 'Weighted Pull-Up', sets: 4, reps: '6', load: 'BW + 10kg', rest: '2 min', notes: 'Full extension at bottom', videoUrl: 'https://www.youtube.com/watch?v=eGo4IYlbE5g', completed: false },
+        { id: 'ex_u3', order: 3, name: 'Standing Overhead Press', sets: 3, reps: '6', load: '50 kg', rest: '2 min', notes: 'Brace core throughout', videoUrl: 'https://www.youtube.com/watch?v=2yjwXTZQDDI', completed: false },
+        { id: 'ex_u4', order: 4, name: 'Single-Arm DB Row', sets: 3, reps: '10 each', load: '32 kg', rest: '90 s', notes: 'Pause at top contraction', videoUrl: 'https://www.youtube.com/watch?v=pYcpY20QaE8', completed: false },
+      ],
+    },
+    {
+      id: 'wkt_2',
+      name: 'Lower Body Power',
+      duration: 65,
+      exercises: [
+        { id: 'ex_1', order: 1, name: 'Back Squat', sets: 4, reps: '5', load: '100 kg', rest: '3 min', notes: 'Focus on bar speed out of the hole', videoUrl: 'https://www.youtube.com/watch?v=ultWZbUMPL8', completed: false },
+        { id: 'ex_2', order: 2, name: 'Romanian Deadlift', sets: 3, reps: '8', load: '80 kg', rest: '2 min', notes: '', videoUrl: 'https://www.youtube.com/watch?v=JCXUYuzwNrM', completed: false },
+        { id: 'ex_3', order: 3, name: 'Box Jump', sets: 4, reps: '5', load: 'BW', rest: '90 sec', notes: 'Max height each rep — full reset', videoUrl: 'https://www.youtube.com/watch?v=52r_Ul5k03g', completed: false },
+        { id: 'ex_4', order: 4, name: 'Bulgarian Split Squat', sets: 3, reps: '10 each', load: '40 kg', rest: '90 s', notes: 'Control eccentric phase', videoUrl: 'https://www.youtube.com/watch?v=2C-uNgKwPLE', completed: false },
+        { id: 'ex_5', order: 5, name: 'Nordic Curl', sets: 3, reps: '6', load: 'BW', rest: '2 min', notes: 'Eccentric focus — control descent', videoUrl: 'https://www.youtube.com/watch?v=1__g4QHPUss', completed: false },
+      ],
+    },
+    {
+      id: 'wkt_3',
+      name: 'Full Body Speed',
+      duration: 55,
+      exercises: [
+        { id: 'ex_s1', order: 1, name: 'Power Clean', sets: 4, reps: '3', load: '75 kg', rest: '3 min', notes: 'Max triple extension velocity', videoUrl: '', completed: false },
+        { id: 'ex_s2', order: 2, name: '30m Sprint Acceleration', sets: 5, reps: '1', load: 'BW', rest: '2 min', notes: '100% effort — full recovery', videoUrl: '', completed: false },
+        { id: 'ex_s3', order: 3, name: 'Overhead Med Ball Slam', sets: 4, reps: '6', load: '8 kg', rest: '60 s', notes: 'Triple extension to slam', videoUrl: '', completed: false },
+      ],
+    },
+    {
+      id: 'wkt_4',
+      name: 'Mobility & Recovery',
+      duration: 45,
+      exercises: [
+        { id: 'ex_m1', order: 1, name: 'Thoracic Spine Windmill', sets: 3, reps: '10 each', load: 'BW', rest: '45 s', notes: 'Breathe into rotation', videoUrl: '', completed: false },
+        { id: 'ex_m2', order: 2, name: 'Cossack Squat', sets: 3, reps: '8 each', load: 'BW', rest: '45 s', notes: 'Keep heel grounded', videoUrl: '', completed: false },
+        { id: 'ex_m3', order: 3, name: '90/90 Hip Transition', sets: 3, reps: '60s', load: 'BW', rest: '30 s', notes: 'Active hip mobility', videoUrl: '', completed: false },
+      ],
+    },
   ],
 
   todaySession: {

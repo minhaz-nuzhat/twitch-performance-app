@@ -1,4 +1,28 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+
+function generateWeekSlots(offset) {
+  const today = new Date()
+  const weekStart = new Date(today)
+  weekStart.setDate(today.getDate() - today.getDay() + offset * 7)
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(weekStart)
+    date.setDate(date.getDate() + index)
+    const dateKey = date.toISOString().split('T')[0]
+
+    return {
+      dateKey,
+      day: `${date.toLocaleDateString('en-IN', { weekday: 'short' })} ${date.getDate()}`,
+      date,
+      isToday: dateKey === new Date().toISOString().split('T')[0],
+      sessionId: null,
+      sessionName: null,
+      duration: null,
+      completed: false,
+      assignedBy: 'Coach Ravi',
+    }
+  })
+}
 
 /**
  * Manages weekly schedule state for drag/drop planner
@@ -8,38 +32,22 @@ export function useWeeklySchedule(initialWeek = 0) {
   const [weekOffset, setWeekOffset] = useState(initialWeek)
   const [selectedDayKey, setSelectedDayKey] = useState('')
   const [dragSession, setDragSession] = useState(null)
-  const [weekSchedule, setWeekSchedule] = useState([])
+  const [schedules, setSchedules] = useState(() => ({ [initialWeek]: generateWeekSlots(initialWeek) }))
+  const weekSchedule = schedules[weekOffset] ?? []
 
-  // Generate 7 empty slots for the week
-  const generateWeekSlots = (offset) => {
-    const today = new Date()
-    const weekStart = new Date(today)
-    weekStart.setDate(today.getDate() - today.getDay() + offset * 7)
+  useEffect(() => {
+    setSchedules((current) => current[weekOffset]
+      ? current
+      : { ...current, [weekOffset]: generateWeekSlots(weekOffset) })
+    setSelectedDayKey('')
+    setDragSession(null)
+  }, [weekOffset])
 
-    return Array.from({ length: 7 }, (_, i) => {
-      const date = new Date(weekStart)
-      date.setDate(date.getDate() + i)
-      const dateKey = date.toISOString().split('T')[0]
-      const day = date.toLocaleDateString('en-IN', { weekday: 'short' })
-      const dayNum = date.getDate()
-
-      return {
-        dateKey,
-        day: `${day} ${dayNum}`,
-        date,
-        isToday: dateKey === new Date().toISOString().split('T')[0],
-        sessionId: null,
-        sessionName: null,
-        duration: null,
-        completed: false,
-        assignedBy: 'Coach Ravi',
-      }
-    })
-  }
-
-  // Initialize week schedule
-  if (weekSchedule.length === 0) {
-    setWeekSchedule(generateWeekSlots(weekOffset))
+  const setWeekSchedule = (updater) => {
+    setSchedules((current) => ({
+      ...current,
+      [weekOffset]: typeof updater === 'function' ? updater(current[weekOffset] ?? []) : updater,
+    }))
   }
 
   const weekLabel = useMemo(() => {
@@ -120,7 +128,6 @@ export function useWeeklySchedule(initialWeek = 0) {
 
   const goToThisWeek = () => {
     setWeekOffset(0)
-    setWeekSchedule(generateWeekSlots(0))
   }
 
   return {

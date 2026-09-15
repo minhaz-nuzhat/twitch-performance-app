@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@media print {
+  body { background: white !important; }
+  body * { visibility: hidden; }
+  .nutrition-print-area, .nutrition-print-area * { visibility: visible; }
+  .nutrition-print-area { position: absolute; inset: 0; color: black; }
+  .nutrition-print-area .card { background: white !important; border-color: #d1d5db !important; box-shadow: none !important; }
+  .nutrition-print-area [class*="text-tp-white"] { color: #111827 !important; }
+  .nutrition-print-area [class*="text-tp-soft"],
+  .nutrition-print-area [class*="text-tp-muted"] { color: #4b5563 !important; }
+}
+
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
 

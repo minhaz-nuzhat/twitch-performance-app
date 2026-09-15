@@ -58,7 +58,14 @@ export function WeeklyPlanner({
           {workoutTemplates.map((w) => (
             <button
               key={w.id}
+              type="button"
               draggable
+              onClick={() => onDragStartFromTemplate({
+                sourceDateKey: null,
+                sessionId: w.id,
+                sessionName: w.name,
+                duration: w.duration,
+              })}
               onDragStart={() =>
                 onDragStartFromTemplate({
                   sourceDateKey: null,
@@ -67,7 +74,12 @@ export function WeeklyPlanner({
                   duration: w.duration,
                 })
               }
-              className="px-3 py-1.5 bg-tp-red/10 border border-tp-red/30 rounded-lg text-tp-red text-xs font-medium hover:bg-tp-red/20 transition-colors cursor-grab active:cursor-grabbing"
+              className={clsx(
+                'px-3 py-1.5 border rounded-lg text-xs font-medium transition-colors cursor-grab active:cursor-grabbing',
+                dragSession?.sessionId === w.id
+                  ? 'bg-tp-red text-white border-tp-red'
+                  : 'bg-tp-red/10 border-tp-red/30 text-tp-red hover:bg-tp-red/20',
+              )}
             >
               + {w.name}
             </button>
@@ -92,7 +104,7 @@ export function WeeklyPlanner({
             }
             onDragOver={(e) => e.preventDefault()}
             onDrop={() => onDrop(slot.dateKey)}
-            onClick={() => onSelectDay(slot.dateKey)}
+            onClick={() => dragSession ? onDrop(slot.dateKey) : onSelectDay(slot.dateKey)}
             className={clsx(
               'min-h-24 p-2.5 rounded-xl border transition-all cursor-pointer group',
               slot.isToday && 'border-tp-red/40 bg-tp-red/5',
@@ -161,6 +173,11 @@ export function WeeklyPlanner({
           </div>
         ))}
       </div>
+      {dragSession && (
+        <p className="text-tp-red text-xs font-medium">
+          Select a day to schedule {dragSession.sessionName}, or drag it onto the calendar.
+        </p>
+      )}
     </div>
   )
 }

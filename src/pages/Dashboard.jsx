@@ -180,19 +180,49 @@ function StrengthIndexCard({ perf }) {
 }
 
 function LeaderboardCard({ perf, onOpen }) {
-  const { leaderboard: lb } = perf
-  return (
-    <button onClick={onOpen} className="card p-4 flex flex-col hover:border-tp-border-bright transition-all group">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Trophy size={14} className="text-tp-gold" />
-          <p className="label">Leaderboard</p>
+  const { leaderboard: lb, composite, nextTierName, nextTierTarget } = perf
+
+  // Rule: Only members ranked #1–#5 see the public Leaderboard Card
+  if (lb && lb.rank <= 5) {
+    return (
+      <button onClick={onOpen} className="card p-4 flex flex-col hover:border-tp-border-bright transition-all group">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Trophy size={14} className="text-tp-gold" />
+            <p className="label">Studio Leaderboard</p>
+          </div>
+          <ChevronRight size={14} className="text-tp-muted group-hover:text-tp-red transition-colors" />
         </div>
-        <ChevronRight size={14} className="text-tp-muted group-hover:text-tp-red transition-colors" />
+        <p className="font-mono font-bold text-4xl text-tp-white mb-1">#{lb.rank}</p>
+        <p className="text-tp-soft text-xs">Top 5 Studio Performer · Out of {lb.total}</p>
+      </button>
+    )
+  }
+
+  // Members outside Top 5 (#6+): Display Personal Milestone Target Card
+  const ptsAway = nextTierTarget - composite
+  return (
+    <Link to="/progress" className="card p-4 flex flex-col justify-between hover:border-tp-border-bright transition-all group">
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Zap size={14} className="text-tp-red" />
+            <p className="label">Personal Milestone</p>
+          </div>
+          <ChevronRight size={14} className="text-tp-muted group-hover:text-tp-red transition-colors" />
+        </div>
+        <p className="font-mono font-bold text-2xl text-tp-white mb-1">
+          {ptsAway > 0 ? `${ptsAway} pts` : 'Target Met'}
+        </p>
+        <p className="text-tp-soft text-xs">
+          {ptsAway > 0 ? `Target distance to ${nextTierName} Tier` : `Achieved ${nextTierName} Tier`}
+        </p>
       </div>
-      <p className="font-mono font-bold text-4xl text-tp-white mb-1">#{lb.rank}</p>
-      <p className="text-tp-soft text-xs">Out of {lb.total} members</p>
-    </button>
+      <div className="mt-3 pt-2 border-t border-tp-border flex items-center justify-between text-[11px]">
+        <span className="text-tp-muted">Next Testing Date:</span>
+        <span className="text-tp-red font-semibold">15 Oct 2026</span>
+      </div>
+    </Link>
   )
 }
 

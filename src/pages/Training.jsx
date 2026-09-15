@@ -169,8 +169,26 @@ export default function Training() {
 
   // State management via custom hooks
   const weekly = useWeeklySchedule(0)
-  const exercises = useExerciseLogs(training?.todaySession?.exercises ?? [])
-  const session = useSessionState(training?.todaySession?.id ?? 'pending')
+
+  // Resolve active session based on selected calendar slot or default today's session
+  const selectedSlot = weekly.weekSchedule.find((s) => s.dateKey === weekly.selectedDayKey)
+  const activeTemplate = selectedSlot?.sessionId
+    ? (training?.workoutTemplates || []).find((t) => t.id === selectedSlot.sessionId)
+    : null
+
+  const activeSession = activeTemplate
+    ? {
+        ...training.todaySession,
+        id: `${activeTemplate.id}:${selectedSlot.dateKey}`,
+        name: activeTemplate.name,
+        date: selectedSlot.dateKey,
+        estimatedDuration: activeTemplate.duration,
+        exercises: activeTemplate.exercises || training.todaySession.exercises,
+      }
+    : training?.todaySession
+
+  const exercises = useExerciseLogs(activeSession?.exercises ?? [])
+  const session = useSessionState(activeSession?.id ?? 'pending')
 
   if (loading || !training) {
     return (
@@ -236,8 +254,8 @@ export default function Training() {
         onSelectDay={weekly.setSelectedDayKey}
         onToggleCompleted={weekly.toggleSlotCompleted}
         onClearSlot={weekly.clearSlot}
-        onPrevWeek={() => weekly.setWeekOffset((prev) => prev - 1)}
-        onNextWeek={() => weekly.setWeekOffset((prev) => prev + 1)}
+        onPrevWeek={() => weekly.setWeekOffset((previous) => previous - 1)}
+        onNextWeek={() => weekly.setWeekOffset((previous) => previous + 1)}
         onThisWeek={weekly.goToThisWeek}
       />
 
@@ -266,15 +284,15 @@ export default function Training() {
       {activeTab === 'today' && (
         <div className="space-y-4 animate-fade-in">
           <SessionHeader
-            session={training.todaySession}
+            session={activeSession}
             completionStats={exercises.completionStats}
           />
 
           <PrepBlock
             title="Warm-Up"
             subtitle="Do this before you start — no check-in needed"
-            summary={training.todaySession.warmup}
-            exercises={training.todaySession.warmupExercises}
+            summary={activeSession.warmup || training.todaySession.warmup}
+            exercises={activeSession.warmupExercises || training.todaySession.warmupExercises}
             icon={Flame}
             accent={{ bg: 'bg-tp-amber/15', text: 'text-tp-amber', bar: 'bg-tp-amber' }}
             defaultOpen={!session.started}
@@ -361,8 +379,8 @@ export default function Training() {
         <div className="space-y-2 animate-fade-in">
           {session.finishedAt && (
             <HistoryRow session={{
-              date: training.todaySession.date,
-              name: training.todaySession.name,
+              date: activeSession.date,
+              name: activeSession.name,
               completed: true,
               rpe: null,
               notes: 'Today',
@@ -380,7 +398,7 @@ export default function Training() {
         isOpen={surveyOpen}
         onClose={() => setSurveyOpen(false)}
         onSubmit={handleStart}
-        sessionName={training.todaySession.name}
+        sessionName={activeSession.name}
       />
     </div>
   )

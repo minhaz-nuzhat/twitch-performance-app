@@ -9,7 +9,7 @@ import Login         from './pages/Login'
 import Dashboard     from './pages/Dashboard'
 import Performance   from './pages/Performance'
 import Training      from './pages/Training'
-import Nutrition     from './pages/Nutrition'
+import Nutrition     from './pages/NutritionPlan'
 import Progress      from './pages/Progress'
 import Messages      from './pages/Messages'
 import Profile       from './pages/Profile'
@@ -17,6 +17,7 @@ import Payment       from './pages/Payment'
 import Settings      from './pages/Settings'
 import ClientProfiling from './pages/ClientProfiling'
 import Assessment     from './pages/Assessment'
+import Onboarding     from './pages/Onboarding'
 
 import TrainerDashboard     from './pages/trainer/TrainerDashboard'
 import Roster               from './pages/trainer/Roster'
@@ -70,6 +71,7 @@ function AppRoutes() {
       <Route element={<RequireAuth />}>
             {/* ── Member routes ── */}
             <Route element={<RequireMember />}>
+              <Route path="/onboarding" element={<Onboarding />} />
               <Route element={<AppShell />}>
                 <Route path="/"            element={<Dashboard   />} />
                 <Route path="/performance" element={<Performance />} />
