@@ -815,6 +815,98 @@ export const mockAssessmentReport = {
   ],
 }
 
+export const mockPhysioRomAssessment = {
+  id: 'rom_001',
+  assessmentDate: '28 March 2026',
+  assessor: 'Twitch On-Ground Physio',
+  reviewedBy: 'Coach Ravi',
+  measurementType: 'Active range of motion',
+  unit: 'degrees',
+  protocol: 'Standard goniometric screen',
+  summary: {
+    withinReference: 23,
+    review: 3,
+    primaryFinding: 'Left ankle dorsiflexion and shoulder external rotation are the main movement priorities.',
+    programResponse: 'Ankle preparation and shoulder-control work were added to the current training block.',
+  },
+  joints: [
+    {
+      id: 'hip',
+      label: 'Hip',
+      status: 'review',
+      summary: 'Extension is slightly limited bilaterally; other hip movements are close to the reference range.',
+      movements: [
+        { movement: 'Flexion', right: 118, left: 116, reference: '110-120', status: 'within' },
+        { movement: 'Extension', right: 12, left: 10, reference: '10-20', status: 'review' },
+        { movement: 'Abduction', right: 43, left: 42, reference: '40-45', status: 'within' },
+        { movement: 'Adduction', right: 27, left: 26, reference: '20-30', status: 'within' },
+        { movement: 'Internal Rotation', right: 34, left: 32, reference: '30-40', status: 'within' },
+        { movement: 'External Rotation', right: 44, left: 42, reference: '40-50', status: 'within' },
+      ],
+    },
+    {
+      id: 'knee',
+      label: 'Knee',
+      status: 'within',
+      summary: 'Knee range is symmetrical and within the selected reference range.',
+      movements: [
+        { movement: 'Flexion', right: 137, left: 136, reference: '130-140', status: 'within' },
+        { movement: 'Extension', right: 0, left: 0, reference: '0-5', status: 'within' },
+      ],
+    },
+    {
+      id: 'ankle',
+      label: 'Ankle',
+      status: 'review',
+      summary: 'Left dorsiflexion is lower than the right and may affect squat and landing positions.',
+      movements: [
+        { movement: 'Dorsiflexion', right: 18, left: 12, reference: '15-20', status: 'review' },
+        { movement: 'Plantarflexion', right: 48, left: 46, reference: '40-50', status: 'within' },
+        { movement: 'Eversion', right: 16, left: 14, reference: '10-20', status: 'within' },
+        { movement: 'Inversion', right: 33, left: 31, reference: '30-35', status: 'within' },
+      ],
+    },
+    {
+      id: 'shoulder',
+      label: 'Shoulder',
+      status: 'review',
+      summary: 'Right external rotation is lower than the left and is being monitored for throwing volume.',
+      movements: [
+        { movement: 'Flexion', right: 171, left: 174, reference: '165-180', status: 'within' },
+        { movement: 'Extension', right: 52, left: 54, reference: '45-60', status: 'within' },
+        { movement: 'Abduction', right: 174, left: 177, reference: '170-180', status: 'within' },
+        { movement: 'Adduction', right: 42, left: 44, reference: '30-45', status: 'within' },
+        { movement: 'Internal Rotation', right: 66, left: 70, reference: '60-75', status: 'within' },
+        { movement: 'External Rotation', right: 78, left: 88, reference: '80-95', status: 'review' },
+      ],
+    },
+    {
+      id: 'elbow',
+      label: 'Elbow',
+      status: 'within',
+      summary: 'Elbow and forearm range is balanced across sides.',
+      movements: [
+        { movement: 'Flexion', right: 146, left: 145, reference: '140-150', status: 'within' },
+        { movement: 'Extension', right: 1, left: 0, reference: '0-5', status: 'within' },
+        { movement: 'Supination', right: 86, left: 88, reference: '80-90', status: 'within' },
+        { movement: 'Pronation', right: 84, left: 85, reference: '80-90', status: 'within' },
+      ],
+    },
+    {
+      id: 'wrist',
+      label: 'Wrist',
+      status: 'within',
+      summary: 'Wrist range is within the selected reference range with no meaningful side difference.',
+      movements: [
+        { movement: 'Flexion', right: 76, left: 78, reference: '70-80', status: 'within' },
+        { movement: 'Extension', right: 68, left: 70, reference: '60-75', status: 'within' },
+        { movement: 'Ulnar Deviation', right: 34, left: 35, reference: '30-40', status: 'within' },
+        { movement: 'Radial Deviation', right: 19, left: 20, reference: '15-20', status: 'within' },
+      ],
+    },
+  ],
+}
+
 
 export const mockLeaderboard = {
   description: 'Compare your strength index trend with other members in similar programs.',

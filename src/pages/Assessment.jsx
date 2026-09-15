@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import {
   Activity, ArrowUpRight, CheckCircle2, ChevronDown, Download,
-  Dumbbell, Gauge, MessageCircle, ShieldCheck, Target,
+  Dumbbell, Gauge, MessageCircle, Ruler, ShieldCheck, Target,
 } from 'lucide-react'
-import { mockAssessmentReport as data } from '../data/mockData'
+import { mockAssessmentReport as data, mockPhysioRomAssessment as romData } from '../data/mockData'
 import { useAuth } from '../context/AuthContext'
 import { InfoTooltip } from '../components/ui/InfoTooltip'
 import { KPI_TOOLTIPS } from '../data/scienceTooltips'
@@ -631,6 +631,89 @@ function GuidedView() {
   )
 }
 
+function GuidedRomView() {
+  const reviewJoints = romData.joints.filter((joint) => joint.status === 'review')
+
+  return (
+    <div className="space-y-5 animate-fade-in">
+      <section className="grid md:grid-cols-3 gap-3">
+        <div className="card p-4 border-tp-green/25">
+          <div className="flex items-center gap-2 text-tp-green"><CheckCircle2 size={15} /><p className="text-[10px] font-bold uppercase">Movement baseline</p></div>
+          <p className="text-tp-white font-mono font-bold text-3xl mt-3">{romData.summary.withinReference}<span className="text-tp-muted text-sm font-normal"> / 26</span></p>
+          <p className="text-tp-soft text-xs leading-relaxed mt-2">Movements are within the selected reference range.</p>
+        </div>
+        <div className="card p-4 border-tp-amber/30">
+          <div className="flex items-center gap-2 text-tp-amber"><Target size={15} /><p className="text-[10px] font-bold uppercase">Physio review</p></div>
+          <p className="text-tp-white font-mono font-bold text-3xl mt-3">{romData.summary.review}</p>
+          <p className="text-tp-soft text-xs leading-relaxed mt-2">Movement findings are being monitored in the current block.</p>
+        </div>
+        <div className="card p-4 border-tp-red/25">
+          <div className="flex items-center gap-2 text-tp-red"><Ruler size={15} /><p className="text-[10px] font-bold uppercase">Primary finding</p></div>
+          <h3 className="text-tp-white font-bold mt-3">Ankle and shoulder mobility</h3>
+          <p className="text-tp-soft text-xs leading-relaxed mt-2">Left ankle dorsiflexion and right shoulder external rotation are the main follow-up areas.</p>
+        </div>
+      </section>
+
+      <section className="card overflow-hidden">
+        <div className="px-5 py-4 border-b border-tp-border"><p className="label">Physio findings → training response</p><h2 className="text-tp-white font-bold text-lg mt-1">What your team is accounting for</h2></div>
+        <div className="divide-y divide-tp-border">
+          {reviewJoints.map((joint) => {
+            const flagged = joint.movements.filter((movement) => movement.status === 'review')
+            const response = joint.id === 'ankle'
+              ? 'Ankle preparation before squatting, jumping and landing work.'
+              : joint.id === 'shoulder'
+                ? 'Shoulder-control work and monitoring around throwing volume.'
+                : 'Hip-extension preparation within warm-ups and strength sessions.'
+            return (
+              <div key={joint.id} className="grid sm:grid-cols-[130px_1fr_1fr] gap-3 sm:gap-5 p-4 sm:p-5">
+                <div><p className="text-tp-amber text-[10px] font-bold uppercase">{joint.label}</p><p className="text-tp-white font-mono text-xs mt-1">{flagged.map((movement) => movement.movement).join(', ')}</p></div>
+                <p className="text-tp-soft text-xs leading-relaxed">{joint.summary}</p>
+                <div className="sm:border-l sm:border-tp-border sm:pl-5"><p className="text-tp-red text-[10px] font-bold uppercase">Program response</p><p className="text-tp-soft text-xs leading-relaxed mt-1">{response}</p></div>
+              </div>
+            )
+          })}
+        </div>
+        <div className="px-5 py-4 bg-tp-raised/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3"><p className="text-tp-muted text-xs">Range-of-motion findings provide coaching context and are not a diagnosis.</p><Link to="/training" className="text-tp-red text-xs font-semibold inline-flex items-center gap-1">View program <ArrowUpRight size={13} /></Link></div>
+      </section>
+
+      <section className="grid md:grid-cols-[1fr_0.8fr] gap-4">
+        <div className="card p-5"><div className="flex items-center gap-2"><ShieldCheck size={16} className="text-tp-red" /><p className="label">Physio summary</p></div><h2 className="text-tp-white font-bold text-lg mt-4">Most movement ranges support the current training plan</h2><p className="text-tp-soft text-sm leading-relaxed mt-2">{romData.summary.primaryFinding} {romData.summary.programResponse}</p><p className="text-tp-muted text-xs mt-4">Assessed by {romData.assessor} · Reviewed with {romData.reviewedBy}</p></div>
+        <div className="card p-5"><div className="flex items-center gap-2"><Activity size={16} className="text-tp-red" /><p className="label">Follow-up</p></div><p className="text-tp-white font-mono font-bold text-2xl mt-4">6 weeks</p><p className="text-tp-soft text-xs leading-relaxed mt-2">Recheck selected ankle, shoulder and hip movements alongside the next performance assessment.</p><Link to="/progress" className="text-tp-red text-xs font-semibold inline-flex items-center gap-1 mt-5">See checkpoint <ArrowUpRight size={13} /></Link></div>
+      </section>
+    </div>
+  )
+}
+
+function AdvancedRomView() {
+  return (
+    <div className="space-y-4 animate-fade-in">
+      <section className="card p-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[['Assessment', romData.measurementType], ['Protocol', romData.protocol], ['Assessor', romData.assessor], ['Unit', romData.unit]].map(([label, value]) => <div key={label}><p className="label">{label}</p><p className="text-tp-white text-xs font-semibold mt-2">{value}</p></div>)}
+        </div>
+        <p className="text-tp-muted text-xs leading-relaxed mt-4 pt-4 border-t border-tp-border">Reference ranges depend on the stated protocol and provide context for physio review; they are not universal pass/fail standards.</p>
+      </section>
+
+      <div className="space-y-3">
+        {romData.joints.map((joint) => (
+          <details key={joint.id} className="card overflow-hidden group" open={joint.status === 'review'}>
+            <summary className="list-none cursor-pointer px-5 py-4 flex items-center justify-between gap-3 hover:bg-tp-raised/40">
+              <div><div className="flex items-center gap-2"><h2 className="text-tp-white text-sm font-bold">{joint.label}</h2><span className={clsx('rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase', joint.status === 'review' ? 'text-tp-amber border-tp-amber/30 bg-tp-amber/10' : 'text-tp-green border-tp-green/30 bg-tp-green/10')}>{joint.status === 'review' ? 'Review' : 'Within range'}</span></div><p className="text-tp-muted text-xs mt-1">{joint.summary}</p></div>
+              <ChevronDown size={15} className="text-tp-muted transition-transform group-open:rotate-180 flex-shrink-0" />
+            </summary>
+            <div className="border-t border-tp-border overflow-x-auto">
+              <table className="w-full min-w-[580px] text-xs">
+                <thead><tr className="bg-tp-raised/50">{['Movement', 'Right', 'Left', 'Difference', 'Reference range', 'Status'].map((heading) => <th key={heading} className="text-tp-muted font-medium text-left px-4 py-2.5 whitespace-nowrap">{heading}</th>)}</tr></thead>
+                <tbody>{joint.movements.map((movement) => <tr key={movement.movement} className="border-t border-tp-border/50"><td className="px-4 py-2.5 text-tp-white font-medium">{movement.movement}</td><td className="px-4 py-2.5 text-tp-white font-mono">{movement.right}°</td><td className="px-4 py-2.5 text-tp-white font-mono">{movement.left}°</td><td className="px-4 py-2.5 text-tp-soft font-mono">{Math.abs(movement.right - movement.left)}°</td><td className="px-4 py-2.5 text-tp-muted font-mono">{movement.reference}°</td><td className="px-4 py-2.5"><span className={clsx('font-semibold', movement.status === 'review' ? 'text-tp-amber' : 'text-tp-green')}>{movement.status === 'review' ? 'Physio review' : 'Within reference'}</span></td></tr>)}</tbody>
+              </table>
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function PrintReport({ member }) {
   return (
     <div className="assessment-print-only hidden">
@@ -643,6 +726,9 @@ function PrintReport({ member }) {
       <table><thead><tr><th>Metric</th><th>Result</th><th>Reference</th><th>Status</th></tr></thead><tbody>{data.kpis.map((kpi) => <tr key={kpi.label}><td>{kpi.label}</td><td>{kpi.value} {kpi.unit}</td><td>{kpi.target}</td><td>{kpi.statusLabel}</td></tr>)}</tbody></table>
       <h2>Complete results</h2>
       <table><thead><tr><th>Assessment</th><th>Factor</th><th>Result</th><th>Reference</th><th>Status</th></tr></thead><tbody>{data.fullResultsSummary.map((row, index) => <tr key={index}><td>{row.assessment}</td><td>{row.factor}</td><td>{row.result}</td><td>{row.norm}</td><td>{row.statusLabel}</td></tr>)}</tbody></table>
+      <h2>Physio range-of-motion screen</h2>
+      <p>{romData.measurementType} · {romData.protocol} · Assessed by {romData.assessor}</p>
+      <table><thead><tr><th>Joint</th><th>Movement</th><th>Right</th><th>Left</th><th>Difference</th><th>Reference</th><th>Status</th></tr></thead><tbody>{romData.joints.flatMap((joint) => joint.movements.map((movement) => <tr key={`${joint.id}-${movement.movement}`}><td>{joint.label}</td><td>{movement.movement}</td><td>{movement.right}°</td><td>{movement.left}°</td><td>{Math.abs(movement.right - movement.left)}°</td><td>{movement.reference}°</td><td>{movement.status === 'review' ? 'Physio review' : 'Within reference'}</td></tr>))}</tbody></table>
       <p className="assessment-print-note">Assessment findings are coaching information and are not a medical diagnosis.</p>
     </div>
   )
@@ -651,6 +737,7 @@ function PrintReport({ member }) {
 export default function Assessment() {
   const [tab, setTab] = useState('overview')
   const [mode, setMode] = useState('guided')
+  const [reportType, setReportType] = useState('performance')
   const { user } = useAuth()
   const { kpis } = data
   const member = {
@@ -669,10 +756,10 @@ export default function Assessment() {
       <header className="card p-5 border-l-4 border-tp-red">
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
           <div>
-            <p className="text-tp-red text-[10px] font-bold uppercase">Baseline performance assessment</p>
+            <p className="text-tp-red text-[10px] font-bold uppercase">{reportType === 'performance' ? 'Baseline performance assessment' : 'Physio movement assessment'}</p>
             <h1 className="text-tp-white font-bold text-2xl mt-2">{member.name}</h1>
             <p className="text-tp-soft text-xs mt-1">{member.sport} · {member.position}</p>
-            <p className="text-tp-muted text-xs mt-3">Assessed {member.assessmentDate} · Reviewed by {member.coach}</p>
+            <p className="text-tp-muted text-xs mt-3">{reportType === 'performance' ? `Assessed ${member.assessmentDate} · Reviewed by ${member.coach}` : `Assessed ${romData.assessmentDate} by ${romData.assessor} · Reviewed with ${romData.reviewedBy}`}</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 print:hidden">
             <div className="flex bg-tp-raised border border-tp-border rounded-lg p-1" aria-label="Assessment detail level">
@@ -687,9 +774,22 @@ export default function Assessment() {
         </div>
       </header>
 
-      {mode === 'guided' && <GuidedView />}
+      <nav className="grid grid-cols-2 gap-1 bg-tp-surface border border-tp-border rounded-xl p-1 print:hidden" aria-label="Assessment report type">
+        {[
+          { id: 'performance', label: 'Performance testing', icon: Activity },
+          { id: 'rom', label: 'Physio ROM screen', icon: Ruler },
+        ].map(({ id, label, icon: Icon }) => (
+          <button key={id} type="button" onClick={() => setReportType(id)} className={clsx('min-h-11 rounded-lg px-3 flex items-center justify-center gap-2 text-xs font-semibold transition-colors', reportType === id ? 'bg-tp-red text-white' : 'text-tp-muted hover:text-tp-white hover:bg-tp-raised')}>
+            <Icon size={14} />{label}
+          </button>
+        ))}
+      </nav>
 
-      {mode === 'advanced' && <div className="space-y-4 animate-fade-in">
+      {mode === 'guided' && (reportType === 'performance' ? <GuidedView /> : <GuidedRomView />)}
+
+      {mode === 'advanced' && reportType === 'rom' && <AdvancedRomView />}
+
+      {mode === 'advanced' && reportType === 'performance' && <div className="space-y-4 animate-fade-in">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {kpis.map(kpi => {
           const cfg = KPI_STATUS_CFG[kpi.status] ?? KPI_STATUS_CFG.pass
