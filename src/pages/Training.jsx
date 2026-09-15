@@ -207,8 +207,21 @@ export default function Training() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* ── Mobile task navigation ── */}
+      <div className="lg:hidden sticky top-0 z-20 flex gap-1 bg-tp-surface/95 backdrop-blur-sm p-1 rounded-xl border border-tp-border">
+        {[
+          { id: 'today', label: 'Today' },
+          { id: 'schedule', label: 'Schedule' },
+          { id: 'history', label: 'History' },
+        ].map((tab) => (
+          <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)} className={clsx('flex-1 min-h-10 rounded-lg text-xs font-semibold transition-colors', activeTab === tab.id ? 'bg-tp-red text-white' : 'text-tp-muted')}>
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       {/* ── Program Header ── */}
-      <div className="card p-5 border-red-glow">
+      <div className={clsx('card p-5 border-red-glow', activeTab === 'schedule' ? 'block' : 'hidden lg:block')}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <span className="label block mb-1">Active Program</span>
@@ -241,26 +254,28 @@ export default function Training() {
       </div>
 
       {/* ── Weekly Planner ── */}
-      <WeeklyPlanner
-        weekLabel={weekly.weekLabel}
-        weekSchedule={weekly.weekSchedule}
-        dragSession={weekly.dragSession}
-        selectedDayKey={weekly.selectedDayKey}
-        workoutTemplates={training.workoutTemplates || []}
-        onDragStartFromTemplate={(source) => weekly.handleDragStart(source)}
-        onDragStartFromSlot={(source) => weekly.handleDragStart(source)}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={weekly.handleDrop}
-        onSelectDay={weekly.setSelectedDayKey}
-        onToggleCompleted={weekly.toggleSlotCompleted}
-        onClearSlot={weekly.clearSlot}
-        onPrevWeek={() => weekly.setWeekOffset((previous) => previous - 1)}
-        onNextWeek={() => weekly.setWeekOffset((previous) => previous + 1)}
-        onThisWeek={weekly.goToThisWeek}
-      />
+      <div className={activeTab === 'schedule' ? 'block' : 'hidden lg:block'}>
+        <WeeklyPlanner
+          weekLabel={weekly.weekLabel}
+          weekSchedule={weekly.weekSchedule}
+          dragSession={weekly.dragSession}
+          selectedDayKey={weekly.selectedDayKey}
+          workoutTemplates={training.workoutTemplates || []}
+          onDragStartFromTemplate={(source) => weekly.handleDragStart(source)}
+          onDragStartFromSlot={(source) => weekly.handleDragStart(source)}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={weekly.handleDrop}
+          onSelectDay={weekly.setSelectedDayKey}
+          onToggleCompleted={weekly.toggleSlotCompleted}
+          onClearSlot={weekly.clearSlot}
+          onPrevWeek={() => weekly.setWeekOffset((previous) => previous - 1)}
+          onNextWeek={() => weekly.setWeekOffset((previous) => previous + 1)}
+          onThisWeek={weekly.goToThisWeek}
+        />
+      </div>
 
       {/* ── Tabs ── */}
-      <div className="flex gap-1 bg-tp-surface p-1 rounded-xl border border-tp-border">
+      <div className="hidden lg:flex gap-1 bg-tp-surface p-1 rounded-xl border border-tp-border">
         {[
           { id: 'today', label: "Today's Session" },
           { id: 'history', label: 'History' },

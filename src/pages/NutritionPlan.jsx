@@ -29,6 +29,7 @@ export default function NutritionPlan() {
   const [weekIndex, setWeekIndex] = useState(5)
   const [dayIndex, setDayIndex] = useState(0)
   const [openMeal, setOpenMeal] = useState(null)
+  const [weekPickerOpen, setWeekPickerOpen] = useState(false)
 
   if (loading || !plan) {
     return <div className="space-y-4">{[...Array(4)].map((_, index) => <div key={index} className="skeleton h-24 rounded-xl" />)}</div>
@@ -54,9 +55,9 @@ export default function NutritionPlan() {
             <h2 className="text-tp-white font-bold text-lg">{plan.name}</h2>
             <p className="text-tp-soft text-xs mt-1">12-week plan · Assigned by {plan.assignedBy}</p>
           </div>
-          <button type="button" onClick={() => window.print()} className="btn-primary inline-flex items-center justify-center gap-2 print:hidden">
+          <button type="button" onClick={() => window.print()} className="w-10 h-10 sm:w-auto sm:h-auto sm:px-4 sm:py-2.5 rounded-lg border border-tp-border text-tp-soft hover:text-tp-white hover:border-tp-border-bright inline-flex items-center justify-center gap-2 print:hidden" aria-label="Download selected week as PDF">
             <Download size={15} />
-            Download week as PDF
+            <span className="hidden sm:inline text-xs font-semibold">Download PDF</span>
           </button>
         </div>
       </section>
@@ -75,7 +76,11 @@ export default function NutritionPlan() {
           </button>
         </div>
 
-        <div className="grid grid-cols-6 sm:grid-cols-12 gap-1.5 print:hidden" aria-label="Nutrition plan weeks">
+        <button type="button" onClick={() => setWeekPickerOpen(true)} className="sm:hidden w-full min-h-11 rounded-lg border border-tp-border bg-tp-raised text-tp-white text-xs font-semibold flex items-center justify-center gap-2 print:hidden">
+          Choose another week <ChevronDown size={14} />
+        </button>
+
+        <div className="hidden sm:grid sm:grid-cols-12 gap-1.5 print:hidden" aria-label="Nutrition plan weeks">
           {WEEK_CONFIGS.map((item, index) => (
             <button key={index} type="button" onClick={() => changeWeek(index)} title={`${item.phase}: ${item.focus}`} className={clsx('h-9 rounded-lg border text-xs font-mono font-bold transition-colors', index === weekIndex ? 'border-tp-red bg-tp-red text-white' : 'border-tp-border bg-tp-raised text-tp-muted hover:text-tp-white')}>
               {index + 1}
@@ -83,6 +88,15 @@ export default function NutritionPlan() {
           ))}
         </div>
       </section>
+
+      {weekPickerOpen && (
+        <div className="sm:hidden fixed inset-0 z-[70] bg-black/75 flex items-end print:hidden" onClick={(event) => event.target === event.currentTarget && setWeekPickerOpen(false)}>
+          <section className="w-full bg-tp-surface border-t border-tp-border rounded-t-xl p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+            <div className="flex items-center justify-between mb-4"><div><h2 className="text-tp-white font-semibold">Choose plan week</h2><p className="text-tp-muted text-xs mt-1">Your coach's 12-week nutrition progression</p></div><button type="button" onClick={() => setWeekPickerOpen(false)} className="text-tp-red text-xs font-semibold">Done</button></div>
+            <div className="grid grid-cols-4 gap-2">{WEEK_CONFIGS.map((item, index) => <button key={index} type="button" onClick={() => { changeWeek(index); setWeekPickerOpen(false) }} className={clsx('min-h-14 rounded-lg border text-left px-3', index === weekIndex ? 'border-tp-red bg-tp-red/10' : 'border-tp-border bg-tp-raised')}><span className={clsx('font-mono text-sm font-bold', index === weekIndex ? 'text-tp-red' : 'text-tp-white')}>W{index + 1}</span><span className="block text-tp-muted text-[9px] mt-1">{item.phase}</span></button>)}</div>
+          </section>
+        </div>
+      )}
 
       <section>
         <div className="flex items-end justify-between gap-3 mb-3">
@@ -92,9 +106,9 @@ export default function NutritionPlan() {
           </div>
           <span className="text-tp-muted text-xs">Read only</span>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+        <div className="flex sm:grid sm:grid-cols-4 lg:grid-cols-7 gap-2 overflow-x-auto pb-2 snap-x">
           {week.schedule.map((type, index) => (
-            <button key={`${DAYS[index]}-${type}`} type="button" onClick={() => { setDayIndex(index); setOpenMeal(null) }} className={clsx('min-h-24 rounded-lg border p-3 text-left transition-colors', dayIndex === index ? 'border-tp-red bg-tp-red/10' : 'border-tp-border bg-tp-card hover:border-tp-border-bright')}>
+            <button key={`${DAYS[index]}-${type}`} type="button" onClick={() => { setDayIndex(index); setOpenMeal(null) }} className={clsx('min-w-[112px] sm:min-w-0 min-h-20 sm:min-h-24 rounded-lg border p-3 text-left transition-colors snap-start', dayIndex === index ? 'border-tp-red bg-tp-red/10' : 'border-tp-border bg-tp-card hover:border-tp-border-bright')}>
               <span className={clsx('text-xs font-bold', dayIndex === index ? 'text-tp-red' : 'text-tp-white')}>{DAYS[index]}</span>
               <p className="text-tp-soft text-[11px] leading-tight mt-2">{plan.dayTypes[type].label}</p>
               <p className="text-tp-muted text-[10px] font-mono mt-1">{plan.dayTypes[type].calories.toLocaleString()} kcal</p>

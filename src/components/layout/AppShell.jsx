@@ -15,8 +15,8 @@ export default function AppShell() {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <TopBar />
 
-        <main className="flex-1 overflow-y-auto pb-20 lg:pb-6">
-          <div className="max-w-5xl mx-auto px-4 py-6">
+        <main className="flex-1 overflow-y-auto pb-24 lg:pb-6">
+          <div className="max-w-5xl mx-auto px-4 py-5 sm:py-6">
             <Outlet />
           </div>
         </main>

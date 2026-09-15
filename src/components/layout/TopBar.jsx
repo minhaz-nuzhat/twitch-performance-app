@@ -64,7 +64,7 @@ export default function TopBar() {
           <button
             onClick={() => setAgentOpen(!agentOpen)}
             className={clsx(
-              'p-2 rounded-lg transition-all relative',
+              'hidden sm:block p-2 rounded-lg transition-all relative',
               agentOpen
                 ? 'bg-tp-red/20 text-tp-red border border-tp-red/40'
                 : 'text-tp-soft hover:text-tp-red hover:bg-tp-red/10'

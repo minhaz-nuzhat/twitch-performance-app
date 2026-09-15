@@ -32,6 +32,16 @@ const LOAD_HISTORY = [
   { week: 'W5', load: 1680, rpe: 7.1 }, { week: 'W6', load: 1740, rpe: 7.0 },
 ]
 
+const WEEKLY_EXECUTION = [
+  { week: 1, completed: 3, prescribed: 3, rpe: 6.2, state: 'complete' },
+  { week: 2, completed: 3, prescribed: 3, rpe: 6.5, state: 'complete' },
+  { week: 3, completed: 2, prescribed: 3, rpe: 6.8, state: 'complete', note: '1 session moved' },
+  { week: 4, completed: 3, prescribed: 3, rpe: 6.4, state: 'complete', note: 'Travel gym' },
+  { week: 5, completed: 3, prescribed: 3, rpe: 7.1, state: 'complete' },
+  { week: 6, completed: 2, prescribed: 3, rpe: 7.0, state: 'current', note: 'In progress' },
+  ...Array.from({ length: 6 }, (_, index) => ({ week: index + 7, completed: 0, prescribed: 3, rpe: null, state: index === 5 ? 'testing' : 'upcoming' })),
+]
+
 function ProgressChartTooltip({ active, label, payload }) {
   if (!active || !payload?.length) return null
 
@@ -89,8 +99,8 @@ function PhotoSlot({ label, file, onSelect }) {
   )
 }
 
-function VisualCheckIns() {
-  const [open, setOpen] = useState(false)
+function VisualCheckIns({ defaultOpen = false }) {
+  const [open, setOpen] = useState(defaultOpen)
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [photos, setPhotos] = useState({ front: null, side: null, back: null })
   const [checkIns, setCheckIns] = useState([])
@@ -115,6 +125,44 @@ function VisualCheckIns() {
         {checkIns.length === 0 ? <div className="border border-dashed border-tp-border rounded-lg p-5 text-center"><p className="text-tp-muted text-xs">Your first saved set establishes the visual baseline. A second set unlocks comparison.</p></div> : <div><p className="label mb-3">Saved check-ins</p>{checkIns.map((item) => <div key={item.id} className="flex items-center gap-3 border-t border-tp-border py-3"><div className="flex gap-1">{Object.values(item.photos).map((src, index) => <img key={index} src={src} alt="Saved check-in" className="w-9 h-11 object-cover rounded" />)}</div><p className="text-tp-white text-xs">{new Date(item.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p></div>)}</div>}
       </div>}
     </section>
+  )
+}
+
+function WeeklyExecution() {
+  const [selectedWeek, setSelectedWeek] = useState(5)
+  const selected = WEEKLY_EXECUTION[selectedWeek]
+
+  return (
+    <div className="space-y-4 animate-fade-in">
+      <section className="card p-4">
+        <p className="label">This block</p>
+        <h2 className="text-tp-white font-semibold mt-1">Weekly execution</h2>
+        <p className="text-tp-muted text-xs leading-relaxed mt-1">The work completed between coach-defined assessment checkpoints.</p>
+        <div className="flex gap-2 overflow-x-auto pb-2 mt-4 snap-x">
+          {WEEKLY_EXECUTION.map((item, index) => (
+            <button key={item.week} type="button" onClick={() => setSelectedWeek(index)} className={clsx('min-w-14 h-14 rounded-lg border flex flex-col items-center justify-center snap-start', selectedWeek === index ? 'border-tp-red bg-tp-red/10' : item.state === 'complete' ? 'border-tp-green/25 bg-tp-green/5' : 'border-tp-border bg-tp-raised')}>
+              <span className={clsx('text-[9px] uppercase font-bold', selectedWeek === index ? 'text-tp-red' : 'text-tp-muted')}>Week</span>
+              <span className="text-tp-white font-mono font-bold text-sm mt-1">{item.week}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="card p-5">
+        <div className="flex items-start justify-between gap-3">
+          <div><p className="text-tp-red text-xs font-semibold">Week {selected.week}</p><h2 className="text-tp-white font-bold text-xl mt-1">{selected.state === 'testing' ? 'Reassessment week' : selected.state === 'current' ? 'Current training week' : selected.state === 'upcoming' ? 'Upcoming week' : 'Week complete'}</h2></div>
+          <span className={clsx('border rounded-full px-2.5 py-1 text-[10px] font-bold uppercase', selected.state === 'complete' ? 'text-tp-green border-tp-green/25 bg-tp-green/10' : selected.state === 'current' ? 'text-tp-red border-tp-red/25 bg-tp-red/10' : 'text-tp-muted border-tp-border bg-tp-raised')}>{selected.state}</span>
+        </div>
+        <div className="grid grid-cols-2 gap-3 mt-5">
+          <div className="bg-tp-raised rounded-lg p-3"><p className="label">Sessions</p><p className="text-tp-white font-mono font-bold text-2xl mt-2">{selected.completed}/{selected.prescribed}</p><p className="text-tp-muted text-xs mt-1">completed / prescribed</p></div>
+          <div className="bg-tp-raised rounded-lg p-3"><p className="label">Average RPE</p><p className="text-tp-white font-mono font-bold text-2xl mt-2">{selected.rpe ?? '—'}</p><p className="text-tp-muted text-xs mt-1">session effort / 10</p></div>
+        </div>
+        {selected.note && <div className="mt-3 border border-tp-border rounded-lg p-3 flex items-center gap-2"><CalendarDays size={14} className="text-tp-red" /><p className="text-tp-soft text-xs">{selected.note}</p></div>}
+        <Link to="/training" className="btn-primary w-full mt-5 inline-flex items-center justify-center gap-2 text-sm">Open training history <ChevronRight size={14} /></Link>
+      </section>
+
+      <section className="card p-4"><p className="label">How to read this</p><p className="text-tp-soft text-xs leading-relaxed mt-2">Weekly execution shows whether prescribed work happened, including moved and travel sessions. Performance change is confirmed at coach-defined reassessments.</p></section>
+    </div>
   )
 }
 
@@ -156,6 +204,7 @@ export default function ClientProgress() {
   const { data: perf, loading: performanceLoading } = usePerformance()
   const { data: training, loading: trainingLoading } = useTraining()
   const [mode, setMode] = useState('guided')
+  const [mobileView, setMobileView] = useState('journey')
 
   if (goalsLoading || assessmentLoading || performanceLoading || trainingLoading || !goalsData || !assessments || !perf || !training) return <div className="space-y-4">{[...Array(4)].map((_, index) => <div key={index} className="skeleton h-24 rounded-xl" />)}</div>
 
@@ -166,8 +215,17 @@ export default function ClientProgress() {
         <div className="mt-5 pt-4 border-t border-tp-border grid sm:grid-cols-[1fr_auto] gap-4 items-center"><div><div className="flex items-center justify-between text-xs"><span className="text-tp-soft">Current block</span><span className="text-tp-white font-mono">{training.week}/{training.totalWeeks} weeks</span></div><div className="h-1.5 bg-tp-raised rounded-full overflow-hidden mt-2"><div className="h-full bg-tp-red" style={{ width: `${training.week / training.totalWeeks * 100}%` }} /></div></div><Link to="/messages" className="text-tp-red text-xs font-semibold inline-flex items-center gap-1"><MessageCircle size={13} /> Check in with coach</Link></div>
       </header>
 
-      {mode === 'guided' ? <GuidedProgress goals={goalsData.goals} training={training} /> : <AdvancedProgress perf={perf} assessments={assessments} training={training} />}
-      <VisualCheckIns />
+      <nav className="lg:hidden sticky top-0 z-20 grid grid-cols-3 gap-1 bg-tp-surface/95 backdrop-blur-sm border border-tp-border rounded-xl p-1" aria-label="Progress views">
+        {[
+          ['journey', 'Journey'],
+          ['weekly', 'Weekly'],
+          ['visuals', 'Visuals'],
+        ].map(([id, label]) => <button key={id} type="button" onClick={() => setMobileView(id)} className={clsx('min-h-10 rounded-lg text-xs font-semibold', mobileView === id ? 'bg-tp-red text-white' : 'text-tp-muted')}>{label}</button>)}
+      </nav>
+
+      <div className={mobileView === 'journey' ? 'block' : 'hidden lg:block'}>{mode === 'guided' ? <GuidedProgress goals={goalsData.goals} training={training} /> : <AdvancedProgress perf={perf} assessments={assessments} training={training} />}</div>
+      <div className={mobileView === 'weekly' ? 'block lg:hidden' : 'hidden'}><WeeklyExecution /></div>
+      <div className={mobileView === 'visuals' ? 'block' : 'hidden lg:block'}><VisualCheckIns key={mobileView} defaultOpen={mobileView === 'visuals'} /></div>
     </div>
   )
 }

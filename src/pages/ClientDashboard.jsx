@@ -55,7 +55,7 @@ function TodaySession({ training }) {
   return (
     <section className="border border-tp-red/35 bg-tp-card rounded-xl overflow-hidden shadow-[0_0_24px_rgba(230,57,70,0.08)]">
       <div className="h-1 bg-tp-red" />
-      <div className="p-5 sm:p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-tp-red/15 border border-tp-red/25 text-tp-red flex items-center justify-center">
@@ -82,14 +82,14 @@ function TodaySession({ training }) {
           </p>
         </div>
 
-        <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="mt-5 flex flex-col sm:flex-row sm:items-center gap-3">
           <Link to="/training" className="btn-primary inline-flex items-center justify-center gap-2">
             <Dumbbell size={16} /> Open session
           </Link>
-          <Link to="/training" className="btn-ghost inline-flex items-center justify-center gap-2">
+          <Link to="/training" className="sm:btn-ghost inline-flex items-center justify-center gap-2 text-tp-red text-xs font-semibold py-2">
             <CalendarDays size={16} /> Adjust this week
           </Link>
-          <div className="sm:ml-auto min-w-32">
+          <div className={clsx('sm:ml-auto min-w-32', completion === 0 && 'hidden sm:block')}>
             <div className="flex justify-between text-[10px] text-tp-muted mb-1"><span>Session progress</span><span>{completion}%</span></div>
             <div className="h-1.5 bg-tp-raised rounded-full overflow-hidden"><div className="h-full bg-tp-red" style={{ width: `${completion}%` }} /></div>
           </div>
@@ -226,7 +226,7 @@ export default function ClientDashboard() {
     <div className="space-y-7 animate-fade-in">
       <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div><p className="text-tp-red text-xs font-semibold">{user?.sport} · {user?.position}</p><h1 className="text-tp-white text-2xl font-bold mt-1">{greeting(user?.name)}</h1><p className="text-tp-soft text-sm mt-1">{new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p></div>
-        <Link to="/messages" className="inline-flex items-center gap-2 text-tp-soft hover:text-tp-white text-xs"><MessageCircle size={14} className="text-tp-red" /> Message {user?.trainer?.name ?? 'your coach'} <ChevronRight size={13} /></Link>
+        <Link to="/messages" className="hidden sm:inline-flex items-center gap-2 text-tp-soft hover:text-tp-white text-xs"><MessageCircle size={14} className="text-tp-red" /> Message {user?.trainer?.name ?? 'your coach'} <ChevronRight size={13} /></Link>
       </header>
 
       <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(280px,0.75fr)] gap-4 items-start">
