@@ -59,11 +59,11 @@ export const mockRoster = [
 
 // ── Member detail scores (full dimension data per member) ────
 export const mockMemberScores = {
-  mem_001: { composite: 62, tier: 'silver', dimensions: { relativeStrength: 68, explosiveScore: 71, powerIndex: 65, cardiovascular: 58, mobilityScore: 55, symmetryScore: 72, injuryRisk: 31, bodyComposition: 69, trainingAdherence: 83, nutritionCompliance: 61, recoveryScore: 74 } },
+  mem_001: { composite: 62, tier: 'silver', dimensions: { forceIndex: 68, explosiveScore: 71, powerIndex: 65, cardiovascular: 58, mobilityScore: 55, symmetryScore: 72, injuryRisk: 31, bodyComposition: 69, trainingAdherence: 83, nutritionCompliance: 61, recoveryScore: 74 } },
   mem_002: { composite: 71, tier: 'gold',   dimensions: { forceIndex: 62, explosiveScore: 80, powerIndex: 74, cardiovascular: 76, mobilityScore: 70, symmetryScore: 68, injuryRisk: 18, bodyComposition: 72, trainingAdherence: 91, nutritionCompliance: 78, recoveryScore: 69 } },
   mem_003: { composite: 38, tier: 'bronze', dimensions: { forceIndex: 42, explosiveScore: 44, powerIndex: 35, cardiovascular: 40, mobilityScore: 30, symmetryScore: 45, injuryRisk: 62, bodyComposition: 38, trainingAdherence: 55, nutritionCompliance: 40, recoveryScore: 35 } },
-  mem_004: { composite: 55, tier: 'silver', dimensions: { relativeStrength: 50, explosiveScore: 52, powerIndex: 48, cardiovascular: 70, mobilityScore: 60, symmetryScore: 58, injuryRisk: 28, bodyComposition: 62, trainingAdherence: 78, nutritionCompliance: 55, recoveryScore: 66 } },
-  mem_005: { composite: 75, tier: 'gold',   dimensions: { relativeStrength: 72, explosiveScore: 85, powerIndex: 80, cardiovascular: 72, mobilityScore: 65, symmetryScore: 78, injuryRisk: 20, bodyComposition: 74, trainingAdherence: 95, nutritionCompliance: 70, recoveryScore: 72 } },
+  mem_004: { composite: 55, tier: 'silver', dimensions: { forceIndex: 50, explosiveScore: 52, powerIndex: 48, cardiovascular: 70, mobilityScore: 60, symmetryScore: 58, injuryRisk: 28, bodyComposition: 62, trainingAdherence: 78, nutritionCompliance: 55, recoveryScore: 66 } },
+  mem_005: { composite: 75, tier: 'gold',   dimensions: { forceIndex: 72, explosiveScore: 85, powerIndex: 80, cardiovascular: 72, mobilityScore: 65, symmetryScore: 78, injuryRisk: 20, bodyComposition: 74, trainingAdherence: 95, nutritionCompliance: 70, recoveryScore: 72 } },
 }
 
 // ── Assessment template fields ────────────────────────────────
@@ -204,7 +204,7 @@ export const mockAnalytics = {
   rosterAverageScore: 60.2,
   rosterAverageAdherence: 80.4,
   totalMembers: 5,
-  membersNeedingAttention: 1, // Rohit
+  membersNeedingAttention: 2,
   assessmentsDueThisWeek: 2,
 
   scoreByTier: [

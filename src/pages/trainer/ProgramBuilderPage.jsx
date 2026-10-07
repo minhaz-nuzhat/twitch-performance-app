@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useProgramLibrary, useExerciseLibrary } from '../../hooks/useTrainerApi'
 import { mockRoster } from '../../data/mockTrainerData'
 import ProgramCalendar from '../../components/trainer/ProgramCalendar'
+import { formatDate, parseDateOnly } from '../../utils/date'
 import {
   Plus, Trash2, ChevronDown, GripVertical,
   CheckCircle2, X, Search, BookOpen, Youtube,
@@ -453,13 +454,13 @@ export default function ProgramBuilderPage() {
           <div><span className="font-mono font-bold text-tp-white">{totalSessions}</span> <span className="text-tp-muted text-xs">sessions</span></div>
           <div><span className="font-mono font-bold text-tp-white">{totalExercises}</span> <span className="text-tp-muted text-xs">exercises</span></div>
           {program.startDate && (() => {
-            const end = new Date(program.startDate)
+            const end = parseDateOnly(program.startDate)
             const maxWk = Math.max(1, ...program.phases.flatMap(ph => ph.sessions.map(s => s.week)))
             end.setDate(end.getDate() + maxWk * 7 - 1)
             return (
               <div className="ml-auto text-right">
                 <p className="text-tp-muted text-xs">
-                  {new Date(program.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  {formatDate(program.startDate, { day: 'numeric', month: 'short', year: 'numeric' })}
                   {' – '}
                   {end.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </p>

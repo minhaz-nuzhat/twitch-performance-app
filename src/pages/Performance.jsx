@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { usePerformance } from '../hooks/useApi'
 import ScoreRing from '../components/ui/ScoreRing'
 import TierBadge from '../components/ui/TierBadge'
@@ -8,6 +9,7 @@ import { Brain, Activity, Zap } from 'lucide-react'
 import { InfoTooltip } from '../components/ui/InfoTooltip'
 import { DERIVED_TOOLTIPS } from '../data/scienceTooltips'
 import clsx from 'clsx'
+import { formatDate } from '../utils/date'
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip,
   ResponsiveContainer, CartesianGrid,
@@ -25,6 +27,15 @@ const HistoryTooltip = ({ active, payload, label }) => {
 
 export default function Performance() {
   const { data: perf, loading } = usePerformance()
+  const [mobileView, setMobileView] = useState('overview')
+  const [isDesktop, setIsDesktop] = useState(() => window.matchMedia('(min-width: 1024px)').matches)
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 1024px)')
+    const syncLayout = () => setIsDesktop(mediaQuery.matches)
+    mediaQuery.addEventListener('change', syncLayout)
+    return () => mediaQuery.removeEventListener('change', syncLayout)
+  }, [])
 
   if (loading || !perf) {
     return (
@@ -46,8 +57,20 @@ export default function Performance() {
   return (
     <div className="space-y-8 animate-fade-in">
 
+      <nav className="lg:hidden sticky top-0 z-20 grid grid-cols-3 gap-1 bg-tp-surface/95 backdrop-blur-sm border border-tp-border rounded-xl p-1" aria-label="Performance views">
+        {[
+          ['overview', 'Overview'],
+          ['metrics', 'Metrics'],
+          ['history', 'History'],
+        ].map(([id, label]) => (
+          <button key={id} type="button" onClick={() => setMobileView(id)} className={clsx('min-h-10 rounded-lg text-xs font-semibold', mobileView === id ? 'bg-tp-red text-white' : 'text-tp-muted')}>
+            {label}
+          </button>
+        ))}
+      </nav>
+
       {/* ── Header: Score + Radar ── */}
-      <div className="card p-6 border-red-glow">
+      {(isDesktop || mobileView === 'overview') && <div className="card p-6 border-red-glow">
         <div className="flex flex-col md:flex-row items-center gap-8">
           {/* Score */}
           <div className="flex flex-col items-center gap-4 flex-shrink-0">
@@ -56,7 +79,7 @@ export default function Performance() {
             <div className="text-center">
               <p className="text-tp-soft text-xs">Last updated</p>
               <p className="text-tp-white text-sm font-medium">
-                {new Date(perf.lastUpdated).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                {formatDate(perf.lastUpdated, { day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
             </div>
           </div>
@@ -70,10 +93,10 @@ export default function Performance() {
             <RadarChartWidget data={perf.radarData} />
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* ── Derived Contextual Metrics ── */}
-      <div>
+      {(isDesktop || mobileView === 'overview') && <div>
         <h3 className="text-tp-white font-semibold mb-3 flex items-center gap-2">
           <Brain size={16} className="text-tp-red" />
           Contextual Metrics
@@ -110,24 +133,24 @@ export default function Performance() {
             </p>
             <p className="text-tp-muted text-xs leading-relaxed mt-1">
               {perf.derived.fatigueRatio < 1.3
-                ? 'Training load is within safe range.'
+                ? 'Load ratio is below 1.3; interpret it alongside readiness and symptoms.'
                 : 'Load is elevated — prioritise recovery this week.'}
             </p>
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* ── AI Insight ── */}
-      <div>
+      {(isDesktop || mobileView === 'overview') && <div>
         <h3 className="text-tp-white font-semibold mb-3 flex items-center gap-2">
           <Zap size={16} className="text-tp-red" />
           AI Insight
         </h3>
         <InsightCard insight={perf.insightCard} />
-      </div>
+      </div>}
 
       {/* ── All Dimensions ── */}
-      <div>
+      {(isDesktop || mobileView === 'metrics') && <div>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-tp-white font-semibold flex items-center gap-2">
             <Activity size={16} className="text-tp-red" />
@@ -140,10 +163,10 @@ export default function Performance() {
             <DimensionCard key={dim.label} dimension={dim} delay={i * 40} />
           ))}
         </div>
-      </div>
+      </div>}
 
       {/* ── Score History ── */}
-      <div>
+      {(isDesktop || mobileView === 'history') && <div>
         <h3 className="text-tp-white font-semibold mb-4">Score History</h3>
         <div className="card p-4">
           <div className="h-52">
@@ -182,7 +205,7 @@ export default function Performance() {
             </ResponsiveContainer>
           </div>
         </div>
-      </div>
+      </div>}
     </div>
   )
 }

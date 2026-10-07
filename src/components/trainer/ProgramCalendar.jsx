@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Clock } from 'lucide-react'
 import clsx from 'clsx'
+import { parseDateOnly } from '../../utils/date'
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const DAY_SHORT = { Monday: 'Mon', Tuesday: 'Tue', Wednesday: 'Wed', Thursday: 'Thu', Friday: 'Fri', Saturday: 'Sat' }
@@ -8,7 +9,7 @@ const DAY_SHORT = { Monday: 'Mon', Tuesday: 'Tue', Wednesday: 'Wed', Thursday: '
 // ── Date helpers ─────────────────────────────────────────────
 function addDays(dateStr, days) {
   if (!dateStr) return null
-  const d = new Date(dateStr)
+  const d = parseDateOnly(dateStr)
   d.setDate(d.getDate() + days)
   return d
 }

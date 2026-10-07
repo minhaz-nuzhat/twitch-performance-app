@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext'
 import { usePerformance, useTraining } from '../hooks/useApi'
 import { mockLeaderboard } from '../data/mockData'
 import ScoreRing from '../components/ui/ScoreRing'
+import { formatDate } from '../utils/date'
 
 function greeting(name) {
   const hour = new Date().getHours()
@@ -75,7 +76,7 @@ function TodaySession({ training }) {
           <div className="flex flex-wrap items-center gap-4 text-tp-soft text-xs mt-3">
             <span className="flex items-center gap-1.5"><Clock size={13} />{session.estimatedDuration} min</span>
             <span className="flex items-center gap-1.5"><Dumbbell size={13} />{session.exercises.length} exercises</span>
-            <span className="flex items-center gap-1.5"><CalendarDays size={13} />Flexible weekly schedule</span>
+            <span className="flex items-center gap-1.5"><CalendarDays size={13} />{formatDate(session.date, { day: 'numeric', month: 'short', year: 'numeric' })}</span>
           </div>
           <p className="text-tp-soft text-sm leading-relaxed mt-4 max-w-2xl">
             {session.exercises[0]?.notes || 'Follow the prescribed load and record your completed work for your coach.'}
@@ -219,6 +220,7 @@ export default function ClientDashboard() {
   const { data: perf } = usePerformance()
   const { data: training } = useTraining()
   const [leaderboardOpen, setLeaderboardOpen] = useState(false)
+  const [mobileSection, setMobileSection] = useState('session')
 
   if (!perf) return <div className="space-y-4">{[...Array(4)].map((_, index) => <div key={index} className="skeleton h-28 rounded-xl" />)}</div>
 
@@ -229,24 +231,56 @@ export default function ClientDashboard() {
         <Link to="/messages" className="hidden sm:inline-flex items-center gap-2 text-tp-soft hover:text-tp-white text-xs"><MessageCircle size={14} className="text-tp-red" /> Message {user?.trainer?.name ?? 'your coach'} <ChevronRight size={13} /></Link>
       </header>
 
-      <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(280px,0.75fr)] gap-4 items-start">
-        <div className="lg:col-span-2"><TodaySession training={training} /></div>
-        <CoachDirection perf={perf} trainer={user?.trainer} />
-        <section className="lg:col-span-2">
-          <div className="flex items-end justify-between gap-3 mb-3"><div><h2 className="text-tp-white font-semibold">Where do you want to go?</h2><p className="text-tp-muted text-xs mt-1">Every part of your program, one step away.</p></div></div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5">{DESTINATIONS.map((item) => <PlatformLink key={item.to} item={item} />)}</div>
-        </section>
-        <RecoveryContext perf={perf} />
+      <div className="lg:hidden sticky top-0 z-20 -mx-1 p-1 rounded-xl border border-tp-border bg-tp-surface/95 backdrop-blur-sm" aria-label="Dashboard views">
+        <div className="grid grid-cols-3 gap-1">
+          {[
+            ['session', 'Session'],
+            ['progress', 'Progress'],
+            ['coach', 'Coach'],
+          ].map(([id, label]) => (
+            <button key={id} type="button" onClick={() => setMobileSection(id)} className={clsx('min-h-10 rounded-lg text-xs font-semibold transition-colors', mobileSection === id ? 'bg-tp-red text-white' : 'text-tp-muted')}>
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <PerformanceSnapshot perf={perf} />
+      <div className="lg:hidden">
+        {mobileSection === 'session' && <TodaySession training={training} />}
+        {mobileSection === 'coach' && <CoachDirection perf={perf} trainer={user?.trainer} />}
+        {mobileSection === 'progress' && (
+          <div className="space-y-4">
+            <PerformanceSnapshot perf={perf} />
+            <RecoveryContext perf={perf} />
+            <Link to="/performance" className="group block border border-tp-border bg-tp-card rounded-xl p-5 hover:border-tp-red/40 transition-colors">
+              <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Activity size={16} className="text-tp-red" /><p className="label">Science insight</p></div><ArrowUpRight size={15} className="text-tp-muted group-hover:text-tp-red" /></div>
+              <h3 className="text-tp-white font-bold mt-4">{perf.insightCard.title}</h3><p className="text-tp-soft text-xs leading-relaxed mt-2">{perf.insightCard.body}</p><p className="text-tp-red text-xs font-semibold mt-4">Explore the data behind this <ChevronRight size={13} className="inline" /></p>
+            </Link>
+            <TopFiveCard perf={perf} onOpen={() => setLeaderboardOpen(true)} />
+          </div>
+        )}
+      </div>
 
-      <div className="grid md:grid-cols-[1fr_1fr] gap-4">
-        <Link to="/performance" className="group border border-tp-border bg-tp-card rounded-xl p-5 hover:border-tp-red/40 transition-colors">
-          <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Activity size={16} className="text-tp-red" /><p className="label">Science insight</p></div><ArrowUpRight size={15} className="text-tp-muted group-hover:text-tp-red" /></div>
-          <h3 className="text-tp-white font-bold mt-4">{perf.insightCard.title}</h3><p className="text-tp-soft text-xs leading-relaxed mt-2">{perf.insightCard.body}</p><p className="text-tp-red text-xs font-semibold mt-4">Explore the data behind this <ChevronRight size={13} className="inline" /></p>
-        </Link>
-        <TopFiveCard perf={perf} onOpen={() => setLeaderboardOpen(true)} />
+      <div className="hidden lg:block space-y-7">
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(280px,0.75fr)] gap-4 items-start">
+          <div className="lg:col-span-2"><TodaySession training={training} /></div>
+          <CoachDirection perf={perf} trainer={user?.trainer} />
+          <section className="lg:col-span-2">
+            <div className="flex items-end justify-between gap-3 mb-3"><div><h2 className="text-tp-white font-semibold">Where do you want to go?</h2><p className="text-tp-muted text-xs mt-1">Every part of your program, one step away.</p></div></div>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5">{DESTINATIONS.map((item) => <PlatformLink key={item.to} item={item} />)}</div>
+          </section>
+          <RecoveryContext perf={perf} />
+        </div>
+
+        <PerformanceSnapshot perf={perf} />
+
+        <div className="grid md:grid-cols-[1fr_1fr] gap-4">
+          <Link to="/performance" className="group border border-tp-border bg-tp-card rounded-xl p-5 hover:border-tp-red/40 transition-colors">
+            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Activity size={16} className="text-tp-red" /><p className="label">Science insight</p></div><ArrowUpRight size={15} className="text-tp-muted group-hover:text-tp-red" /></div>
+            <h3 className="text-tp-white font-bold mt-4">{perf.insightCard.title}</h3><p className="text-tp-soft text-xs leading-relaxed mt-2">{perf.insightCard.body}</p><p className="text-tp-red text-xs font-semibold mt-4">Explore the data behind this <ChevronRight size={13} className="inline" /></p>
+          </Link>
+          <TopFiveCard perf={perf} onOpen={() => setLeaderboardOpen(true)} />
+        </div>
       </div>
 
       <LeaderboardModal isOpen={leaderboardOpen} onClose={() => setLeaderboardOpen(false)} />

@@ -11,6 +11,7 @@ import {
 } from 'recharts'
 import { useAuth } from '../context/AuthContext'
 import { useAssessments, useGoals, usePerformance, useTraining } from '../hooks/useApi'
+import { formatDate, toDateKey } from '../utils/date'
 
 const CHANGE_METRICS = [
   { label: 'Performance score', baseline: '51', current: '62', delta: '+11 pts', detail: 'Across four completed assessments', to: '/performance' },
@@ -91,7 +92,7 @@ function PhotoSlot({ label, file, onSelect }) {
   return (
     <div className="border border-tp-border bg-tp-card rounded-lg overflow-hidden">
       <div className="px-3 py-2 border-b border-tp-border flex items-center justify-between"><span className="text-tp-white text-xs font-semibold">{label}</span><span className="text-tp-muted text-[9px] uppercase">Optional</span></div>
-      <button type="button" onClick={() => input.current?.click()} className="w-full aspect-[3/4] min-h-40 flex items-center justify-center bg-tp-raised/40 hover:bg-tp-raised transition-colors">
+      <button type="button" onClick={() => input.current?.click()} className="w-full aspect-[3/4] min-h-28 sm:min-h-40 flex items-center justify-center bg-tp-raised/40 hover:bg-tp-raised transition-colors">
         {preview ? <img src={preview} alt={`${label} preview`} className="w-full h-full object-cover" /> : <span className="flex flex-col items-center gap-2 text-tp-muted text-xs"><Camera size={22} />Choose {label.toLowerCase()} photo</span>}
       </button>
       <input ref={input} type="file" accept="image/*" className="hidden" onChange={(event) => onSelect(event.target.files?.[0] ?? null)} />
@@ -101,7 +102,7 @@ function PhotoSlot({ label, file, onSelect }) {
 
 function VisualCheckIns({ defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen)
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0])
+  const [date, setDate] = useState(toDateKey)
   const [photos, setPhotos] = useState({ front: null, side: null, back: null })
   const [checkIns, setCheckIns] = useState([])
   const complete = photos.front && photos.side && photos.back
@@ -121,8 +122,8 @@ function VisualCheckIns({ defaultOpen = false }) {
       {open && <div className="p-5 pt-0 space-y-5 animate-fade-in">
         <div className="border-t border-tp-border pt-4 flex flex-col sm:flex-row sm:items-start justify-between gap-3"><p className="text-tp-soft text-xs leading-relaxed max-w-xl">Use consistent lighting, distance, clothing and pose. Photos are available to your assigned coach, but are not analyzed, scored, or visible to other members.</p><span className="text-tp-green text-[10px] font-bold uppercase">Coach can view</span></div>
         <div className="flex items-end justify-between gap-3"><label><span className="label block mb-2">Check-in date</span><input type="date" value={date} onChange={(event) => setDate(event.target.value)} className="input py-2" /></label><button type="button" disabled={!complete} onClick={save} className="btn-primary px-4 py-2.5 text-xs">Save check-in</button></div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">{['front', 'side', 'back'].map((key) => <PhotoSlot key={key} label={key[0].toUpperCase() + key.slice(1)} file={photos[key]} onSelect={(file) => setPhotos((current) => ({ ...current, [key]: file }))} />)}</div>
-        {checkIns.length === 0 ? <div className="border border-dashed border-tp-border rounded-lg p-5 text-center"><p className="text-tp-muted text-xs">Your first saved set establishes the visual baseline. A second set unlocks comparison.</p></div> : <div><p className="label mb-3">Saved check-ins</p>{checkIns.map((item) => <div key={item.id} className="flex items-center gap-3 border-t border-tp-border py-3"><div className="flex gap-1">{Object.values(item.photos).map((src, index) => <img key={index} src={src} alt="Saved check-in" className="w-9 h-11 object-cover rounded" />)}</div><p className="text-tp-white text-xs">{new Date(item.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p></div>)}</div>}
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">{['front', 'side', 'back'].map((key) => <PhotoSlot key={key} label={key[0].toUpperCase() + key.slice(1)} file={photos[key]} onSelect={(file) => setPhotos((current) => ({ ...current, [key]: file }))} />)}</div>
+        {checkIns.length === 0 ? <div className="border border-dashed border-tp-border rounded-lg p-5 text-center"><p className="text-tp-muted text-xs">Your first saved set establishes the visual baseline. A second set unlocks comparison.</p></div> : <div><p className="label mb-3">Saved check-ins</p>{checkIns.map((item) => <div key={item.id} className="flex items-center gap-3 border-t border-tp-border py-3"><div className="flex gap-1">{Object.values(item.photos).map((src, index) => <img key={index} src={src} alt="Saved check-in" className="w-9 h-11 object-cover rounded" />)}</div><p className="text-tp-white text-xs">{formatDate(item.date, { day: 'numeric', month: 'long', year: 'numeric' })}</p></div>)}</div>}
       </div>}
     </section>
   )
@@ -166,28 +167,28 @@ function WeeklyExecution() {
   )
 }
 
-function GuidedProgress({ goals, training }) {
+function GuidedProgress({ goals, training, mobileSection }) {
   return (
     <div className="space-y-6 animate-fade-in">
-      <section>
+      <section className={mobileSection !== 'journey' ? 'hidden lg:block' : undefined}>
         <div className="flex items-end justify-between gap-3 mb-3"><div><h2 className="text-tp-white font-semibold">Since your baseline</h2><p className="text-tp-muted text-xs mt-1">The clearest changes across testing and training.</p></div><Link to="/assessment" className="text-tp-red text-xs font-semibold">Open evidence →</Link></div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">{CHANGE_METRICS.map((metric) => <Link key={metric.label} to={metric.to} className="group card p-4 hover:border-tp-border-bright transition-colors"><p className="label">{metric.label}</p><div className="flex items-baseline gap-2 mt-3"><span className="text-tp-muted font-mono text-xs">{metric.baseline}</span><span className="text-tp-red">→</span><span className="text-tp-white font-mono font-bold text-lg">{metric.current}</span></div><p className="text-tp-green text-xs font-semibold mt-2">{metric.delta}</p><p className="text-tp-muted text-[10px] leading-relaxed mt-3">{metric.detail}</p></Link>)}</div>
       </section>
 
-      <section className="card overflow-hidden">
+      <section className={clsx('card overflow-hidden', mobileSection !== 'journey' && 'hidden lg:block')}>
         <div className="px-5 py-4 border-b border-tp-border"><p className="label">Coach-programmed cycle</p><h2 className="text-tp-white font-semibold mt-1">Assessment and training milestones</h2><p className="text-tp-muted text-xs mt-1">Defined by your coach around program phases and evidence checkpoints.</p></div>
         <div className="divide-y divide-tp-border">{MILESTONES.map((milestone, index) => <Link key={milestone.label} to={milestone.to} className="group grid grid-cols-[28px_1fr_auto] sm:grid-cols-[36px_100px_1fr_auto] gap-3 items-start p-4 sm:px-5 hover:bg-tp-raised/40 transition-colors"><span className={clsx('w-7 h-7 rounded-full border flex items-center justify-center text-[10px] font-bold', milestone.status === 'complete' ? 'bg-tp-green/10 border-tp-green/30 text-tp-green' : milestone.status === 'current' ? 'bg-tp-red border-tp-red text-white' : 'bg-tp-raised border-tp-border text-tp-muted')}>{milestone.status === 'complete' ? <Check size={12} /> : index + 1}</span><div className="hidden sm:block"><p className="text-tp-white text-xs font-semibold">{milestone.label}</p><p className="text-tp-muted text-[10px] mt-1">{milestone.date}</p></div><div><p className="sm:hidden text-tp-red text-[10px] font-semibold mb-1">{milestone.label} · {milestone.date}</p><p className="text-tp-white text-sm font-semibold">{milestone.title}</p><p className="text-tp-muted text-xs mt-1">{milestone.detail}</p></div><ChevronRight size={14} className="text-tp-muted group-hover:text-tp-red mt-1" /></Link>)}</div>
       </section>
 
-      <section><div className="flex items-end justify-between gap-3 mb-3"><div><h2 className="text-tp-white font-semibold">Coach-set goals</h2><p className="text-tp-muted text-xs mt-1">Targets connected to measurable evidence.</p></div></div><div className="grid md:grid-cols-2 gap-3">{goals.map((goal) => <GoalCard key={goal.id} goal={goal} />)}</div></section>
+      <section className={mobileSection !== 'goals' ? 'hidden lg:block' : undefined}><div className="flex items-end justify-between gap-3 mb-3"><div><h2 className="text-tp-white font-semibold">Coach-set goals</h2><p className="text-tp-muted text-xs mt-1">Swipe between active targets.</p></div></div><div className="flex lg:grid lg:grid-cols-2 gap-3 overflow-x-auto lg:overflow-visible snap-x snap-mandatory pb-2">{goals.map((goal) => <div key={goal.id} className="min-w-[86%] lg:min-w-0 snap-start"><GoalCard goal={goal} /></div>)}</div></section>
 
-      <section className="grid md:grid-cols-2 gap-4"><div className="card p-5"><div className="flex items-center gap-2"><Trophy size={16} className="text-tp-gold" /><p className="label">Personal bests</p></div><div className="grid grid-cols-2 gap-3 mt-4"><div><p className="text-tp-white font-mono font-bold text-xl">52 cm</p><p className="text-tp-muted text-xs">CMJ height</p></div><div><p className="text-tp-white font-mono font-bold text-xl">100 kg</p><p className="text-tp-muted text-xs">Back squat · 5 reps</p></div></div><Link to="/assessment" className="text-tp-red text-xs font-semibold inline-flex items-center gap-1 mt-5">View verified results <ArrowUpRight size={13} /></Link></div><div className="card p-5"><div className="flex items-center gap-2"><Dumbbell size={16} className="text-tp-red" /><p className="label">Training consistency</p></div><p className="text-tp-white font-mono font-bold text-2xl mt-4">5 / 6</p><p className="text-tp-soft text-xs mt-1">prescribed sessions completed in the last 30 days</p><p className="text-tp-muted text-xs mt-3">Moved workouts still count when completed on another day or while traveling.</p><Link to="/training" className="text-tp-red text-xs font-semibold inline-flex items-center gap-1 mt-4">Open session history <ArrowUpRight size={13} /></Link></div></section>
+      <section className={clsx('grid md:grid-cols-2 gap-4', mobileSection !== 'goals' && 'hidden lg:grid')}><div className="card p-5"><div className="flex items-center gap-2"><Trophy size={16} className="text-tp-gold" /><p className="label">Personal bests</p></div><div className="grid grid-cols-2 gap-3 mt-4"><div><p className="text-tp-white font-mono font-bold text-xl">52 cm</p><p className="text-tp-muted text-xs">CMJ height</p></div><div><p className="text-tp-white font-mono font-bold text-xl">100 kg</p><p className="text-tp-muted text-xs">Back squat · 5 reps</p></div></div><Link to="/assessment" className="text-tp-red text-xs font-semibold inline-flex items-center gap-1 mt-5">View verified results <ArrowUpRight size={13} /></Link></div><div className="card p-5"><div className="flex items-center gap-2"><Dumbbell size={16} className="text-tp-red" /><p className="label">Training consistency</p></div><p className="text-tp-white font-mono font-bold text-2xl mt-4">5 / 6</p><p className="text-tp-soft text-xs mt-1">prescribed sessions completed in the last 30 days</p><p className="text-tp-muted text-xs mt-3">Moved workouts still count when completed on another day or while traveling.</p><Link to="/training" className="text-tp-red text-xs font-semibold inline-flex items-center gap-1 mt-4">Open session history <ArrowUpRight size={13} /></Link></div></section>
     </div>
   )
 }
 
 function AdvancedProgress({ perf, assessments, training }) {
-  const assessmentData = assessments.filter((item) => item.composite != null).reverse().map((item) => ({ date: new Date(item.date).toLocaleDateString('en-IN', { month: 'short' }), score: item.composite }))
+  const assessmentData = assessments.filter((item) => item.composite != null).reverse().map((item) => ({ date: formatDate(item.date, { month: 'short' }), score: item.composite }))
   return (
     <div className="space-y-5 animate-fade-in">
       <section className="grid lg:grid-cols-2 gap-4"><div className="card p-4"><div className="flex items-center justify-between"><div><p className="label">Assessment trend</p><p className="text-tp-muted text-xs mt-1">Composite score across completed tests · Tap or hover for values</p></div><Link to="/assessment" className="text-tp-red text-xs">Full assessments →</Link></div><div className="h-56 mt-4"><ResponsiveContainer width="100%" height="100%"><AreaChart data={assessmentData} margin={{ left: -20, right: 8 }}><defs><linearGradient id="progressScore" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#e63946" stopOpacity={0.35} /><stop offset="95%" stopColor="#e63946" stopOpacity={0} /></linearGradient></defs><CartesianGrid stroke="#1e1e1e" vertical={false} /><XAxis dataKey="date" tick={{ fill: '#777', fontSize: 10 }} axisLine={false} tickLine={false} /><YAxis domain={[45, 70]} tick={{ fill: '#777', fontSize: 10 }} axisLine={false} tickLine={false} /><Tooltip content={<ProgressChartTooltip />} cursor={{ stroke: '#555', strokeDasharray: '3 3' }} /><Area dataKey="score" name="Performance score" stroke="#e63946" fill="url(#progressScore)" strokeWidth={2.5} /></AreaChart></ResponsiveContainer></div></div><div className="card p-4"><p className="label">Training load and effort</p><p className="text-tp-muted text-xs mt-1">Weekly session load with average RPE · Tap or hover for values</p><div className="h-56 mt-4"><ResponsiveContainer width="100%" height="100%"><LineChart data={LOAD_HISTORY} margin={{ left: -20, right: 8 }}><CartesianGrid stroke="#1e1e1e" vertical={false} /><XAxis dataKey="week" tick={{ fill: '#777', fontSize: 10 }} axisLine={false} tickLine={false} /><YAxis yAxisId="load" tick={{ fill: '#777', fontSize: 10 }} axisLine={false} tickLine={false} /><YAxis yAxisId="rpe" orientation="right" domain={[0, 10]} hide /><Tooltip content={<ProgressChartTooltip />} cursor={{ stroke: '#555', strokeDasharray: '3 3' }} /><Line yAxisId="load" dataKey="load" name="Session load" stroke="#e63946" strokeWidth={2.5} dot={{ r: 3, fill: '#e63946' }} /><Line yAxisId="rpe" dataKey="rpe" name="Average RPE" stroke="#f59e0b" strokeWidth={2} strokeDasharray="4 3" dot={{ r: 3, fill: '#f59e0b' }} /></LineChart></ResponsiveContainer></div></div></section>
@@ -215,15 +216,16 @@ export default function ClientProgress() {
         <div className="mt-5 pt-4 border-t border-tp-border grid sm:grid-cols-[1fr_auto] gap-4 items-center"><div><div className="flex items-center justify-between text-xs"><span className="text-tp-soft">Current block</span><span className="text-tp-white font-mono">{training.week}/{training.totalWeeks} weeks</span></div><div className="h-1.5 bg-tp-raised rounded-full overflow-hidden mt-2"><div className="h-full bg-tp-red" style={{ width: `${training.week / training.totalWeeks * 100}%` }} /></div></div><Link to="/messages" className="text-tp-red text-xs font-semibold inline-flex items-center gap-1"><MessageCircle size={13} /> Check in with coach</Link></div>
       </header>
 
-      <nav className="lg:hidden sticky top-0 z-20 grid grid-cols-3 gap-1 bg-tp-surface/95 backdrop-blur-sm border border-tp-border rounded-xl p-1" aria-label="Progress views">
+      <nav className="lg:hidden sticky top-0 z-20 grid grid-cols-4 gap-1 bg-tp-surface/95 backdrop-blur-sm border border-tp-border rounded-xl p-1" aria-label="Progress views">
         {[
-          ['journey', 'Journey'],
+          ['journey', 'Summary'],
+          ['goals', 'Goals'],
           ['weekly', 'Weekly'],
           ['visuals', 'Visuals'],
         ].map(([id, label]) => <button key={id} type="button" onClick={() => setMobileView(id)} className={clsx('min-h-10 rounded-lg text-xs font-semibold', mobileView === id ? 'bg-tp-red text-white' : 'text-tp-muted')}>{label}</button>)}
       </nav>
 
-      <div className={mobileView === 'journey' ? 'block' : 'hidden lg:block'}>{mode === 'guided' ? <GuidedProgress goals={goalsData.goals} training={training} /> : <AdvancedProgress perf={perf} assessments={assessments} training={training} />}</div>
+      <div className={mobileView === 'journey' || mobileView === 'goals' ? 'block' : 'hidden lg:block'}>{mode === 'guided' ? <GuidedProgress goals={goalsData.goals} training={training} mobileSection={mobileView} /> : <AdvancedProgress perf={perf} assessments={assessments} training={training} />}</div>
       <div className={mobileView === 'weekly' ? 'block lg:hidden' : 'hidden'}><WeeklyExecution /></div>
       <div className={mobileView === 'visuals' ? 'block' : 'hidden lg:block'}><VisualCheckIns key={mobileView} defaultOpen={mobileView === 'visuals'} /></div>
     </div>

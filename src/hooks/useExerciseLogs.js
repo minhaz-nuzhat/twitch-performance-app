@@ -1,10 +1,12 @@
 import { useState, useCallback, useEffect } from 'react'
 
+const EMPTY_EXERCISES = []
+
 /**
  * Manages exercise completion and logging data
  * Handles: completion toggle, set/rep/weight logging per exercise
  */
-export function useExerciseLogs(initialExercises = []) {
+export function useExerciseLogs(initialExercises = EMPTY_EXERCISES) {
   const [exercises, setExercises] = useState([])
 
   // Transform exercises with defaults

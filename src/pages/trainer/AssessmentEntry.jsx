@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useAssessmentTemplate } from '../../hooks/useTrainerApi'
 import { mockRoster } from '../../data/mockTrainerData'
-import { CheckCircle2, ChevronDown } from 'lucide-react'
+import { CheckCircle2, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import clsx from 'clsx'
 
 function ScoreButtons({ options, value, onChange }) {
@@ -31,6 +31,7 @@ export default function AssessmentEntry() {
   const [values, setValues]     = useState({})
   const [submitted, setSubmitted] = useState(false)
   const [activeCategory, setActiveCategory] = useState(null)
+  const [mobileCategoryIndex, setMobileCategoryIndex] = useState(0)
 
   const setVal = (fieldId, val) => setValues(v => ({ ...v, [fieldId]: val }))
 
@@ -42,6 +43,7 @@ export default function AssessmentEntry() {
 
   const filledCount = Object.values(values).filter(v => v !== '' && v !== undefined).length
   const totalFields = template?.categories.reduce((acc, c) => acc + c.fields.length, 0) ?? 0
+  const mobileCategory = template?.categories[mobileCategoryIndex]
 
   if (loading) return <div className="space-y-3">{[...Array(4)].map((_, i) => <div key={i} className="skeleton h-20 rounded-xl" />)}</div>
 
@@ -93,13 +95,21 @@ export default function AssessmentEntry() {
         </div>
       </div>
 
+      <div className="lg:hidden card p-3 sticky top-0 z-20 bg-tp-surface/95 backdrop-blur-sm">
+        <div className="flex items-center justify-between gap-3">
+          <button type="button" disabled={mobileCategoryIndex === 0} onClick={() => setMobileCategoryIndex((index) => index - 1)} className="w-10 h-10 rounded-lg bg-tp-raised text-tp-soft disabled:opacity-25 flex items-center justify-center" aria-label="Previous assessment category"><ChevronLeft size={16} /></button>
+          <div className="text-center min-w-0"><p className="text-tp-muted text-[10px] uppercase font-bold">Step {mobileCategoryIndex + 1} of {template?.categories.length}</p><p className="text-tp-white text-sm font-semibold truncate mt-0.5">{mobileCategory?.name}</p></div>
+          <button type="button" disabled={mobileCategoryIndex === template?.categories.length - 1} onClick={() => setMobileCategoryIndex((index) => index + 1)} className="w-10 h-10 rounded-lg bg-tp-raised text-tp-soft disabled:opacity-25 flex items-center justify-center" aria-label="Next assessment category"><ChevronRight size={16} /></button>
+        </div>
+      </div>
+
       {/* ── Category accordions ── */}
-      {template?.categories.map((cat) => {
+      {template?.categories.map((cat, categoryIndex) => {
         const isOpen = activeCategory === cat.id || activeCategory === null
         const filled = cat.fields.filter(f => values[f.id] !== undefined && values[f.id] !== '').length
 
         return (
-          <div key={cat.id} className="card overflow-hidden">
+          <div key={cat.id} className={clsx('card overflow-hidden', categoryIndex !== mobileCategoryIndex && 'hidden lg:block')}>
             <button
               type="button"
               onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}
@@ -166,8 +176,19 @@ export default function AssessmentEntry() {
         )
       })}
 
+      <div className="lg:hidden grid grid-cols-2 gap-3 pb-4">
+        <button type="button" onClick={() => mobileCategoryIndex === 0 ? navigate(-1) : setMobileCategoryIndex((index) => index - 1)} className="btn-ghost px-3">
+          {mobileCategoryIndex === 0 ? 'Cancel' : 'Previous'}
+        </button>
+        {mobileCategoryIndex < (template?.categories.length ?? 0) - 1 ? (
+          <button type="button" onClick={() => setMobileCategoryIndex((index) => index + 1)} className="btn-primary px-3 inline-flex items-center justify-center gap-1">Next <ChevronRight size={15} /></button>
+        ) : (
+          <button type="submit" disabled={!memberId} className="btn-primary px-3 disabled:opacity-40">Save Score</button>
+        )}
+      </div>
+
       {/* ── Submit ── */}
-      <div className="flex gap-3 pb-4">
+      <div className="hidden lg:flex gap-3 pb-4">
         <button type="button" onClick={() => navigate(-1)} className="btn-ghost flex-1">Cancel</button>
         <button
           type="submit"

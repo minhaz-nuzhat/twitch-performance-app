@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { Upload, FileText, CheckCircle2, AlertCircle, X, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
+import { mockRoster } from '../../data/mockTrainerData'
 
 // ── Device types the pipeline supports ───────────────────────
 const DEVICE_TYPES = [
@@ -12,19 +13,13 @@ const DEVICE_TYPES = [
 ]
 
 // ── Mock member roster ────────────────────────────────────────
-const MEMBERS = [
-  { id: 'mem_001', name: 'Arjun Sharma',  sport: 'Cricket'    },
-  { id: 'mem_002', name: 'Lavanya C',     sport: 'Cricket'    },
-  { id: 'mem_003', name: 'Rohan Mehta',   sport: 'Football'   },
-  { id: 'mem_004', name: 'Priya Venkat',  sport: 'Athletics'  },
-  { id: 'mem_005', name: 'Karan Bose',    sport: 'Basketball' },
-]
+const MEMBERS = mockRoster.map(({ id, name, sport }) => ({ id, name, sport }))
 
 // ── Mock upload history ───────────────────────────────────────
 const INITIAL_HISTORY = [
-  { id: 1, member: 'Lavanya C',    device: 'Vald ForceDecks',      file: 'lavanya_imtp_mar26.csv',  uploadedAt: '28 Mar 2026 · 14:22', status: 'processed' },
+  { id: 1, member: 'Priya Nair',   device: 'Vald ForceDecks',      file: 'priya_imtp_mar26.csv',    uploadedAt: '28 Mar 2026 · 14:22', status: 'processed' },
   { id: 2, member: 'Arjun Sharma', device: 'InBody 770',           file: 'arjun_inbody_feb26.csv',  uploadedAt: '15 Feb 2026 · 11:05', status: 'processed' },
-  { id: 3, member: 'Rohan Mehta',  device: 'Hawkin Dynamics',      file: 'rohan_cmj_jan26.csv',     uploadedAt: '20 Jan 2026 · 09:30', status: 'processed' },
+  { id: 3, member: 'Rohit Singh',  device: 'Hawkin Dynamics',      file: 'rohit_cmj_jan26.csv',     uploadedAt: '20 Jan 2026 · 09:30', status: 'processed' },
 ]
 
 // Pipeline steps description

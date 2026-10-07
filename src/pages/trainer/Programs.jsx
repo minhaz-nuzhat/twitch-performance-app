@@ -3,6 +3,7 @@ import { useProgramLibrary } from '../../hooks/useTrainerApi'
 import { mockRoster } from '../../data/mockTrainerData'
 import { Plus, Dumbbell, ChevronRight } from 'lucide-react'
 import clsx from 'clsx'
+import { formatDate, parseDateOnly } from '../../utils/date'
 
 export default function Programs() {
   const { data: library, loading } = useProgramLibrary()
@@ -31,13 +32,13 @@ export default function Programs() {
           const assignedMembers = mockRoster.filter(m => prog.assignedTo?.includes(m.id))
           const endDate = prog.startDate
             ? (() => {
-                const d = new Date(prog.startDate)
+                const d = parseDateOnly(prog.startDate)
                 d.setDate(d.getDate() + prog.totalWeeks * 7 - 1)
                 return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
               })()
             : null
           const fmtStart = prog.startDate
-            ? new Date(prog.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+            ? formatDate(prog.startDate, { day: 'numeric', month: 'short', year: 'numeric' })
             : null
           return (
             <div key={prog.id} className="card p-5">

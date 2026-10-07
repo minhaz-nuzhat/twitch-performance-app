@@ -88,22 +88,22 @@ export const mockPerformanceScore = {
     { date: '2026-03-18', composite: 56, label: 'Mar' },
     { date: '2026-04-22', composite: 58, label: 'Apr' },
     { date: '2026-05-14', composite: 60, label: 'May' },
-    { date: '2026-06-03', composite: 62, label: 'Jun' },
-    { date: '2026-07-28', composite: 65, label: 'Jul' },
+    { date: '2026-06-03', composite: 60, label: 'Jun' },
+    { date: '2026-07-28', composite: 62, label: 'Jul' },
   ],
 
   // 7-day daily trend for hero card sparkline
   last7Days: [
-    { day: 'Mon', v: 60 }, { day: 'Tue', v: 61 }, { day: 'Wed', v: 62 },
-    { day: 'Thu', v: 62 }, { day: 'Fri', v: 63 }, { day: 'Sat', v: 64 },
-    { day: 'Sun', v: 65 },
+    { day: 'Mon', v: 58 }, { day: 'Tue', v: 59 }, { day: 'Wed', v: 59 },
+    { day: 'Thu', v: 60 }, { day: 'Fri', v: 60 }, { day: 'Sat', v: 61 },
+    { day: 'Sun', v: 62 },
   ],
 
   insightCard: {
     type: 'improvement',
     title: 'Explosive Score up 6 points',
     body: 'CMJ height improved from 46 cm to 52 cm — a strong result from the plyometric block. Cardiovascular score dipped slightly; this is expected during high-intensity phases and will recover in the taper week.',
-    priority: 'Biggest gain available: Cardiovascular Fitness. A 7-point improvement would push you to Elite tier.',
+    priority: 'Cardiovascular fitness is the clearest improvement opportunity for the next assessment block.',
     generatedAt: '2026-07-28',
   },
 
@@ -112,7 +112,7 @@ export const mockPerformanceScore = {
     label: 'Train with Control',
     color: 'amber',
     description: 'Readiness is acceptable. Keep intensity but control total volume.',
-    ptsToNextTier: 20,
+    ptsToNextTier: 3,
   },
 
   strengthIndex: {
@@ -142,7 +142,7 @@ export const mockPerformanceScore = {
   },
 
   adherenceWindows: {
-    last14d: { pct: 100, sessions: '1/1' },
+    last14d: { pct: 75,  sessions: '3/4' },
     last30d: { pct: 83,  sessions: '5/6' },
     targetText: 'Target: sustain 85%+ adherence with quality execution.',
   },
@@ -156,8 +156,8 @@ export const mockTrainingProgram = {
   totalPhases: 3,
   week: 6,
   totalWeeks: 12,
-  startDate: '2026-06-16',
-  endDate: '2026-09-08',
+  startDate: '2026-06-29',
+  endDate: '2026-09-21',
   sessionsPerWeek: 3,
   assignedBy: 'Coach Ravi',
 
@@ -242,9 +242,9 @@ export const mockTrainingProgram = {
   },
 
   weekView: [
-    { day: 'Mon', name: 'Upper Body Strength', status: 'completed', date: '2026-08-04', duration: 60 },
-    { day: 'Wed', name: 'Lower Body Power',    status: 'today',     date: '2026-08-08', duration: 65 },
-    { day: 'Fri', name: 'Full Body Speed',     status: 'upcoming',  date: '2026-08-10', duration: 55 },
+    { day: 'Tue', name: 'Upper Body Strength', status: 'completed', date: '2026-08-04', duration: 60 },
+    { day: 'Sat', name: 'Lower Body Power',    status: 'today',     date: '2026-08-08', duration: 65 },
+    { day: 'Mon', name: 'Full Body Speed',     status: 'upcoming',  date: '2026-08-10', duration: 55 },
   ],
 
   recentSessions: [
@@ -307,9 +307,9 @@ export const mockNutritionPlan = {
   duration: '12 weeks',
   targets: { calories: 2800, protein: 165, carbs: 340, fat: 75 },
   dayTypes: {
-    heavy: { label: 'Heavy Training Day', calories: 4100, protein: 124, carbs: 624, fat: 123, description: 'S&C plus both skill sessions. Carbohydrate rises to cover the highest training demand.' },
-    skill: { label: 'Skill Day', calories: 3700, protein: 124, carbs: 530, fat: 120, description: 'Skill work only. Keep protein steady and reduce carbohydrate slightly.' },
-    rest: { label: 'Rest / Low Day', calories: 3300, protein: 124, carbs: 406, fat: 131, description: 'Recovery or travel day. Keep regular meals, but lower training fuel.' },
+    heavy: { label: 'Heavy Training Day', calories: 2720, protein: 164, carbs: 359, fat: 59, description: 'S&C plus both skill sessions. Carbohydrate rises to cover the highest training demand.' },
+    skill: { label: 'Skill Day', calories: 2540, protein: 164, carbs: 339, fat: 59, description: 'Skill work only. Keep protein steady and reduce carbohydrate slightly.' },
+    rest: { label: 'Rest / Low Day', calories: 1860, protein: 149, carbs: 203, fat: 54, description: 'Recovery or travel day. Keep regular meals, but lower training fuel.' },
   },
   selectedDayType: 'heavy',
   planReasoning: [
@@ -327,7 +327,7 @@ export const mockNutritionPlan = {
     'During training lasting more than four hours, use a carbohydrate-electrolyte drink and replace fluids gradually afterward.',
     'Pale straw-coloured urine is a simple day-to-day hydration check, not a medical test.',
   ],
-  todayLog:  { calories: 1940, protein: 118, carbs: 230, fat: 52 },
+  todayLog:  { calories: 1860, protein: 118, carbs: 230, fat: 52 },
   trainerNote: 'Increase carbs by 50 g on training days around session window. Recovery days drop to 2500 kcal. Prioritise protein within 30 min post-session.',
   meals: [
     { id: 'meal_1', name: 'Breakfast',       time: '07:30', calories: 650, protein: 40, carbs: 75, fat: 18, logged: true,  purpose: 'Fuel the first training block', items: ['Oats with whey protein', 'Banana', '3 whole eggs'], alternatives: ['2 egg-white masala omelette + 2 idli + milk', 'Paneer paratha + curd + 1 boiled egg', 'Rolled oats + milk + 2 boiled eggs + banana'], dayTypeAdjustments: { heavy: { calories: 690, carbs: 88, purpose: 'High-carbohydrate breakfast before S&C', items: ['3 eggs + 2 idli + sambar', 'Banana', 'Glass of milk'] }, skill: { calories: 610, carbs: 82, purpose: 'Moderate fuel before skill work', items: ['2 eggs + 2 idli + sambar', 'Banana', 'Glass of milk'] }, rest: { calories: 560, carbs: 58, purpose: 'Balanced breakfast for a lower-demand day', items: ['Oats with milk', '2 boiled eggs', 'Fruit'] } } },
@@ -457,7 +457,7 @@ export const mockNotifications = [
 export const mockSubscription = {
   plan: 'Performance',
   status: 'active',
-  renewsAt: '2026-08-31',
+  renewsAt: '2026-10-31',
   monthlyPrice: 2999,   // INR
   currency: 'INR',
   features: [
@@ -913,9 +913,9 @@ export const mockLeaderboard = {
   yourRank: 2,
   members: [
     { rank: 1, name: 'Priya Mehta',   program: 'Elite Speed Cycle',        score: 79, trend: '+2' },
-    { rank: 2, name: 'Arjun Sharma',  program: 'Power & Strength Block',   score: 72, trend: '+1', isCurrentUser: true },
-    { rank: 3, name: 'Rahul Singh',   program: 'Force Build Phase',        score: 69, trend: '+3' },
-    { rank: 4, name: 'Nisha Patel',   program: 'Speed & Recovery',         score: 66, trend: '-1' },
-    { rank: 5, name: 'Vikram Shah',   program: 'Explosive Kickstart',      score: 63, trend: '+0' },
+    { rank: 2, name: 'Arjun Sharma',  program: 'Power & Strength Block',   score: 68, trend: '+7', isCurrentUser: true },
+    { rank: 3, name: 'Rahul Singh',   program: 'Force Build Phase',        score: 66, trend: '+3' },
+    { rank: 4, name: 'Nisha Patel',   program: 'Speed & Recovery',         score: 64, trend: '-1' },
+    { rank: 5, name: 'Vikram Shah',   program: 'Explosive Kickstart',      score: 61, trend: '+0' },
   ],
 }

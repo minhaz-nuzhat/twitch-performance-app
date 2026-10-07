@@ -21,6 +21,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function RadarChartWidget({ data = [] }) {
   if (!data.length) return null
+  const hasPrevious = data.some((item) => Number.isFinite(item.previous))
 
   return (
     <div className="w-full h-72">
@@ -33,16 +34,17 @@ export default function RadarChartWidget({ data = [] }) {
           />
           <Tooltip content={<CustomTooltip />} />
 
-          {/* Previous assessment — ghost */}
-          <Radar
-            name="Previous"
-            dataKey="previous"
-            stroke="#444444"
-            fill="#444444"
-            fillOpacity={0.15}
-            strokeWidth={1.5}
-            dot={false}
-          />
+          {hasPrevious && (
+            <Radar
+              name="Previous"
+              dataKey="previous"
+              stroke="#444444"
+              fill="#444444"
+              fillOpacity={0.15}
+              strokeWidth={1.5}
+              dot={false}
+            />
+          )}
 
           {/* Current — red */}
           <Radar

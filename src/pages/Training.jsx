@@ -10,6 +10,7 @@ import { WeeklyPlanner } from '../components/training/WeeklyPlanner'
 import { SessionHeader } from '../components/training/SessionHeader'
 import { ExerciseList } from '../components/training/ExerciseList'
 import { ReadinessSurveyModal, READINESS_METRICS } from '../components/training/ReadinessSurveyModal'
+import { formatDate } from '../utils/date'
 
 function ReadinessChips({ readiness }) {
   if (!readiness) return null
@@ -100,7 +101,7 @@ function HistoryRow({ session }) {
         <div className="flex-1 min-w-0">
           <p className="text-tp-white text-sm font-semibold">{session.name}</p>
           <p className="text-tp-soft text-xs">
-            {new Date(session.date).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}
+            {formatDate(session.date, { weekday: 'short', day: 'numeric', month: 'short' })}
             {session.notes && ` · ${session.notes}`}
             {hasDetail && ` · ${session.loggedExercises.length} lifts logged`}
           </p>
@@ -187,7 +188,7 @@ export default function Training() {
       }
     : training?.todaySession
 
-  const exercises = useExerciseLogs(activeSession?.exercises ?? [])
+  const exercises = useExerciseLogs(activeSession?.exercises)
   const session = useSessionState(activeSession?.id ?? 'pending')
 
   if (loading || !training) {
@@ -210,7 +211,7 @@ export default function Training() {
       {/* ── Mobile task navigation ── */}
       <div className="lg:hidden sticky top-0 z-20 flex gap-1 bg-tp-surface/95 backdrop-blur-sm p-1 rounded-xl border border-tp-border">
         {[
-          { id: 'today', label: 'Today' },
+          { id: 'today', label: 'Session' },
           { id: 'schedule', label: 'Schedule' },
           { id: 'history', label: 'History' },
         ].map((tab) => (
@@ -277,7 +278,7 @@ export default function Training() {
       {/* ── Tabs ── */}
       <div className="hidden lg:flex gap-1 bg-tp-surface p-1 rounded-xl border border-tp-border">
         {[
-          { id: 'today', label: "Today's Session" },
+          { id: 'today', label: 'Current Session' },
           { id: 'history', label: 'History' },
         ].map((tab) => (
           <button
@@ -328,7 +329,7 @@ export default function Training() {
                   </p>
                   <button onClick={() => setSurveyOpen(true)} className="btn-primary inline-flex items-center gap-2">
                     <Play size={15} />
-                    Start Today's Session
+                    Start Session
                   </button>
                 </div>
               )
@@ -339,7 +340,7 @@ export default function Training() {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <ClipboardCheck size={14} className="text-tp-red" />
-                        <p className="label">Today's Readiness</p>
+                        <p className="label">Session Readiness</p>
                       </div>
                       <span className={clsx(
                         'font-mono font-bold text-sm',
@@ -398,7 +399,7 @@ export default function Training() {
               name: activeSession.name,
               completed: true,
               rpe: null,
-              notes: 'Today',
+              notes: 'Current session',
               readiness: session.readiness,
               loggedExercises: session.loggedExercises,
             }} />

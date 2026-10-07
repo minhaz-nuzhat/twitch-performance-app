@@ -26,14 +26,14 @@ export default function MemberDetail() {
 
   const dims   = member.scores?.dimensions ?? {}
   const radarData = [
-    { dimension: 'Strength',  current: dims.relativeStrength  ?? 0, previous: Math.max(0, (dims.relativeStrength  ?? 0) - 3) },
-    { dimension: 'Explosive', current: dims.explosiveScore    ?? 0, previous: Math.max(0, (dims.explosiveScore    ?? 0) - 5) },
-    { dimension: 'Power',     current: dims.powerIndex        ?? 0, previous: Math.max(0, (dims.powerIndex        ?? 0) - 2) },
-    { dimension: 'Cardio',    current: dims.cardiovascular    ?? 0, previous: Math.max(0, (dims.cardiovascular    ?? 0) + 2) },
-    { dimension: 'Mobility',  current: dims.mobilityScore     ?? 0, previous: Math.max(0, (dims.mobilityScore     ?? 0) - 1) },
-    { dimension: 'Symmetry',  current: dims.symmetryScore     ?? 0, previous: Math.max(0, (dims.symmetryScore     ?? 0) - 4) },
-    { dimension: 'Body Comp', current: dims.bodyComposition   ?? 0, previous: Math.max(0, (dims.bodyComposition   ?? 0) - 2) },
-    { dimension: 'Recovery',  current: dims.recoveryScore     ?? 0, previous: Math.max(0, (dims.recoveryScore     ?? 0) - 3) },
+    { dimension: 'Force',     current: dims.forceIndex       ?? 0 },
+    { dimension: 'Explosive', current: dims.explosiveScore   ?? 0 },
+    { dimension: 'Power',     current: dims.powerIndex       ?? 0 },
+    { dimension: 'Cardio',    current: dims.cardiovascular   ?? 0 },
+    { dimension: 'Mobility',  current: dims.mobilityScore    ?? 0 },
+    { dimension: 'Symmetry',  current: dims.symmetryScore    ?? 0 },
+    { dimension: 'Body Comp', current: dims.bodyComposition  ?? 0 },
+    { dimension: 'Recovery',  current: dims.recoveryScore    ?? 0 },
   ]
 
   const handleSend = () => {

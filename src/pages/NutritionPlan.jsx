@@ -30,6 +30,7 @@ export default function NutritionPlan() {
   const [dayIndex, setDayIndex] = useState(0)
   const [openMeal, setOpenMeal] = useState(null)
   const [weekPickerOpen, setWeekPickerOpen] = useState(false)
+  const [mobileView, setMobileView] = useState('meals')
 
   if (loading || !plan) {
     return <div className="space-y-4">{[...Array(4)].map((_, index) => <div key={index} className="skeleton h-24 rounded-xl" />)}</div>
@@ -49,8 +50,8 @@ export default function NutritionPlan() {
   return (
     <div className="space-y-6 animate-fade-in nutrition-print-area">
       <section className="card p-5 border-red-glow">
-        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-          <div>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
             <span className="label block mb-1">Coach-Prescribed Nutrition</span>
             <h2 className="text-tp-white font-bold text-lg">{plan.name}</h2>
             <p className="text-tp-soft text-xs mt-1">12-week plan · Assigned by {plan.assignedBy}</p>
@@ -62,7 +63,19 @@ export default function NutritionPlan() {
         </div>
       </section>
 
-      <section className="card p-5">
+      <nav className="lg:hidden sticky top-0 z-20 grid grid-cols-3 gap-1 bg-tp-surface/95 backdrop-blur-sm border border-tp-border rounded-xl p-1" aria-label="Nutrition views">
+        {[
+          ['schedule', 'Schedule'],
+          ['meals', 'Meals'],
+          ['guidance', 'Guidance'],
+        ].map(([id, label]) => (
+          <button key={id} type="button" onClick={() => setMobileView(id)} className={clsx('min-h-10 rounded-lg text-xs font-semibold', mobileView === id ? 'bg-tp-red text-white' : 'text-tp-muted')}>
+            {label}
+          </button>
+        ))}
+      </nav>
+
+      <section className={clsx('card p-5', mobileView !== 'schedule' && 'hidden lg:block')}>
         <div className="flex items-center justify-between gap-3 mb-4">
           <button type="button" disabled={weekIndex === 0} onClick={() => changeWeek(weekIndex - 1)} className="w-9 h-9 rounded-lg bg-tp-raised text-tp-soft disabled:opacity-30 flex items-center justify-center print:hidden" aria-label="Previous week">
             <ChevronLeft size={16} />
@@ -98,7 +111,7 @@ export default function NutritionPlan() {
         </div>
       )}
 
-      <section>
+      <section className={mobileView !== 'schedule' ? 'hidden lg:block' : undefined}>
         <div className="flex items-end justify-between gap-3 mb-3">
           <div>
             <h3 className="text-tp-white font-semibold">Weekly schedule</h3>
@@ -108,7 +121,7 @@ export default function NutritionPlan() {
         </div>
         <div className="flex sm:grid sm:grid-cols-4 lg:grid-cols-7 gap-2 overflow-x-auto pb-2 snap-x">
           {week.schedule.map((type, index) => (
-            <button key={`${DAYS[index]}-${type}`} type="button" onClick={() => { setDayIndex(index); setOpenMeal(null) }} className={clsx('min-w-[112px] sm:min-w-0 min-h-20 sm:min-h-24 rounded-lg border p-3 text-left transition-colors snap-start', dayIndex === index ? 'border-tp-red bg-tp-red/10' : 'border-tp-border bg-tp-card hover:border-tp-border-bright')}>
+            <button key={`${DAYS[index]}-${type}`} type="button" onClick={() => { setDayIndex(index); setOpenMeal(null); setMobileView('meals') }} className={clsx('min-w-[112px] sm:min-w-0 min-h-20 sm:min-h-24 rounded-lg border p-3 text-left transition-colors snap-start', dayIndex === index ? 'border-tp-red bg-tp-red/10' : 'border-tp-border bg-tp-card hover:border-tp-border-bright')}>
               <span className={clsx('text-xs font-bold', dayIndex === index ? 'text-tp-red' : 'text-tp-white')}>{DAYS[index]}</span>
               <p className="text-tp-soft text-[11px] leading-tight mt-2">{plan.dayTypes[type].label}</p>
               <p className="text-tp-muted text-[10px] font-mono mt-1">{plan.dayTypes[type].calories.toLocaleString()} kcal</p>
@@ -118,7 +131,7 @@ export default function NutritionPlan() {
       </section>
 
       <section className="grid lg:grid-cols-[minmax(0,1fr)_300px] gap-6 items-start">
-        <div className="space-y-4">
+        <div className={clsx('space-y-4', mobileView !== 'meals' && 'hidden lg:block')}>
           <div className="card p-5">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div>
@@ -137,12 +150,12 @@ export default function NutritionPlan() {
           <div className="space-y-3">
             {meals.map((meal) => (
               <article key={meal.id} className="card p-4 break-inside-avoid">
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-3">
                   <div>
                     <div className="flex items-center gap-2"><h4 className="text-tp-white font-semibold text-sm">{meal.name}</h4><span className="text-tp-muted text-xs">{meal.time}</span></div>
                     <p className="text-tp-soft text-xs mt-1">{meal.purpose}</p>
                   </div>
-                  <p className="text-tp-white text-xs font-mono flex-shrink-0">{meal.calories} kcal · P {meal.protein}g · C {meal.carbs}g · F {meal.fat}g</p>
+                  <p className="text-tp-white text-xs font-mono flex-shrink-0 whitespace-nowrap">{meal.calories} kcal · P {meal.protein}g · C {meal.carbs}g · F {meal.fat}g</p>
                 </div>
                 <ul className="mt-3 flex flex-wrap gap-1.5">
                   {meal.items.map((item) => <li key={item} className="bg-tp-raised border border-tp-border rounded px-2 py-1 text-tp-soft text-xs">{item}</li>)}
@@ -162,7 +175,7 @@ export default function NutritionPlan() {
           </div>
         </div>
 
-        <aside className="space-y-4">
+        <aside className={clsx('space-y-4', mobileView !== 'guidance' && 'hidden lg:block')}>
           <div className="card p-4 border-tp-amber/30">
             <div className="flex items-center gap-2 mb-2"><Info size={14} className="text-tp-amber" /><h3 className="text-tp-amber font-semibold text-sm">Coach's note</h3></div>
             <p className="text-tp-soft text-xs leading-relaxed">{plan.trainerNote}</p>

@@ -1,4 +1,5 @@
-import { Clock, Dumbbell } from 'lucide-react'
+import { CalendarDays, Clock, Dumbbell } from 'lucide-react'
+import { formatDate } from '../../utils/date'
 
 /**
  * Session header card with summary info and progress bar
@@ -21,6 +22,10 @@ export function SessionHeader({ session, completionStats }) {
             <span className="flex items-center gap-1 text-tp-muted text-xs">
               <Dumbbell size={12} />
               {completionStats.total} exercises
+            </span>
+            <span className="flex items-center gap-1 text-tp-muted text-xs">
+              <CalendarDays size={12} />
+              {formatDate(session.date, { day: 'numeric', month: 'short' })}
             </span>
           </div>
         </div>

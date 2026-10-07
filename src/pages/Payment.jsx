@@ -1,6 +1,7 @@
 import { useSubscription } from '../hooks/useApi'
 import { CreditCard, Check, Zap, Lock } from 'lucide-react'
 import clsx from 'clsx'
+import { formatDate } from '../utils/date'
 
 const TIER_COLOR = {
   basic:       'border-tp-border',
@@ -33,7 +34,7 @@ export default function Payment() {
               Active
             </span>
             <p className="text-tp-muted text-xs mt-2">
-              Renews {new Date(sub.renewsAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+              Renews {formatDate(sub.renewsAt, { day: 'numeric', month: 'short', year: 'numeric' })}
             </p>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
+import { toDateKey } from '../utils/date'
 
 function generateWeekSlots(offset) {
   const today = new Date()
@@ -8,13 +9,13 @@ function generateWeekSlots(offset) {
   return Array.from({ length: 7 }, (_, index) => {
     const date = new Date(weekStart)
     date.setDate(date.getDate() + index)
-    const dateKey = date.toISOString().split('T')[0]
+    const dateKey = toDateKey(date)
 
     return {
       dateKey,
       day: `${date.toLocaleDateString('en-IN', { weekday: 'short' })} ${date.getDate()}`,
       date,
-      isToday: dateKey === new Date().toISOString().split('T')[0],
+      isToday: dateKey === toDateKey(),
       sessionId: null,
       sessionName: null,
       duration: null,
